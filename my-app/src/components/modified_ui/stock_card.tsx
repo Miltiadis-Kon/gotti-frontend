@@ -1,3 +1,5 @@
+"use-client"
+
 import {
   Card,
   CardContent,
@@ -6,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { HiArrowCircleUp  as GreenArrow } from "react-icons/hi";
-import { HiArrowCircleDown as RedArrow} from "react-icons/hi";
+import { BiSolidUpArrow  as GreenArrow } from "react-icons/bi";
+import { BiSolidDownArrow  as RedArrow} from "react-icons/bi";
 
 export default function StockCard() {
   const ticker = "BTC";
