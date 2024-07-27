@@ -1,6 +1,7 @@
 
 import { Marquee } from "@/components/ui/marquee";
 import StockCard from "../modified_ui/stock_card";
+import {Orders} from "@/app/trades/page";
 
 export default function Trades() {
 
@@ -29,22 +30,6 @@ export default function Trades() {
             logo: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.png",
             bullish: true
         },
-        {
-            symbol: "AMZN",
-            ticker: "Amazon",
-            price: 3500.00,
-            refCurrency: "USD",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/6/62/Amazon.com-Logo.svg",
-            bullish: true
-        },
-        {
-            symbol: "TSLA",
-            ticker: "Tesla",
-            price: 750.00,
-            refCurrency: "USD",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/b/b2/Tesla_Motors_Logo.svg",
-            bullish: true
-        }
     ];
 
     const stockCards = stockData.map((stock, index) => (
@@ -59,21 +44,24 @@ export default function Trades() {
         />
     ));
 
-    // Add more StockCard components as needed
-
     return (
-        <div>
-            <h1 className="text-2xl font-bold">Gotti Favourites</h1>
+        <div className="container mx-auto px-4">
+            <h1 className="text-2xl font-bold">Gotti WatchList</h1>
             <Marquee>
-                {stockCards.map((stockCard, index) => (
-                    <div
-                        key={index}
-                        className="relative h-full w-fit mx-[0.1rem] flex items-center justify-start"
-                    >
-                        {stockCard}
-                    </div>
-                ))}
+            {stockCards.map((stockCard, index) => (
+                <div
+                key={index}
+                className="relative h-full w-fit mx-[0.1rem] flex items-center justify-start"
+                >
+                {stockCard}
+                </div>
+            ))}
             </Marquee>
+            <hr />
+            <h1 className="text-2xl font-bold mt-4">Gotti Trades</h1>
+            <div className="flex justify-between p-1">
+            <Orders/>
+            </div>
         </div>
-    );
+        );
 }
