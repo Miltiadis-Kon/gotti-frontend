@@ -38,10 +38,12 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { default as DashboardContent } from "@/components/pages/dashboard"
+import { default as TradesContent } from "@/components/pages/trades"
+
 //Example
 
-const DashboardContent = () => <div>Dashboard Content</div>;
-const TradesContent = () => <div>Trades Content</div>;
+//const DashboardContent = () => <div>Dashboard Content</div>;
 const EvaluationContent = () => <div>Evaluation Content</div>;
 const AddFundsContent = () => <div>Add Funds Content</div>;
 const ProfileContent = () => <div>Profile Content</div>;
@@ -87,7 +89,7 @@ export default function Dashboard() {
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold" onClick={()=> setView("dashboard") } >
+            <Link href="/" className="flex items-center gap-2 font-semibold" onClick={()=>{ setView("dashboard"); handleLinkClick("dashboard");}} >
               <Image src="/icons/face.ico" alt="Gotti" width={30} height={30} />
               <span className="">Gotti</span>
             </Link>
@@ -154,9 +156,11 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
+                <Link href="/pricing">
+                  <Button size="sm" className="w-full">
+                    Upgrade
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

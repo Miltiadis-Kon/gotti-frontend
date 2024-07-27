@@ -14,8 +14,6 @@ import {
   import { LiaHandshake } from "react-icons/lia";
   
   import MiniChartV2 from "./mini_chart_v2";
-
-  import Image from "next/image";
   
   interface TickerInfoProps {
       symbol: string;

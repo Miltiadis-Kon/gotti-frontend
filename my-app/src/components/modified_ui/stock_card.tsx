@@ -12,14 +12,16 @@ import { BiSolidUpArrow  as GreenArrow } from "react-icons/bi";
 import { BiSolidDownArrow  as RedArrow} from "react-icons/bi";
 import Image from "next/image";
 
-export default function StockCard() {
-  const ticker = "BTC";
-  const symbol = "Bitcoin";
-  const price = "70.000";
-  const refCurrency = "USD";
-  const logo =
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png";
-  const bullish = true;
+interface StockCardProps {
+  ticker: string;
+  symbol: string;
+  price: string;
+  refCurrency: string;
+  logo: string;
+  bullish: boolean;
+}
+
+export default function StockCard( {ticker, symbol, price, refCurrency, logo, bullish}: StockCardProps) {
   return (
     <Card className="w-72">
       <CardHeader>
@@ -34,7 +36,9 @@ export default function StockCard() {
               }}
             >
               <Image
-                style={{ width: "20px", height: "20px", borderRadius: "50%" }}
+                width={20}
+                height={20}
+                style={{ borderRadius: "50%" }}
                 src={logo}
                 alt="Apple Inc."
               />
