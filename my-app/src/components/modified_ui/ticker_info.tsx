@@ -15,6 +15,8 @@ import { LiaHandshake } from "react-icons/lia";
 
 import TradingViewWidget from "@/components/modified_ui/mini_chart";
 
+import Image from "next/image";
+
 interface TickerInfoProps {
     symbol: string;
     logo: string;
@@ -38,7 +40,7 @@ export function TickerInfo({ symbol,logo,name }: TickerInfoProps) {
                 justifyContent: "space-evenly",
               }}
             >
-              <img
+              <Image
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
                 src={logo}
                 alt={name}

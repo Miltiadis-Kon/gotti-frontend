@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { BiSolidUpArrow  as GreenArrow } from "react-icons/bi";
 import { BiSolidDownArrow  as RedArrow} from "react-icons/bi";
+import Image from "next/image";
 
 export default function StockCard() {
   const ticker = "BTC";
@@ -32,7 +33,7 @@ export default function StockCard() {
                 justifyContent: "space-evenly",
               }}
             >
-              <img
+              <Image
                 style={{ width: "20px", height: "20px", borderRadius: "50%" }}
                 src={logo}
                 alt="Apple Inc."
