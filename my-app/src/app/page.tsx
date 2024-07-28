@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 
 import { useState } from "react";
@@ -40,13 +40,10 @@ import { useRouter } from "next/navigation";
 
 import { default as DashboardContent } from "@/components/pages/dashboard"
 import { default as TradesContent } from "@/components/pages/trades"
+import EvaluationContent from "@/components/pages/evaluation"
+import AddFundsContent from "@/components/pages/addFunds"
+import ProfileContent from "@/components/pages/profile"
 
-//Example
-
-//const DashboardContent = () => <div>Dashboard Content</div>;
-const EvaluationContent = () => <div>Evaluation Content</div>;
-const AddFundsContent = () => <div>Add Funds Content</div>;
-const ProfileContent = () => <div>Profile Content</div>;
 
 export default function Dashboard() {
 
@@ -195,18 +192,22 @@ export default function Dashboard() {
                   <Package2 className="h-6 w-6" />
                   <span className="sr-only">Gotti</span>
                 </Link>
+                <SheetClose asChild>
                 <Link
                   href="#"
                   className={getLinkClassMobile("dashboard")}
-                  onClick={() => {setView("dashboard"); handleLinkClick("dashboard");} }
+                  onClick={() => {setView("dashboard"); handleLinkClick("dashboard");}// Close the Sheet
+                }
                 >
                   <Home className="h-5 w-5" />
                   Dashboard
                 </Link>
+                </SheetClose>
+                <SheetClose asChild>
                 <Link
                   href="#"
                   className={getLinkClassMobile("trades")}
-                  onClick={() => {setView("trades"); handleLinkClick("trades");}}
+                  onClick={() => {setView("trades"); handleLinkClick("trades");  }}
                 >
                   <ShoppingCart className="h-5 w-5" />
                   Trades
@@ -214,6 +215,8 @@ export default function Dashboard() {
                     6
                   </Badge>
                 </Link>
+                </SheetClose>
+                <SheetClose asChild>
                 <Link
                   href="#"
                   className={getLinkClassMobile("evaluation")}
@@ -222,6 +225,8 @@ export default function Dashboard() {
                   <Gauge className="h-5 w-5" />
                   Evaluation
                 </Link>
+                </SheetClose>
+                <SheetClose asChild>
                 <Link
                   href="#"
                   className={getLinkClassMobile("addFunds")}
@@ -230,6 +235,8 @@ export default function Dashboard() {
                   <Landmark className="h-5 w-5" />
                   Add Funds
                 </Link>
+                </SheetClose>
+                <SheetClose asChild>
                 <Link
                 href="#"
                 className={getLinkClassMobile("profile")}
@@ -238,6 +245,7 @@ export default function Dashboard() {
                   <UserRound className="h-5 w-5" />
                   Profile
                 </Link>
+                </SheetClose>
               </nav>
               <div className="mt-auto">
                 <Card>
@@ -263,7 +271,7 @@ export default function Dashboard() {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder="Search orders..."
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>

@@ -61,13 +61,14 @@ export default function Trades() {
     ));
 
     return (
-        <div className="container mx-auto px-4">
+        <div className="w-full mx-auto flex flex-row flex-wrap items-start justify-start">
             <h1 className="text-2xl font-bold">Gotti WatchList</h1>
-            <WatchList data={stockCards} type="none" />
+           { <WatchList data={stockCards} type="marquee" /> }
             <hr />
             <h1 className="text-2xl font-bold mt-4">Gotti Trades</h1>
             <div className="flex justify-between p-1">
-            <Orders/>
+        {/*TODO: FIX THIS*/}
+          {/* <Orders/>  */} 
             </div>
         </div>
         );

@@ -9,7 +9,6 @@ import {
     CarouselPrevious,
   } from "@/components/ui/carousel"
   
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface WatchListProps {
     data: any;
@@ -19,7 +18,6 @@ interface WatchListProps {
 export default function WatchList( {data,type}: WatchListProps) {
     if (type === "carousel") {
         return (
-            <AspectRatio ratio={16 / 9}>
                 <Carousel opts={{ align: "start", loop: true }} className="rounded-md object-cover"  >
                     <CarouselContent>
                         {data.map((item: any, index: number) => (
@@ -31,13 +29,12 @@ export default function WatchList( {data,type}: WatchListProps) {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-            </AspectRatio>
         );
     }
     else if (type === "marquee")
     {
         return (
-            <div className="pt-4 pb-4">
+            <div className="pt-4 pb-4 ">
                 <Marquee>
                     {data.map((item: any, index: number) => (
                         <div key={index} className="pr-4">

@@ -33,7 +33,7 @@ export default function StockCard({
   bullish,
 }: StockCardProps) {
   return (
-    <Card>
+    <Card className="" >
       <CardHeader className="p-2" >
         <CardTitle>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
