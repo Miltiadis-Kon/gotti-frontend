@@ -2,6 +2,8 @@
 
 Welcome to the Gotti.ai frontend repository! This repository contains the frontend code for the Gotti Intelligent Investment Portfolio Management application.
 
+Build : https://gotti-bice.vercel.app/
+
 ### About Gotti.ai
 
 Gotti.ai is an innovative application that utilizes Time-Series Analytics and Deep Reinforcement Learning to provide intelligent investment portfolio management solutions. Our goal is to empower investors with advanced analytics and machine learning techniques to make informed investment decisions.
@@ -31,4 +33,4 @@ We welcome contributions from the community! If you would like to contribute to 
 
 This project is licensed under the [MIT License](LICENSE).
 
-For more information about Gotti.ai, please visit our [official website](https://www.gotti.ai).
+For more information about Gotti.ai, please visit our [unofficial website](https://gotti-bice.vercel.app/).
