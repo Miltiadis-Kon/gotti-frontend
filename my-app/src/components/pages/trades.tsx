@@ -63,7 +63,7 @@ export default function Trades() {
     return (
         <div className="container mx-auto px-4">
             <h1 className="text-2xl font-bold">Gotti WatchList</h1>
-            <WatchList data={stockCards} type="carousel" />
+            <WatchList data={stockCards} type="none" />
             <hr />
             <h1 className="text-2xl font-bold mt-4">Gotti Trades</h1>
             <div className="flex justify-between p-1">
