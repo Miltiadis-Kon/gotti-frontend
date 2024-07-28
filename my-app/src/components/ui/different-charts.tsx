@@ -38,7 +38,7 @@ export function WeeklyPnLChart()
 {
     return(
             <Card
-            className="lg:max-w-md" x-chunk="charts-01-chunk-0"
+            className="lg:max-w-md flex-grow" x-chunk="charts-01-chunk-0"
           >
             <CardHeader className="space-y-0 pb-2">
               <CardDescription>Today</CardDescription>

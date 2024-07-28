@@ -38,11 +38,11 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { default as DashboardContent } from "@/components/pages/dashboard"
+import {DashboardContent}  from "@/components/pages/dashboard"
 import { default as TradesContent } from "@/components/pages/trades"
 import EvaluationContent from "@/components/pages/evaluation"
-import AddFundsContent from "@/components/pages/addFunds"
-import ProfileContent from "@/components/pages/profile"
+import {AddFundsContent} from "@/components/pages/addFunds"
+import {ProfileContent} from "@/components/pages/profile"
 
 
 export default function Dashboard() {

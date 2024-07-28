@@ -44,7 +44,8 @@ const chartConfig = {
 export function PnLChart() {
     var percentageChange = Math.round((chartData[chartData.length - 1].price - chartData[0].price) / chartData[0].price * 100 * 100) / 100;
   return (
-    <Card>
+    <Card className="lg:max-w-md flex-grow " x-chunk="charts-01-chunk-0"
+>
       <CardHeader>
         <CardTitle>Monthly Realised PnL</CardTitle>
         <CardDescription>{chartData[0].month} - {chartData[chartData.length-1].month} 2024</CardDescription>

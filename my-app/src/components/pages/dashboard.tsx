@@ -1,56 +1,18 @@
-import main from "@/styles/main.module.css";
-import { PnLChart } from "@/components/modified_ui/pnl_chart";
 
-import {
-  WeeklyPnLChart,
-  MultiPieChart,
-  SimpleNoteChart,
-  SimpleTickerChart,
-  Progress,
-} from "../ui/different-charts";
+import { Separator } from "@radix-ui/react-dropdown-menu"
+import { DashboardNotes } from "../ui/dashboard-notes"
+import { DashboardAnalytics } from "../ui/dashboard-analytics"
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-
-export default function Dashboard() {
+export function DashboardContent() {
   return (
-    <div className="w-full mx-auto flex flex-row flex-wrap items-start justify-start">
-      <h1 className="w-full font-bold text-3xl sm:text-xl mx-auto flex flex-row flex-wrap items-start justify-start">Dashboard</h1>
-      <DashboardTabs/>
-      <div className="chart-wrapper mx-auto flex flex-row flex-wrap items-start gap-6 p-6 sm:flex-row sm:p-8 justify-start sm:justify-start">
-          <PnLChart />
-          <WeeklyPnLChart />
-        <div className="grid w-full flex-1 gap-6 justify-start">
-          <MultiPieChart />
-          <SimpleNoteChart />
-        </div>
-      </div>
+    <div className="flex min-h-screen w-full flex-col">
+      <h1 className="text-2xl font-semibold pb-6 ">Overview</h1>
+        <DashboardNotes/>
+        <Separator className="bg-slate-500 h-px mt-4 -mb-3"/>
+        <h1 className="text-2xl font-semibold pb-6 pt-6">Analytics</h1>
+        <DashboardAnalytics/>
+        <Separator className="bg-slate-500 h-px mt-4 -mb-3"/>
+        <h1 className="text-2xl font-semibold pb-6 pt-6">Recent Activity</h1>
     </div>
-  );
-}
-
-export function DashboardTabs()
-{
-  return(
-    <Tabs defaultValue="account" className="mx-auto flex flex-row flex-wrap items-start  pt-4 pb-1">
-    <TabsList>
-      <TabsTrigger value="account">Your Progress</TabsTrigger>
-      <TabsTrigger value="global">Global</TabsTrigger>
-      <TabsTrigger value="analytics">Analytics</TabsTrigger>
-      <TabsTrigger value="reports">Reports</TabsTrigger>
-    </TabsList>
-    <TabsContent value="account">
-      {/*TODO ADD CONTENT HERE*/}
-    </TabsContent>
-    <TabsContent value="global">
-      {/*TODO ADD CONTENT HERE*/}
-    </TabsContent>
-    <TabsContent value="analytics">
-      {/*TODO ADD CONTENT HERE*/}
-    </TabsContent>
-    <TabsContent value="reports">
-      {/*TODO ADD CONTENT HERE*/}
-    </TabsContent>
-  </Tabs>
-  );
+  )
 }
