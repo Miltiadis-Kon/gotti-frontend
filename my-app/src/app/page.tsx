@@ -84,6 +84,12 @@ export default function Dashboard() {
       : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
   };
 
+  const getLinkClassMobile = (view: string) => {
+    return activeLink === view
+      ? "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-foreground"
+      :"mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground";
+  }
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -184,20 +190,23 @@ export default function Dashboard() {
                 <Link
                   href="#"
                   className="flex items-center gap-2 text-lg font-semibold"
+                  onClick={()=>{ setView("dashboard"); handleLinkClick("dashboard");}}
                 >
                   <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <span className="sr-only">Gotti</span>
                 </Link>
                 <Link
                   href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                  className={getLinkClassMobile("dashboard")}
+                  onClick={() => {setView("dashboard"); handleLinkClick("dashboard");} }
                 >
                   <Home className="h-5 w-5" />
                   Dashboard
                 </Link>
                 <Link
                   href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
+                  className={getLinkClassMobile("trades")}
+                  onClick={() => {setView("trades"); handleLinkClick("trades");}}
                 >
                   <ShoppingCart className="h-5 w-5" />
                   Trades
@@ -207,21 +216,24 @@ export default function Dashboard() {
                 </Link>
                 <Link
                   href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
+                  className={getLinkClassMobile("evaluation")}
+                  onClick={() => {setView("evaluation"); handleLinkClick("evaluation");}}
+                  >
                   <Gauge className="h-5 w-5" />
                   Evaluation
                 </Link>
                 <Link
                   href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                  className={getLinkClassMobile("addFunds")}
+                  onClick={() => {setView("addFunds"); handleLinkClick("addFunds"); }}
                 >
                   <Landmark className="h-5 w-5" />
                   Add Funds
                 </Link>
                 <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                href="#"
+                className={getLinkClassMobile("profile")}
+                onClick={() => {setView("profile"); handleLinkClick("profile");} }
                 >
                   <UserRound className="h-5 w-5" />
                   Profile

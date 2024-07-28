@@ -311,7 +311,7 @@ const columns: ColumnDef<OrderData>[] = [
   },
 ];
 
-export function Orders() {
+export default function Orders() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
