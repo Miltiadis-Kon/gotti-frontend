@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreditCard, DollarSign, Activity, Users } from 'lucide-react';
+import { CreditCard, DollarSign, Activity, Users, CookingPot, ChefHat, UtensilsCrossed } from 'lucide-react';
 
 
 export function DashboardNotes() {
@@ -8,52 +8,41 @@ export function DashboardNotes() {
 <Card x-chunk="dashboard-01-chunk-0">
   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
     <CardTitle className="text-sm font-medium">
-      Total Revenue
+      Account Balance / Goal
     </CardTitle>
     <DollarSign className="h-4 w-4 text-muted-foreground" />
   </CardHeader>
   <CardContent>
-    <div className="text-2xl font-bold">$45,231.89</div>
+    <div className="text-2xl font-bold">$45,231.89 / $50,000.00</div>
     <p className="text-xs text-muted-foreground">
-      +20.1% from last month
+      +5% to your goal this month!
     </p>
   </CardContent>
 </Card>
 <Card x-chunk="dashboard-01-chunk-1">
   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
     <CardTitle className="text-sm font-medium">
-      Subscriptions
+      Profitable Trades
     </CardTitle>
-    <Users className="h-4 w-4 text-muted-foreground" />
+  {/*TODO add a pie chart to show profitable trades*/}
+  <ChefHat className="h-4 w-4 text-muted-foreground" />
   </CardHeader>
   <CardContent>
-    <div className="text-2xl font-bold">+2350</div>
+    <div className="text-2xl font-bold">67%</div>
     <p className="text-xs text-muted-foreground">
-      +180.1% from last month
+      Gotti is cooking this week!<br/>34/50 trades were profitable!
     </p>
   </CardContent>
 </Card>
 <Card x-chunk="dashboard-01-chunk-2">
   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-    <CreditCard className="h-4 w-4 text-muted-foreground" />
+    <CardTitle className="text-sm font-medium">Account Growth</CardTitle>
+    <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
   </CardHeader>
   <CardContent>
-    <div className="text-2xl font-bold">+12,234</div>
+    <div className="text-2xl font-bold">+ $10,000.00</div>
     <p className="text-xs text-muted-foreground">
-      +19% from last month
-    </p>
-  </CardContent>
-</Card>
-<Card x-chunk="dashboard-01-chunk-3">
-  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-    <Activity className="h-4 w-4 text-muted-foreground" />
-  </CardHeader>
-  <CardContent>
-    <div className="text-2xl font-bold">+573</div>
-    <p className="text-xs text-muted-foreground">
-      +201 since last hour
+      Made from thin air! You can buy a car with that!
     </p>
   </CardContent>
 </Card>

@@ -11,15 +11,18 @@ import Link  from 'next/link';
 export function DashboardAnalytics()
 {
     return(
-<div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3 bg-transparent ">
+<div className="grid gap-4 md:gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent ">
 <Card
   className="xl:col-span-2 bg-transparent m-2 p-0 border-0"
 >
-  <CardContent className="flex flex-row  gap-6 items-stretch" >
+  <CardContent className="lg:flex xl:flex  md:flex-col lg:flex-col xl:flex-row  gap-6 items-stretch " >
   <PnLChart/>
+  <Separator className="bg-transparent mt-6 mb-6 md:sr-only"/>
   <WeeklyPnLChart/>
   </CardContent>
 </Card>
+<Separator className="bg-slate-500 h-px mt-4 -mb-3 md:sr-only"/>
+<h1 className="text-2xl font-semibold pb-6 pt-6 md:sr-only">Recent Activity</h1>
 <Card x-chunk="dashboard-01-chunk-5">
   <CardHeader className="flex justify-between flex-row items-center ">
     <div>
@@ -89,7 +92,6 @@ export function DashboardAnalytics()
     </div>
   </CardContent>
   <CardFooter>
-
   </CardFooter>
 </Card>
 </div>

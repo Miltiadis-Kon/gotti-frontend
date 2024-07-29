@@ -7,9 +7,8 @@ import {
   Home,
   Menu,
   Gauge,
-  Package2,
   Search,
-  ShoppingCart,
+  HandPlatter,
   UserRound,
   Landmark,
 } from "lucide-react"
@@ -117,7 +116,7 @@ export default function Dashboard() {
                 className={getLinkClass("trades")}
                 onClick={() => {setView("trades"); handleLinkClick("trades");}}
               >
-                <ShoppingCart className="h-4 w-4" />
+                <HandPlatter className="h-4 w-4" />
                 Trades
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
@@ -189,8 +188,8 @@ export default function Dashboard() {
                   className="flex items-center gap-2 text-lg font-semibold"
                   onClick={()=>{ setView("dashboard"); handleLinkClick("dashboard");}}
                 >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Gotti</span>
+              <Image src="/icons/face.ico" alt="Gotti" width={30} height={30} />
+              <span className="">Gotti</span>
                 </Link>
                 <SheetClose asChild>
                 <Link
@@ -209,7 +208,7 @@ export default function Dashboard() {
                   className={getLinkClassMobile("trades")}
                   onClick={() => {setView("trades"); handleLinkClick("trades");  }}
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <HandPlatter className="h-5 w-5" />
                   Trades
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     6

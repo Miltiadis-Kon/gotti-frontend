@@ -11,8 +11,6 @@ export function DashboardContent() {
         <Separator className="bg-slate-500 h-px mt-4 -mb-3"/>
         <h1 className="text-2xl font-semibold pb-6 pt-6">Analytics</h1>
         <DashboardAnalytics/>
-        <Separator className="bg-slate-500 h-px mt-4 -mb-3"/>
-        <h1 className="text-2xl font-semibold pb-6 pt-6">Recent Activity</h1>
     </div>
   )
 }
