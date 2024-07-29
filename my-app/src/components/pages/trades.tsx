@@ -2,6 +2,7 @@
 import StockCard from "../modified_ui/stock_card";
 import Orders from "@/app/orders/page";
 import WatchList from "@/components/modified_ui/watchlist";
+import { Separator } from "../ui/separator";
 
 export default function Trades() {
 
@@ -64,12 +65,14 @@ export default function Trades() {
         <div className="w-full mx-auto flex flex-row flex-wrap items-start justify-start">
             <h1 className="text-2xl font-bold">Gotti WatchList</h1>
            { <WatchList data={stockCards} type="marquee" /> }
-            <hr />
-            <h1 className="text-2xl font-bold mt-4">Gotti Trades</h1>
+           <Separator className="bg-slate-500 h-px mt-10 mb-1"/>
+           <h1 className="text-2xl font-bold mt-4">Gotti Trades</h1>
             <div className="flex justify-between p-1">
         {/*TODO: FIX THIS*/}
           {/* <Orders/>  */} 
             </div>
+            <Separator className="bg-slate-500 h-px mt-10 mb-1"/>
+            <h1 className="text-2xl font-semibold pb-6 ">Portfolio</h1>
         </div>
         );
 }
