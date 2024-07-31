@@ -11,6 +11,7 @@ import {
   HandPlatter,
   UserRound,
   Landmark,
+  Banknote,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -38,7 +39,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {DashboardContent}  from "@/components/pages/dashboard"
-import { default as TradesContent } from "@/components/pages/trades"
+import {TradesContent} from "@/components/pages/portfolio"
 import EvaluationContent from "@/components/pages/evaluation"
 import {AddFundsContent} from "@/components/pages/addFunds"
 import {ProfileContent} from "@/components/pages/profile"
@@ -116,8 +117,8 @@ export default function Dashboard() {
                 className={getLinkClass("trades")}
                 onClick={() => {setView("trades"); handleLinkClick("trades");}}
               >
-                <HandPlatter className="h-4 w-4" />
-                Trades
+                <Banknote className="h-4 w-4" />
+                Portofolio
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
                 </Badge>
@@ -208,8 +209,8 @@ export default function Dashboard() {
                   className={getLinkClassMobile("trades")}
                   onClick={() => {setView("trades"); handleLinkClick("trades");  }}
                 >
-                  <HandPlatter className="h-5 w-5" />
-                  Trades
+                  <Banknote className="h-5 w-5" />
+                  Portofolio
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     6
                   </Badge>
@@ -295,7 +296,6 @@ export default function Dashboard() {
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           <div className="flex items-center">
-            {/*TODO: ADD main evaluation page */}
             {renderContent()}
           </div>
         </main>
