@@ -5,11 +5,14 @@ import { DollarSign } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoatBadge } from "../ui/badge_tooltipes";
 
+import TickerChrt from "../ui/tickerChart";
+
 export default function EvaluationContent() {
   return (
     <div className="flex min-h-screen w-full flex-col">
     {/*TODO VIP FEATURE ONLY */}
-
+    <h1 className="text-2xl font-semibold pb-6 ">Stock Evaluation</h1>
+    <TickerChrt/>
     {/*TODO Add a table with top 5 gainers and losers */}
       <div className="grid gap-1 md:gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent">
         <Card x-chunk="dashboard-01-chunk-5">
