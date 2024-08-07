@@ -22,7 +22,7 @@ To get started with the Gotti.ai frontend, follow these steps:
 
 1. Clone this repository to your local machine.
 2. Install the necessary dependencies by running `npm install` or `yarn install`.
-3. Start the development server by running `npm start` or `yarn start`.
+3. Start the development server by running `npm run dev` or `yarn start`.
 4. Open your browser and navigate to `http://localhost:3000` to access the Gotti.ai application.
 
 ### Contributing

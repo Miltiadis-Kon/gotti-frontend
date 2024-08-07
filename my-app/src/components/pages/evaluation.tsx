@@ -6,15 +6,21 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { GoatBadge } from "../ui/badge_tooltipes";
 
 import TickerChrt from "../ui/tickerChart";
+import TickerInfo from "../ui/ticker-info";
+import { TickerMLRecommendationInfo } from "../ui/ticker-ml-recommendation-info";
 
 export default function EvaluationContent() {
   return (
     <div className="flex min-h-screen w-full flex-col">
     {/*TODO VIP FEATURE ONLY */}
     <h1 className="text-2xl font-semibold pb-6 ">Stock Evaluation</h1>
-    <TickerChrt/>
     {/*TODO Add a table with top 5 gainers and losers */}
       <div className="grid gap-1 md:gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent">
+        <div className="gap-4">
+        <TickerChrt/>
+        <TickerMLRecommendationInfo/>
+        </div>
+      <TickerInfo />
         <Card x-chunk="dashboard-01-chunk-5">
           <CardHeader className="flex items-center ">
             <CardTitle>Top 5 Gainers & Losers this week</CardTitle>
