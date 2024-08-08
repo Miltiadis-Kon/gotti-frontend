@@ -133,7 +133,7 @@ export function TickerInfoTable() {
                               <br />
                               is a key financial metric that indicates the
                               <br />
-                              company's ability to generate income.
+                              company &apos;s ability to generate income.
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -158,7 +158,7 @@ export function TickerInfoTable() {
                             <p>
                               Operating expenses are the costs associated with
                               <br />
-                              running a business's day-to-day operations. These
+                              running a business&apos;s day-to-day operations. These
                               <br />
                               expenses are separate from the cost of goods sold
                               <br />
@@ -195,7 +195,7 @@ export function TickerInfoTable() {
                               from its revenue. It is a key financial metric
                               that
                               <br />
-                              indicates the company's profitability.
+                              indicates the company&apos;s profitability.
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -221,10 +221,10 @@ export function TickerInfoTable() {
                               Earnings per share (EPS) is a financial metric
                               that
                               <br />
-                              indicates the company's profitability on a
+                              indicates the company&apos;s profitability on a
                               per-share
                               <br />
-                              basis. It is calculated by dividing the company's
+                              basis. It is calculated by dividing the company&apos;s
                               net
                               <br />
                               income by the number of outstanding shares.

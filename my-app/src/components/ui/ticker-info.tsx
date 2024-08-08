@@ -12,7 +12,7 @@ export default function TickerInfo() {
             <div className="flex flex-row items-start mt-4 " >
             <div>
                 <h1 className="text-2xl font-bold" >Details</h1>
-                <p className=" text-sm font-medium  text-gray-500 pb-4 pt-1" >Apple Inc. is a multinational technology company that designs, manufactures, and sells consumer electronics, computer software, and online services. It is known for its flagship products such as the iPhone, iPad, Mac, and Apple Watch. Apple is one of the world's largest technology companies and has a strong presence in the global market.</p>
+                <p className=" text-sm font-medium  text-gray-500 pb-4 pt-1" >Apple Inc. is a multinational technology company that designs, manufactures, and sells consumer electronics, computer software, and online services. It is known for its flagship products such as the iPhone, iPad, Mac, and Apple Watch. Apple is one of the world&apos;s largest technology companies and has a strong presence in the global market.</p>
             </div>
             <div className="flex items-end gap-4" >
           <Button variant={"outline"} className="gap-2 outline-green-600 outline "  >
