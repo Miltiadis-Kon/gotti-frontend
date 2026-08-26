@@ -1,6 +1,7 @@
-"use client"
-import Link from "next/link"
-import Image from "next/image"
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
 import {
   Bell,
   CircleUser,
@@ -8,21 +9,31 @@ import {
   Menu,
   Gauge,
   Search,
-  HandPlatter,
   UserRound,
   Landmark,
   Banknote,
-} from "lucide-react"
+  ShieldCheck,
+  TrendingUp,
+  Scale,
+  Zap,
+  Flame,
+  UserPlus,
+  Sliders,
+  Layers,
+  ChevronDown,
+  ArrowUpRight,
+  LogOut
+} from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,26 +41,79 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import {DashboardContent}  from "@/components/pages/dashboard"
-import {TradesContent} from "@/components/pages/portfolio"
-import EvaluationContent from "@/components/pages/evaluation"
-import {AddFundsContent} from "@/components/pages/addFunds"
-import {ProfileContent} from "@/components/pages/profile"
-
+import { DashboardContent } from "@/components/pages/dashboard";
+import { TradesContent } from "@/components/pages/portfolio";
+import EvaluationContent from "@/components/pages/evaluation";
+import { AddFundsContent } from "@/components/pages/addFunds";
+import { ProfileContent } from "@/components/pages/profile";
+import {
+  RISK_PROFILES,
+  getStoredUser,
+  getSubAccounts,
+  getActiveSubAccountId,
+  setActiveSubAccountId,
+  DEFAULT_SUB_ACCOUNTS,
+  isUserLoggedIn,
+  logoutUser
+} from "@/lib/risk-assessment-data";
+import { RiskLevel, SubAccount } from "@/types/risk-profile";
+import { SubAccountSwitcher } from "@/components/sub-accounts/sub-account-switcher";
 
 export default function Dashboard() {
-
-  //render content based on view state
   const [view, setView] = useState("dashboard");
+  const [activeLink, setActiveLink] = useState("dashboard");
+  const [subAccounts, setSubAccounts] = useState<SubAccount[]>(DEFAULT_SUB_ACCOUNTS);
+  const [activeSubAccount, setActiveSubAccount] = useState<SubAccount>(DEFAULT_SUB_ACCOUNTS[0]);
+  const [userEmail, setUserEmail] = useState<string>("investor@gotti.ai");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const accs = getSubAccounts();
+    setSubAccounts(accs);
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveSubAccount(current);
+
+    const stored = getStoredUser();
+    if (stored?.email) {
+      setUserEmail(stored.email);
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(isUserLoggedIn());
+    }
+  }, []);
+
+  const handleSubAccountSwitched = (account: SubAccount) => {
+    setActiveSubAccount(account);
+    const all = getSubAccounts();
+    setSubAccounts(all);
+  };
+
+  const handleSignOut = () => {
+    logoutUser();
+    setIsLoggedIn(false);
+    router.push("/signup");
+  };
+
+  const activeProfile = RISK_PROFILES[activeSubAccount.riskLevel];
+
+  const getProfileIcon = (level: RiskLevel) => {
+    switch (level) {
+      case 1: return <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />;
+      case 2: return <TrendingUp className="h-3.5 w-3.5 text-sky-500" />;
+      case 3: return <Scale className="h-3.5 w-3.5 text-indigo-500" />;
+      case 4: return <Zap className="h-3.5 w-3.5 text-amber-500" />;
+      case 5: return <Flame className="h-3.5 w-3.5 text-rose-500" />;
+    }
+  };
 
   const renderContent = () => {
     switch (view) {
@@ -68,46 +132,67 @@ export default function Dashboard() {
     }
   };
 
-  // render navigation link class (highlighted or not) based on active link state
-  const [activeLink, setActiveLink] = useState("dashboard");
-
-  const handleLinkClick = (view: string) => {
-    setActiveLink(view);
+  const handleLinkClick = (viewName: string) => {
+    setActiveLink(viewName);
+    setView(viewName);
   };
 
-  const getLinkClass = (view: string) => {
-    return activeLink === view
-      ? "flex items-center gap-3 rounded-lg px-3 py-2 bg-muted text-muted-foreground transition-all hover:text-primary text-primary"
+  const getLinkClass = (viewName: string) => {
+    return activeLink === viewName
+      ? "flex items-center gap-3 rounded-lg px-3 py-2 bg-muted text-foreground font-semibold transition-all hover:text-primary"
       : "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
   };
 
-  const getLinkClassMobile = (view: string) => {
-    return activeLink === view
-      ? "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground hover:text-foreground"
-      :"mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground";
-  }
+  const getLinkClassMobile = (viewName: string) => {
+    return activeLink === viewName
+      ? "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-foreground font-semibold bg-muted hover:text-foreground"
+      : "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground";
+  };
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      {/* Sidebar Desktop */}
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold" onClick={()=>{ setView("dashboard"); handleLinkClick("dashboard");}} >
-              <Image src="/icons/face.ico" alt="Gotti" width={30} height={30} />
-              <span className="">Gotti</span>
+            <Link
+              href="/"
+              className="flex items-center gap-2 font-bold text-base"
+              onClick={() => handleLinkClick("dashboard")}
+            >
+              <Image src="/icons/face.ico" alt="Gotti" width={28} height={28} />
+              <span>Gotti<span className="text-primary">.ai</span></span>
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
               <span className="sr-only">Toggle notifications</span>
             </Button>
           </div>
+
+          {/* Sub-Account Switcher Widget */}
+          <div className="px-3 pt-2">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground">
+                <span className="font-semibold uppercase tracking-wider">Sub-Account Context:</span>
+                <Link href="/sub-accounts" className="text-primary hover:underline text-[11px] font-medium flex items-center gap-0.5">
+                  Hub <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              </div>
+              <SubAccountSwitcher
+                activeAccount={activeSubAccount}
+                onAccountSwitched={handleSubAccountSwitched}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Navigation Links */}
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+            <nav className="grid items-start px-2 text-sm font-medium lg:px-4 space-y-1 mt-2">
               <Link
                 href="#"
                 className={getLinkClass("dashboard")}
-                onClick={() => {setView("dashboard");handleLinkClick("dashboard");}
-                }
+                onClick={() => handleLinkClick("dashboard")}
               >
                 <Home className="h-4 w-4" />
                 Dashboard
@@ -115,26 +200,36 @@ export default function Dashboard() {
               <Link
                 href="#"
                 className={getLinkClass("trades")}
-                onClick={() => {setView("trades"); handleLinkClick("trades");}}
+                onClick={() => handleLinkClick("trades")}
               >
                 <Banknote className="h-4 w-4" />
-                Portofolio
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
+                Portfolio
+                <Badge className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px]">
+                  5
+                </Badge>
+              </Link>
+              <Link
+                href="/sub-accounts"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Layers className="h-4 w-4" />
+                Sub-Accounts Hub
+                <Badge variant="secondary" className="ml-auto flex h-5 px-1.5 shrink-0 items-center justify-center rounded-full text-[10px]">
+                  {subAccounts.length}/5
                 </Badge>
               </Link>
               <Link
                 href="#"
                 className={getLinkClass("evaluation")}
-                onClick={() => {setView("evaluation"); handleLinkClick("evaluation");}}
+                onClick={() => handleLinkClick("evaluation")}
               >
                 <Gauge className="h-4 w-4" />
-                Evaluation
+                Stock Evaluation
               </Link>
               <Link
                 href="#"
                 className={getLinkClass("addFunds")}
-                onClick={() => {setView("addFunds"); handleLinkClick("addFunds"); }}
+                onClick={() => handleLinkClick("addFunds")}
               >
                 <Landmark className="h-4 w-4" />
                 Add Funds
@@ -142,35 +237,27 @@ export default function Dashboard() {
               <Link
                 href="#"
                 className={getLinkClass("profile")}
-                onClick={() => {setView("profile"); handleLinkClick("profile");} }
+                onClick={() => handleLinkClick("profile")}
               >
                 <UserRound className="h-4 w-4" />
-                Profile
+                Profile & Risk
               </Link>
             </nav>
           </div>
-          <div className="mt-auto p-4">
-            <Card x-chunk="dashboard-02-chunk-0">
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Link href="/pricing">
-                  <Button size="sm" className="w-full">
-                    Upgrade
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+
+          <div className="mt-auto p-4 space-y-3">
+            <Link href="/sub-accounts">
+              <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs">
+                <Layers className="h-3.5 w-3.5" /> Manage {subAccounts.length}/5 Sub-Accounts
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
+
+      {/* Main Content Area */}
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -187,119 +274,155 @@ export default function Dashboard() {
                 <Link
                   href="#"
                   className="flex items-center gap-2 text-lg font-semibold"
-                  onClick={()=>{ setView("dashboard"); handleLinkClick("dashboard");}}
+                  onClick={() => handleLinkClick("dashboard")}
                 >
-              <Image src="/icons/face.ico" alt="Gotti" width={30} height={30} />
-              <span className="">Gotti</span>
+                  <Image src="/icons/face.ico" alt="Gotti" width={28} height={28} />
+                  <span>Gotti<span className="text-primary">.ai</span></span>
                 </Link>
+
+                {/* Mobile ETF Strategy Selector Widget */}
+                <div className="py-2.5 my-1 border-y space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground px-0.5">
+                    <span className="font-semibold uppercase tracking-wider">Active ETF Strategy:</span>
+                    <Link href="/sub-accounts" className="text-primary hover:underline text-[11px] font-medium flex items-center gap-0.5">
+                      Hub <ArrowUpRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                  <SubAccountSwitcher
+                    activeAccount={activeSubAccount}
+                    onAccountSwitched={handleSubAccountSwitched}
+                    className="w-full justify-between"
+                  />
+                </div>
+
                 <SheetClose asChild>
-                <Link
-                  href="#"
-                  className={getLinkClassMobile("dashboard")}
-                  onClick={() => {setView("dashboard"); handleLinkClick("dashboard");}// Close the Sheet
-                }
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                <Link
-                  href="#"
-                  className={getLinkClassMobile("trades")}
-                  onClick={() => {setView("trades"); handleLinkClick("trades");  }}
-                >
-                  <Banknote className="h-5 w-5" />
-                  Portofolio
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                <Link
-                  href="#"
-                  className={getLinkClassMobile("evaluation")}
-                  onClick={() => {setView("evaluation"); handleLinkClick("evaluation");}}
+                  <Link
+                    href="#"
+                    className={getLinkClassMobile("dashboard")}
+                    onClick={() => handleLinkClick("dashboard")}
                   >
-                  <Gauge className="h-5 w-5" />
-                  Evaluation
-                </Link>
+                    <Home className="h-5 w-5" />
+                    Dashboard
+                  </Link>
                 </SheetClose>
                 <SheetClose asChild>
-                <Link
-                  href="#"
-                  className={getLinkClassMobile("addFunds")}
-                  onClick={() => {setView("addFunds"); handleLinkClick("addFunds"); }}
-                >
-                  <Landmark className="h-5 w-5" />
-                  Add Funds
-                </Link>
+                  <Link
+                    href="#"
+                    className={getLinkClassMobile("trades")}
+                    onClick={() => handleLinkClick("trades")}
+                  >
+                    <Banknote className="h-5 w-5" />
+                    Portfolio
+                  </Link>
                 </SheetClose>
                 <SheetClose asChild>
-                <Link
-                href="#"
-                className={getLinkClassMobile("profile")}
-                onClick={() => {setView("profile"); handleLinkClick("profile");} }
-                >
-                  <UserRound className="h-5 w-5" />
-                  Profile
-                </Link>
+                  <Link
+                    href="/sub-accounts"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                  >
+                    <Layers className="h-5 w-5" />
+                    Sub-Accounts Hub ({subAccounts.length}/5)
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="#"
+                    className={getLinkClassMobile("evaluation")}
+                    onClick={() => handleLinkClick("evaluation")}
+                  >
+                    <Gauge className="h-5 w-5" />
+                    Evaluation
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="#"
+                    className={getLinkClassMobile("addFunds")}
+                    onClick={() => handleLinkClick("addFunds")}
+                  >
+                    <Landmark className="h-5 w-5" />
+                    Add Funds
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="#"
+                    className={getLinkClassMobile("profile")}
+                    onClick={() => handleLinkClick("profile")}
+                  >
+                    <UserRound className="h-5 w-5" />
+                    Profile & Risk
+                  </Link>
                 </SheetClose>
               </nav>
-              <div className="mt-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upgrade to Pro</CardTitle>
-                    <CardDescription>
-                      Unlock all features and get unlimited access to our
-                      support team.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button size="sm" className="w-full">
-                      Upgrade
-                    </Button>
-                  </CardContent>
-                </Card>
+              <div className="mt-auto space-y-2">
+                <Link href="/sub-accounts">
+                  <Button className="w-full text-xs gap-1.5">
+                    <Layers className="h-3.5 w-3.5" /> Sub-Accounts Hub ({subAccounts.length}/5)
+                  </Button>
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
+
           <div className="w-full flex-1">
             <form>
-              <div className="relative">
+              <div className="relative max-w-md">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search orders..."
-                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                  placeholder="Search tickers, models, equities..."
+                  className="w-full appearance-none bg-background pl-8 shadow-none text-xs"
                 />
               </div>
             </form>
           </div>
+
+          {/* Rule 2: Only show Sign Up button if user is NOT logged in */}
+          {!isLoggedIn && (
+            <Link href="/signup">
+              <Button size="sm" variant="default" className="text-xs gap-1.5">
+                <UserPlus className="h-3.5 w-3.5" /> Sign Up
+              </Button>
+            </Link>
+          )}
+
+          {/* User Profile Avatar Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
+              <Button variant="secondary" size="icon" className="rounded-full ring-2 ring-primary/20 hover:ring-primary/40">
                 <CircleUser className="h-5 w-5" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
+                Signed in as <strong className="text-foreground block truncate">{userEmail}</strong>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleLinkClick("profile")} className="text-xs cursor-pointer">
+                Profile & Risk Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/sub-accounts")} className="text-xs cursor-pointer">
+                Manage Sub-Accounts ({subAccounts.length}/5)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/orders")} className="text-xs cursor-pointer">
+                Trade Orders
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut} className="text-xs text-destructive focus:text-destructive cursor-pointer flex items-center gap-1.5">
+                <LogOut className="h-3.5 w-3.5" /> Sign Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
+
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <div className="flex items-center">
+          <div className="w-full">
             {renderContent()}
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }

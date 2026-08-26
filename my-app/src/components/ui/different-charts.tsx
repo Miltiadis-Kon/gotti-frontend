@@ -34,138 +34,139 @@ import {
 } from "@/components/ui/chart"
 import { Separator } from "@/components/ui/separator"
 
-export function WeeklyPnLChart()
-{
-    return(
-            <Card
-            className="lg:max-w-md flex-grow" x-chunk="charts-01-chunk-0"
+import { RISK_PROFILES, getSubAccounts, getActiveSubAccountId, DEFAULT_SUB_ACCOUNTS } from "@/lib/risk-assessment-data";
+import { SubAccount } from "@/types/risk-profile";
+import { Badge } from "@/components/ui/badge";
+import React, { useState, useEffect } from "react";
+
+export function WeeklyPnLChart({ subAccount }: { subAccount?: SubAccount }) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const baseVolume = Math.round(activeAccount.currentValue * 0.28);
+
+  const weeklyData = [
+    { date: "2026-08-20", volume: Math.round(baseVolume * 0.85) },
+    { date: "2026-08-21", volume: Math.round(baseVolume * 1.15) },
+    { date: "2026-08-22", volume: Math.round(baseVolume * 0.95) },
+    { date: "2026-08-23", volume: Math.round(baseVolume * 0.65) },
+    { date: "2026-08-24", volume: Math.round(baseVolume * 1.35) },
+    { date: "2026-08-25", volume: Math.round(baseVolume * 1.05) },
+    { date: "2026-08-26", volume: Math.round(baseVolume * 1.25) },
+  ];
+
+  const avgVolume = Math.round(weeklyData.reduce((s, d) => s + d.volume, 0) / weeklyData.length);
+  const todayVolume = weeklyData[weeklyData.length - 1].volume;
+
+  return (
+    <Card
+      className="lg:max-w-md flex-grow border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+      x-chunk="charts-01-chunk-0"
+    >
+      <CardHeader className="space-y-0 pb-2">
+        <CardDescription className="text-xs">Daily Trading Volume</CardDescription>
+        <CardTitle className="text-2xl sm:text-3xl tabular-nums font-mono font-bold pt-1">
+          ${todayVolume.toLocaleString()}{" "}
+          <span className="font-sans text-xs font-normal tracking-normal text-muted-foreground">
+            executed today
+          </span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-2">
+        <ChartContainer
+          config={{
+            volume: {
+              label: "Volume ($)",
+              color: color,
+            },
+          }}
+          className="h-[180px] w-full"
+        >
+          <BarChart
+            accessibilityLayer
+            margin={{
+              left: -4,
+              right: -4,
+              top: 10
+            }}
+            data={weeklyData}
           >
-            <CardHeader className="space-y-0 pb-2">
-              <CardDescription>Today</CardDescription>
-              <CardTitle className="text-4xl tabular-nums">
-                12,584{" "}
-                <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
-                  steps
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  steps: {
-                    label: "Steps",
-                    color: "hsl(var(--chart-1))",
-                  },
-                }}
-              >
-                <BarChart
-                  accessibilityLayer
-                  margin={{
-                    left: -4,
-                    right: -4,
+            <Bar
+              dataKey="volume"
+              fill={color}
+              radius={4}
+              fillOpacity={0.75}
+              activeBar={<Rectangle fill={color} fillOpacity={1} />}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={4}
+              fontSize={10}
+              tickFormatter={(value) => {
+                return new Date(value).toLocaleDateString("en-US", {
+                  weekday: "short",
+                });
+              }}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  hideIndicator
+                  formatter={(val: any) => `$${Number(val).toLocaleString()}`}
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                    });
                   }}
-                  data={[
-                    {
-                      date: "2024-01-01",
-                      steps: 2000,
-                    },
-                    {
-                      date: "2024-01-02",
-                      steps: 2100,
-                    },
-                    {
-                      date: "2024-01-03",
-                      steps: 2200,
-                    },
-                    {
-                      date: "2024-01-04",
-                      steps: 1300,
-                    },
-                    {
-                      date: "2024-01-05",
-                      steps: 1400,
-                    },
-                    {
-                      date: "2024-01-06",
-                      steps: 2500,
-                    },
-                    {
-                      date: "2024-01-07",
-                      steps: 1600,
-                    },
-                  ]}
-                >
-                  <Bar
-                    dataKey="steps"
-                    fill="var(--color-steps)"
-                    radius={5}
-                    fillOpacity={0.6}
-                    activeBar={<Rectangle fillOpacity={0.8} />}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={4}
-                    tickFormatter={(value) => {
-                      return new Date(value).toLocaleDateString("en-US", {
-                        weekday: "short",
-                      })
-                    }}
-                  />
-                  <ChartTooltip
-                    defaultIndex={2}
-                    content={
-                      <ChartTooltipContent
-                        hideIndicator
-                        labelFormatter={(value) => {
-                          return new Date(value).toLocaleDateString("en-US", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })
-                        }}
-                      />
-                    }
-                    cursor={false}
-                  />
-                  <ReferenceLine
-                    y={1200}
-                    stroke="hsl(var(--muted-foreground))"
-                    strokeDasharray="3 3"
-                    strokeWidth={1}
-                  >
-                    <Label
-                      position="insideBottomLeft"
-                      value="Average Steps"
-                      offset={10}
-                      fill="hsl(var(--foreground))"
-                    />
-                    <Label
-                      position="insideTopLeft"
-                      value="12,343"
-                      className="text-lg"
-                      fill="hsl(var(--foreground))"
-                      offset={10}
-                      startOffset={100}
-                    />
-                  </ReferenceLine>
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-            <CardFooter className="flex-col items-start gap-1">
-              <CardDescription>
-                Over the past 7 days, you have walked{" "}
-                <span className="font-medium text-foreground">53,305</span> steps.
-              </CardDescription>
-              <CardDescription>
-                You need{" "}
-                <span className="font-medium text-foreground">12,584</span> more
-                steps to reach your goal.
-              </CardDescription>
-            </CardFooter>
-          </Card>
-          );
+                />
+              }
+              cursor={false}
+            />
+            <ReferenceLine
+              y={avgVolume}
+              stroke={color}
+              strokeDasharray="3 3"
+              strokeWidth={1.5}
+            >
+              <Label
+                position="insideBottomLeft"
+                value={`7D Avg: $${avgVolume.toLocaleString()}`}
+                offset={10}
+                fill="hsl(var(--foreground))"
+                fontSize={10}
+                fontWeight="bold"
+              />
+            </ReferenceLine>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-1 border-t pt-3 bg-muted/10">
+        <CardDescription className="text-[11px]">
+          Algorithm rebalancing activity for <strong className="text-foreground">{activeAccount.name}</strong>
+        </CardDescription>
+        <CardDescription className="text-[11px]">
+          Turnover Model: <span className="text-foreground font-medium">{profile.turnoverStrategy.split(",")[0]}</span>
+        </CardDescription>
+      </CardFooter>
+    </Card>
+  );
 }
 export function Progress() {
     return (

@@ -1,0 +1,13 @@
+# ==============================================================================
+# Gotti AI - Backend & API Dependencies
+# Used for backend API integration, data fetching (yfinance), and ML models
+# ==============================================================================
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+yfinance>=0.2.36
+pandas>=2.2.0
+numpy>=1.26.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+pydantic>=2.6.0

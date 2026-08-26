@@ -1,99 +1,155 @@
-import { Card, CardContent,CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PnLChart } from '@/components/modified_ui/pnl_chart'
-import { WeeklyPnLChart } from '@/components/ui/different-charts';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {ArrowUpRight } from 'lucide-react';
-import Link  from 'next/link';
+"use client";
 
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { PnLChart } from "@/components/modified_ui/pnl_chart";
+import { WeeklyPnLChart } from "@/components/ui/different-charts";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ArrowUpRight, Target } from "lucide-react";
+import Link from "next/link";
+import {
+  RISK_PROFILES,
+  getSubAccounts,
+  getActiveSubAccountId,
+  DEFAULT_SUB_ACCOUNTS
+} from "@/lib/risk-assessment-data";
+import { RiskLevel, SubAccount } from "@/types/risk-profile";
 
-export function DashboardAnalytics()
-{
-    return(
-<div className="grid gap-1 md:gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent ">
-<Card
-  className="xl:col-span-2 bg-transparent  p-0 border-0"
->
-  <CardContent className="lg:flex xl:flex  md:flex-col lg:flex-col xl:flex-row  gap-6 items-stretch " >
-  <PnLChart/>
-  <Separator className="bg-transparent mt-6 mb-6 md:sr-only"/>
-  <WeeklyPnLChart/>
-  </CardContent>
-</Card>
-<Separator className="bg-slate-500 h-px mt-4 -mb-3  md:sr-only"/>
-<h1 className="text-2xl font-semibold pb-6 pt-6 md:sr-only">Recent Activity</h1>
-<Card x-chunk="dashboard-01-chunk-5">
-  <CardHeader className="flex justify-between flex-row items-center ">
-    <div>
-    <CardTitle >
-      Recent Positions
-    </CardTitle>
-    <CardDescription>
-      Recent positions from Gotti
-      </CardDescription>
-      </div>         
-       <Button asChild size="sm" className="ml-auto flex gap-1 items-center justify-center ">
-      <Link href="#">
-        View All
-        <ArrowUpRight className="h-4 w-4 " />
-      </Link>
-    </Button>
-  </CardHeader>
-  <Separator className="bg-slate-500 h-px mb-4"/>
-  <CardContent className="grid gap-8">
-    <div className="flex items-center gap-4">
-      <Avatar className="hidden h-9 w-9 sm:flex">
-        <AvatarImage src="" alt="Avatar" />
-        <AvatarFallback>AAPL</AvatarFallback>
-      </Avatar>
-      <div className="grid gap-1">
-        <p className="text-sm font-medium leading-none">
-          Apple Inc.
-        </p>
-      </div>
-      <div className="ml-auto font-medium">+$1,999.00</div>
+interface DashboardAnalyticsProps {
+  subAccount?: SubAccount;
+}
+
+export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  // Real underlying stock holdings per strategy
+  const holdingsMap: Record<RiskLevel, Array<{ ticker: string; name: string; allocation: string; pnl: string; isPositive: boolean }>> = {
+    1: [
+      { ticker: "KO", name: "The Coca-Cola Company", allocation: "22%", pnl: "+$840.00", isPositive: true },
+      { ticker: "PG", name: "Procter & Gamble Co.", allocation: "20%", pnl: "+$620.50", isPositive: true },
+      { ticker: "JNJ", name: "Johnson & Johnson", allocation: "18%", pnl: "+$410.00", isPositive: true },
+      { ticker: "MSFT", name: "Microsoft Corporation", allocation: "20%", pnl: "+$1,250.00", isPositive: true },
+      { ticker: "AAPL", name: "Apple Inc.", allocation: "20%", pnl: "+$980.00", isPositive: true }
+    ],
+    2: [
+      { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", allocation: "30%", pnl: "+$1,850.00", isPositive: true },
+      { ticker: "GOOGL", name: "Alphabet Inc.", allocation: "20%", pnl: "+$940.00", isPositive: true },
+      { ticker: "AMZN", name: "Amazon.com Inc.", allocation: "18%", pnl: "-$320.00", isPositive: false },
+      { ticker: "UNH", name: "UnitedHealth Group", allocation: "16%", pnl: "+$510.00", isPositive: true },
+      { ticker: "V", name: "Visa Inc.", allocation: "16%", pnl: "+$680.00", isPositive: true }
+    ],
+    3: [
+      { ticker: "QQQ", name: "Invesco QQQ ETF", allocation: "28%", pnl: "+$2,450.00", isPositive: true },
+      { ticker: "NVDA", name: "Nvidia Corporation", allocation: "22%", pnl: "+$3,120.00", isPositive: true },
+      { ticker: "META", name: "Meta Platforms Inc.", allocation: "18%", pnl: "+$1,480.00", isPositive: true },
+      { ticker: "AMD", name: "Advanced Micro Devices", allocation: "16%", pnl: "-$430.00", isPositive: false },
+      { ticker: "ASML", name: "ASML Holding N.V.", allocation: "16%", pnl: "+$960.00", isPositive: true }
+    ],
+    4: [
+      { ticker: "TSLA", name: "Tesla Inc.", allocation: "25%", pnl: "+$3,840.00", isPositive: true },
+      { ticker: "PLTR", name: "Palantir Technologies", allocation: "22%", pnl: "+$2,950.00", isPositive: true },
+      { ticker: "ARM", name: "Arm Holdings plc", allocation: "20%", pnl: "+$1,820.00", isPositive: true },
+      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "18%", pnl: "-$860.00", isPositive: false },
+      { ticker: "SMCI", name: "Super Micro Computer", allocation: "15%", pnl: "+$1,140.00", isPositive: true }
+    ],
+    5: [
+      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "30%", pnl: "+$6,250.00", isPositive: true },
+      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocation: "25%", pnl: "+$3,420.00", isPositive: true },
+      { ticker: "RIVN", name: "Rivian Automotive", allocation: "18%", pnl: "-$1,240.00", isPositive: false },
+      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "15%", pnl: "+$1,890.00", isPositive: true },
+      { ticker: "SOUN", name: "SoundHound AI Inc.", allocation: "12%", pnl: "+$940.00", isPositive: true }
+    ]
+  };
+
+  const positions = holdingsMap[activeAccount.riskLevel] || holdingsMap[3];
+
+  return (
+    <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent">
+      {/* Charts Column */}
+      <Card className="xl:col-span-2 bg-transparent p-0 border-0 shadow-none">
+        <CardContent className="flex flex-col lg:flex-row gap-4 items-stretch p-0">
+          <PnLChart subAccount={activeAccount} />
+          <WeeklyPnLChart subAccount={activeAccount} />
+        </CardContent>
+      </Card>
+
+      {/* Recent Positions for Active ETF Column */}
+      <Card
+        className="border-2 shadow-md bg-card flex flex-col justify-between"
+        style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+        x-chunk="dashboard-01-chunk-5"
+      >
+        <CardHeader className="flex justify-between flex-row items-center pb-3">
+          <div className="space-y-0.5">
+            <CardTitle className="text-base font-bold">Model Portfolio Holdings</CardTitle>
+            <CardDescription className="text-xs">
+              Systematic positions in {activeAccount.name}
+            </CardDescription>
+          </div>
+          <Button asChild size="sm" variant="ghost" className="h-8 text-xs gap-1">
+            <Link href="/sub-accounts">
+              All ETF Hub
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </CardHeader>
+
+        <Separator className="bg-border mb-2" />
+
+        <CardContent className="grid gap-3 pt-0 pb-3">
+          {positions.map((pos) => (
+            <div key={pos.ticker} className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
+              <div className="flex items-center gap-3">
+                <Avatar
+                  className="h-8 w-8 text-xs font-bold font-mono border"
+                  style={{ backgroundColor: `${color}15`, borderColor: `${color}40`, color }}
+                >
+                  <AvatarFallback style={{ backgroundColor: `${color}20`, color }}>
+                    {pos.ticker.slice(0, 3)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-foreground font-mono">{pos.ticker}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium">({pos.allocation})</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground line-clamp-1">
+                    {pos.name}
+                  </p>
+                </div>
+              </div>
+              <div
+                className="font-mono text-xs font-bold text-right"
+                style={{ color: pos.isPositive ? color : "hsl(var(--destructive))" }}
+              >
+                {pos.pnl}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+
+        <CardFooter className="border-t pt-2.5 pb-2.5 text-[11px] text-muted-foreground flex justify-between bg-muted/10">
+          <span>Universe: <strong className="text-foreground">{profile.sampleTickers.length} Assets</strong></span>
+          <span>Rebalanced: <strong className="text-foreground">Today</strong></span>
+        </CardFooter>
+      </Card>
     </div>
-    <div className="flex items-center gap-4">
-      <Avatar className="hidden h-9 w-9 sm:flex">
-        <AvatarImage src="" alt="Avatar" />
-        <AvatarFallback>AMZN</AvatarFallback>
-      </Avatar>
-      <div className="grid gap-1">
-        <p className="text-sm font-medium leading-none">
-          Amazon.com Inc.
-        </p>
-      </div>
-      <div className="ml-auto font-medium">-$1,999.00</div>
-    </div>
-    <div className="flex items-center gap-4">
-      <Avatar className="hidden h-9 w-9 sm:flex">
-        <AvatarImage src="" alt="Avatar" />
-        <AvatarFallback>GOOGL</AvatarFallback>
-      </Avatar>
-      <div className="grid gap-1">
-        <p className="text-sm font-medium leading-none">
-          Alphabet Inc.
-        </p>
-      </div>
-      <div className="ml-auto font-medium">+$100.00</div>
-    </div>
-    <div className="flex items-center gap-4">
-      <Avatar className="hidden h-9 w-9 sm:flex">
-        <AvatarImage src="" alt="Avatar" />
-        <AvatarFallback>MSFT</AvatarFallback>
-      </Avatar>
-      <div className="grid gap-1">
-        <p className="text-sm font-medium leading-none">
-          Microsoft Corporation
-        </p>
-      </div>
-      <div className="ml-auto font-medium">-$199.00</div>
-    </div>
-  </CardContent>
-  <CardFooter>
-  </CardFooter>
-</Card>
-</div>
-    );
+  );
 }

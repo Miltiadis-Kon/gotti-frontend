@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   Table,
   TableBody,
@@ -18,462 +17,542 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-const portfolioData = [
-    {
-        ticker: "VTI",
-        name: "Vanguard Total Stock Market ETF",
-        allocation: "15%",
-        totalBalance: "$15,000.00",
-        fill : "var(--color-VTI)",
-    },
-    {
-        ticker: "VNQ",
-        name: "Vanguard Real Estate ETF",
-        allocation: "20%",
-        totalBalance: "$20,000.00",
-        fill: "var(--color-VNQ)"
-    },
-    {
-        ticker: "EFA",
-        name: "iShares MSCI EAFE ETF",
-        allocation: "30%",
-        totalBalance: "$30,000.00",
-        fill: "var(--color-EFA)"
-    },
-    {
-        ticker: "VWO",
-        name: "Vanguard FTSE Emerging Markets ETF",
-        allocation: "15%",
-        totalBalance: "$15,000.00",
-        fill: "var(--color-VWO)"
-    },
-    {
-        ticker: "TIP",
-        name: "iShares TIPS Bond ETF",
-        allocation: "20%",
-        totalBalance: "$35,000.00",
-        fill: "var(--color-TIP)"
-    },
-];
-
-export function PortofolioAllocation() {
-  return (
-    <Card className="xl:col-span-2 md:col-span-1" >
-    <CardHeader>
-      <CardTitle>Portfolio Overview</CardTitle>
-      <CardDescription>
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-left">Ticker</TableHead>
-          <TableHead className="text-left">Name</TableHead>
-            <TableHead className="text-right">Allocation</TableHead>
-            <TableHead className="text-right">Balace</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {portfolioData.map((ticker) => (
-          <TableRow key={ticker.ticker}>
-            <TableCell className="font-small">{ticker.ticker}</TableCell>
-            <TableCell className="text-left">{ticker.name}</TableCell>
-            <TableCell className="text-right">{ticker.allocation}</TableCell>
-            <TableCell className="text-right">{ticker.totalBalance}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="font-bold">Total</TableCell>
-          <TableCell className="text-right"></TableCell>
-          <TableCell className="text-right"></TableCell>
-          <TableCell className="text-right">$100,000.00</TableCell>
-        </TableRow>
-        </TableFooter>
-    </Table>
-    </CardContent>
-    </Card>
-  )
-}
-
-
-import { TrendingUp } from "lucide-react"
-import { Pie, PieChart } from "recharts"
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, PieChart as PieIcon, Layers, BarChart3, Activity } from "lucide-react";
 import {
-  ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Separator } from "./separator";
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+  LineChart
+} from "recharts";
+import {
+  RISK_PROFILES,
+  getSubAccounts,
+  getActiveSubAccountId,
+  DEFAULT_SUB_ACCOUNTS
+} from "@/lib/risk-assessment-data";
+import { RiskLevel, SubAccount } from "@/types/risk-profile";
 
-
-const chartData = [
-  { ticker: "VTI", totalBalance: 15000,allocation:'15%',  fill: "var(--color-VTI)" },
-  { ticker: "VNQ", totalBalance: 20000,allocation:'20%', fill: "var(--color-VNQ)" },
-  { ticker: "EFA", totalBalance: 30000,allocation:'30%', fill: "var(--color-EFA)" },
-  { ticker: "VWO", totalBalance: 15000,allocation:'15%', fill: "var(--color-VWO)" },
-  { ticker: "TIP", totalBalance: 35000,allocation:'20%', fill: "var(--color-TIP)" },
-]
-
-const chartConfig = {
-    totalBalance: {
-    label: "totalBalance",
-  },
-  VTI: {
-    label: "VTI",
-    color: "hsl(var(--chart-1))",
-  },
-  VNQ: {
-    label: "VNQ",
-    color: "hsl(var(--chart-2))",
-  },
-  EFA: {
-    label: "EFA",
-    color: "hsl(var(--chart-3))",
-  },
-  VWO: {
-    label: "VWO",
-    color: "hsl(var(--chart-4))",
-  },
-  TIP: {
-    label: "TIP",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
-
-export function PortfolioPieChart() {
-  return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-4">
-        <CardTitle>Portfolio Coverage</CardTitle>
-        <Separator className="bg-slate-500 h-px mt-2 mb-6" />
-        </CardHeader>
-      <CardContent className="flex-1 pb-4">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-             <Pie
-              data={chartData}
-              innerRadius={40}
-              dataKey="totalBalance"
-              labelLine={false}
-              label={({ payload, ...props }) => {
-                return (
-                  <text
-                    cx={props.cx}
-                    cy={props.cy}
-                    x={props.x}
-                    y={props.y}
-                    textAnchor={props.textAnchor}
-                    dominantBaseline={props.dominantBaseline}
-                    fill="hsla(var(--foreground))"
-                  >
-                    {payload.allocation}
-                  </text>
-                )
-              }}
-              nameKey="ticker"
-            />
-            <ChartLegend
-              content={<ChartLegendContent nameKey="ticker" />}
-              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-            />
-          </PieChart>  
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this sector <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-        </div>
-      </CardFooter>
-    </Card>
-  )
+interface AllocationProps {
+  subAccount?: SubAccount;
 }
 
-export function EquityPieChart() {
-    return (
-      <Card className="flex flex-col">
-        <CardHeader className="items-center pb-4">
-          <CardTitle>Equity Coverage</CardTitle>
-          <Separator className="bg-slate-500 h-px mt-2 mb-6" />
-          </CardHeader>
-        <CardContent className="flex-1 pb-4">
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[300px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-               <Pie
-                data={chartData}
-                innerRadius={40}
-                dataKey="totalBalance"
-                labelLine={false}
-                nameKey="ticker">
-                <LabelList
-                dataKey="ticker"
-                className="fill-background"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: keyof typeof chartConfig) =>
-                  chartConfig[value]?.label
-                }
-              />
-                </Pie>
-              <ChartLegend
-                content={<ChartLegendContent nameKey="ticker" />}
-                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-              />
-            </PieChart>  
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="flex items-center gap-2 font-medium leading-none">
-            Trending up by 5.2% this sector <TrendingUp className="h-4 w-4" />
-          </div>
-          <div className="leading-none text-muted-foreground">
-          </div>
-        </CardFooter>
-      </Card>
-    )
-  }
+export function PortofolioAllocation({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
 
-  export function AssetAllocationPieChart() {
-    return (
-      <Card className="flex flex-col">
-        <CardHeader className="items-center pb-4">
-          <CardTitle>Asset Allocation</CardTitle>
-          <Separator className="bg-slate-500 h-px mt-2 mb-6" />
-          </CardHeader>
-        <CardContent className="flex-1 pb-4">
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[300px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-               <Pie
-                data={chartData}
-                innerRadius={40}
-                dataKey="totalBalance"
-                labelLine={false}
-                nameKey="ticker">
-                <LabelList
-                dataKey="ticker"
-                className="fill-background"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: keyof typeof chartConfig) =>
-                  chartConfig[value]?.label
-                }
-              />
-                </Pie>
-              <ChartLegend
-                content={<ChartLegendContent nameKey="ticker" />}
-                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-              />
-            </PieChart>  
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="flex items-center gap-2 font-medium leading-none">
-            Trending up by 5.2% this sector <TrendingUp className="h-4 w-4" />
-          </div>
-          <div className="leading-none text-muted-foreground">
-          </div>
-        </CardFooter>
-      </Card>
-    )
-  }
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
 
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+  const totalVal = activeAccount.currentValue;
 
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+  const holdingsMap: Record<RiskLevel, Array<{ ticker: string; name: string; allocationNum: number; allocation: string }>> = {
+    1: [
+      { ticker: "KO", name: "The Coca-Cola Company", allocationNum: 0.22, allocation: "22%" },
+      { ticker: "PG", name: "Procter & Gamble Co.", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "JNJ", name: "Johnson & Johnson", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "MSFT", name: "Microsoft Corporation", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "AAPL", name: "Apple Inc.", allocationNum: 0.20, allocation: "20%" }
+    ],
+    2: [
+      { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", allocationNum: 0.30, allocation: "30%" },
+      { ticker: "GOOGL", name: "Alphabet Inc.", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "AMZN", name: "Amazon.com Inc.", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "UNH", name: "UnitedHealth Group", allocationNum: 0.16, allocation: "16%" },
+      { ticker: "V", name: "Visa Inc.", allocationNum: 0.16, allocation: "16%" }
+    ],
+    3: [
+      { ticker: "QQQ", name: "Invesco QQQ ETF", allocationNum: 0.28, allocation: "28%" },
+      { ticker: "NVDA", name: "Nvidia Corporation", allocationNum: 0.22, allocation: "22%" },
+      { ticker: "META", name: "Meta Platforms Inc.", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "AMD", name: "Advanced Micro Devices", allocationNum: 0.16, allocation: "16%" },
+      { ticker: "ASML", name: "ASML Holding N.V.", allocationNum: 0.16, allocation: "16%" }
+    ],
+    4: [
+      { ticker: "TSLA", name: "Tesla Inc.", allocationNum: 0.25, allocation: "25%" },
+      { ticker: "PLTR", name: "Palantir Technologies", allocationNum: 0.22, allocation: "22%" },
+      { ticker: "ARM", name: "Arm Holdings plc", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "COIN", name: "Coinbase Global Inc.", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "SMCI", name: "Super Micro Computer", allocationNum: 0.15, allocation: "15%" }
+    ],
+    5: [
+      { ticker: "MSTR", name: "MicroStrategy Inc.", allocationNum: 0.30, allocation: "30%" },
+      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocationNum: 0.25, allocation: "25%" },
+      { ticker: "RIVN", name: "Rivian Automotive", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "MARA", name: "MARA Holdings Inc.", allocationNum: 0.15, allocation: "15%" },
+      { ticker: "SOUN", name: "SoundHound AI Inc.", allocationNum: 0.12, allocation: "12%" }
+    ]
+  };
 
-const sectorchartData = [
-  { sector: "Technology", sectorPercentage: 186 },
-  { sector: "Agriculture", sectorPercentage: 305 },
-  { sector: "Etc", sectorPercentage: 237},
-  { sector: "Space", sectorPercentage: 73},
-  { sector: "Porn", sectorPercentage: 209 },
-  { sector: "June", sectorPercentage: 214},
-]
+  const list = holdingsMap[activeAccount.riskLevel] || holdingsMap[3];
 
-const sectorchartConfig = {
-  sectorPercentage: {
-    label: "sectorPercentage",
-    color: "hsl(var(--chart-5))",
-  },
-  label: {
-    color: "hsl(var(--background))",
-  },
-} satisfies ChartConfig
-
-export function SectorBarChart() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sector Diversification</CardTitle>
-     </CardHeader>
-      <CardContent>
-        <ChartContainer config={sectorchartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={sectorchartData}
-            layout="vertical"
-            margin={{
-              right: 16,
-            }}
-          >
-            <CartesianGrid horizontal={false} />
-            <YAxis
-              dataKey="sector"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-              hide
-            />
-            <XAxis dataKey="sectorPercentage" type="number" hide />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
-            <Bar
-              dataKey="sectorPercentage"
-              layout="vertical"
-              fill="var(--color-sectorPercentage)"
-              radius={4}
-            >
-              <LabelList
-                dataKey="sector"
-                position="insideLeft"
-                offset={8}
-                className="fill-[--color-label]"
-                fontSize={12}
-              />
-              <LabelList
-                dataKey="sectorPercentage"
-                position="right"
-                offset={8}
-                className="fill-foreground"
-                fontSize={12}
-              />
-            </Bar>
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Covering 6/12 sectors in total! <TrendingUp className="h-4 w-4" />
+    <Card
+      className="xl:col-span-2 md:col-span-1 border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base font-bold">Asset Allocation Blueprint</CardTitle>
+          <Badge className={profile.badgeClass}>
+            Level {activeAccount.riskLevel}: {profile.strategyName}
+          </Badge>
         </div>
-        <div className="leading-none text-muted-foreground">
-            Wide sector coverage protects from inflation!
-        </div>
-      </CardFooter>
-    </Card>
-  )
-}
-
-
-
-import { Line, LineChart} from "recharts"
-
-const anchartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
-
-const anchartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig
-
-export function ExpectedAnnualReturns() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Estimated Annual Returns</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription className="text-xs">
+          Systematic basket allocation for {activeAccount.name}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={anchartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={anchartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line
-              dataKey="desktop"
-              type="monotone"
-              stroke="var(--color-desktop)"
-              strokeWidth={2}
-              dot={false}
-            />
-            <Line
-              dataKey="mobile"
-              type="monotone"
-              stroke="var(--color-mobile)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ChartContainer>
+      <CardContent className="pt-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-xs">Ticker</TableHead>
+              <TableHead className="text-xs">Asset Name</TableHead>
+              <TableHead className="text-right text-xs">Weight</TableHead>
+              <TableHead className="text-right text-xs">Balance</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {list.map((item) => (
+              <TableRow key={item.ticker}>
+                <TableCell className="font-mono font-bold text-xs" style={{ color }}>{item.ticker}</TableCell>
+                <TableCell className="text-xs text-foreground font-medium">{item.name}</TableCell>
+                <TableCell className="text-right font-mono text-xs">{item.allocation}</TableCell>
+                <TableCell className="text-right font-mono font-bold text-xs">
+                  ${Math.round(totalVal * item.allocationNum).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="font-bold text-xs">Total Portfolio NAV</TableCell>
+              <TableCell></TableCell>
+              <TableCell className="text-right font-mono font-bold text-xs">100%</TableCell>
+              <TableCell className="text-right font-mono font-extrabold text-xs" style={{ color }}>
+                ${totalVal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
-            </div>
-          </div>
+    </Card>
+  );
+}
+
+export function PortfolioPieChart({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const pieData: Record<RiskLevel, Array<{ name: string; value: number; color: string }>> = {
+    1: [
+      { name: "KO", value: 22, color: "#10b981" },
+      { name: "PG", value: 20, color: "#34d399" },
+      { name: "JNJ", value: 18, color: "#6ee7b7" },
+      { name: "MSFT", value: 20, color: "#059669" },
+      { name: "AAPL", value: 20, color: "#047857" }
+    ],
+    2: [
+      { name: "SPY", value: 30, color: "#06b6d4" },
+      { name: "GOOGL", value: 20, color: "#38bdf8" },
+      { name: "AMZN", value: 18, color: "#0284c7" },
+      { name: "UNH", value: 16, color: "#7dd3fc" },
+      { name: "V", value: 16, color: "#0369a1" }
+    ],
+    3: [
+      { name: "QQQ", value: 28, color: "#6366f1" },
+      { name: "NVDA", value: 22, color: "#818cf8" },
+      { name: "META", value: 18, color: "#4f46e5" },
+      { name: "AMD", value: 16, color: "#a5b4fc" },
+      { name: "ASML", value: 16, color: "#4338ca" }
+    ],
+    4: [
+      { name: "TSLA", value: 25, color: "#f59e0b" },
+      { name: "PLTR", value: 22, color: "#fbbf24" },
+      { name: "ARM", value: 20, color: "#d97706" },
+      { name: "COIN", value: 18, color: "#fde68a" },
+      { name: "SMCI", value: 15, color: "#b45309" }
+    ],
+    5: [
+      { name: "MSTR", value: 30, color: "#ef4444" },
+      { name: "NVDA", value: 25, color: "#f87171" },
+      { name: "RIVN", value: 18, color: "#dc2626" },
+      { name: "MARA", value: 15, color: "#fca5a5" },
+      { name: "SOUN", value: 12, color: "#b91c1c" }
+    ]
+  };
+
+  const chartData = pieData[activeAccount.riskLevel] || pieData[3];
+
+  return (
+    <Card
+      className="flex flex-col border-2 shadow-md bg-card justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold">Holdings Dispersion</CardTitle>
+        <CardDescription className="text-xs">Asset weighting split for {activeAccount.name}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-2">
+        <div className="mx-auto aspect-square max-h-[220px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md text-xs">
+                        <strong className="text-foreground">{payload[0].name}</strong>: {payload[0].value}% Weight
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={50}
+                outerRadius={75}
+                strokeWidth={2}
+                stroke="hsl(var(--background))"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+      <CardFooter className="border-t pt-3 bg-muted/10 text-xs">
+        <div className="flex items-center gap-2 font-medium text-foreground">
+          <TrendingUp className="h-4 w-4" style={{ color }} />
+          <span>Target Yield: <strong style={{ color }}>{profile.targetReturn}</strong></span>
         </div>
       </CardFooter>
     </Card>
-  )
+  );
+}
+
+export function SectorBarChart({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const sectorDataMap: Record<RiskLevel, Array<{ sector: string; pct: number }>> = {
+    1: [
+      { sector: "Consumer Staples", pct: 42 },
+      { sector: "Healthcare", pct: 28 },
+      { sector: "Mega-Cap Tech", pct: 20 },
+      { sector: "Utilities", pct: 10 }
+    ],
+    2: [
+      { sector: "Broad Equity (S&P)", pct: 35 },
+      { sector: "Technology Core", pct: 30 },
+      { sector: "Healthcare", pct: 18 },
+      { sector: "Financials", pct: 17 }
+    ],
+    3: [
+      { sector: "Semiconductors & AI", pct: 44 },
+      { sector: "Software & Cloud", pct: 32 },
+      { sector: "Digital Media", pct: 16 },
+      { sector: "Hardware", pct: 8 }
+    ],
+    4: [
+      { sector: "Autonomous & EV", pct: 32 },
+      { sector: "Enterprise AI", pct: 28 },
+      { sector: "Crypto Infrastructure", pct: 22 },
+      { sector: "Semiconductors", pct: 18 }
+    ],
+    5: [
+      { sector: "Bitcoin Alpha Holding", pct: 40 },
+      { sector: "High-Beta Tech Swings", pct: 30 },
+      { sector: "Speculative AI / Robotics", pct: 20 },
+      { sector: "Micro-Cap Breakouts", pct: 10 }
+    ]
+  };
+
+  const sectors = sectorDataMap[activeAccount.riskLevel] || sectorDataMap[3];
+
+  return (
+    <Card
+      className="border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold">Sector Diversification</CardTitle>
+        <CardDescription className="text-xs">Industry breakdown for {activeAccount.name}</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2">
+        <div className="h-[180px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={sectors} layout="vertical" margin={{ left: 10, right: 20, top: 5, bottom: 5 }}>
+              <CartesianGrid horizontal={false} strokeDasharray="3 3" opacity={0.2} />
+              <XAxis type="number" hide domain={[0, 50]} />
+              <YAxis dataKey="sector" type="category" tickLine={false} axisLine={false} fontSize={10} width={90} />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md text-xs font-mono">
+                        <strong>{payload[0].payload.sector}</strong>: {payload[0].value}% of portfolio
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar dataKey="pct" fill={color} radius={4} fillOpacity={0.8} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+      <CardFooter className="border-t pt-3 bg-muted/10 text-xs text-muted-foreground">
+        Optimized asset allocation for <strong>Level {activeAccount.riskLevel}</strong> risk boundaries
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function AssetAllocationPieChart({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const data = [
+    { name: "Equities / Stocks", value: 85, color: color },
+    { name: "Cash Reserve Buffer", value: 15, color: "#64748b" }
+  ];
+
+  return (
+    <Card
+      className="border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold">Asset Class Split</CardTitle>
+        <CardDescription className="text-xs">Equity exposure vs cash reserves</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-2">
+        <div className="mx-auto aspect-square max-h-[180px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md text-xs">
+                        <strong>{payload[0].name}</strong>: {payload[0].value}%
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} outerRadius={65} strokeWidth={2} stroke="hsl(var(--background))">
+                <Cell fill={color} />
+                <Cell fill="#64748b" />
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+      <CardFooter className="border-t pt-3 bg-muted/10 text-xs text-muted-foreground">
+        85% Active Equity Deployment • 15% Tactical Cash
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function EquityPieChart({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const data = [
+    { name: "Mega & Large-Cap", value: activeAccount.riskLevel <= 2 ? 80 : activeAccount.riskLevel === 3 ? 60 : 35, color: color },
+    { name: "Mid-Cap Growth", value: activeAccount.riskLevel <= 2 ? 20 : activeAccount.riskLevel === 3 ? 30 : 40, color: "#818cf8" },
+    { name: "High-Beta / Speculative", value: activeAccount.riskLevel <= 2 ? 0 : activeAccount.riskLevel === 3 ? 10 : 25, color: "#f59e0b" }
+  ];
+
+  return (
+    <Card
+      className="border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold">Market Cap Breakdown</CardTitle>
+        <CardDescription className="text-xs">Capitalization exposure tier</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-2">
+        <div className="mx-auto aspect-square max-h-[180px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md text-xs">
+                        <strong>{payload[0].name}</strong>: {payload[0].value}%
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} outerRadius={65} strokeWidth={2} stroke="hsl(var(--background))">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-cap-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+      <CardFooter className="border-t pt-3 bg-muted/10 text-xs text-muted-foreground">
+        Calibrated to <strong>Level {activeAccount.riskLevel}</strong> equity beta profile
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function ExpectedAnnualReturns({ subAccount }: AllocationProps) {
+  const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+
+  useEffect(() => {
+    if (subAccount) {
+      setActiveAccount(subAccount);
+      return;
+    }
+    const accs = getSubAccounts();
+    const activeId = getActiveSubAccountId();
+    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+    setActiveAccount(current);
+  }, [subAccount]);
+
+  const profile = RISK_PROFILES[activeAccount.riskLevel];
+  const color = profile.color;
+
+  const base = activeAccount.currentValue / 15;
+  const data = [
+    { month: "Jan", expected: Math.round(base * 0.4), actual: Math.round(base * 0.45) },
+    { month: "Feb", expected: Math.round(base * 0.8), actual: Math.round(base * 0.95) },
+    { month: "Mar", expected: Math.round(base * 1.2), actual: Math.round(base * 1.35) },
+    { month: "Apr", expected: Math.round(base * 1.6), actual: Math.round(base * 1.55) },
+    { month: "May", expected: Math.round(base * 2.0), actual: Math.round(base * 2.25) },
+    { month: "Jun", expected: Math.round(base * 2.4), actual: Math.round(base * 2.80) },
+  ];
+
+  return (
+    <Card
+      className="border-2 shadow-md bg-card flex flex-col justify-between"
+      style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
+    >
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold">Estimated vs Realized Returns</CardTitle>
+        <CardDescription className="text-xs">Cumulative trajectory for {activeAccount.name}</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2">
+        <div className="h-[200px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ left: 10, right: 10, top: 10, bottom: 5 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={11} />
+              <YAxis tickLine={false} axisLine={false} fontSize={10} tickFormatter={(v) => `$${v}`} />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-md text-xs font-mono">
+                        <div style={{ color }}>Realized: ${payload[0]?.value?.toLocaleString()}</div>
+                        <div className="text-muted-foreground">Expected: ${payload[1]?.value?.toLocaleString()}</div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Line dataKey="actual" type="natural" stroke={color} strokeWidth={2.5} dot={{ fill: color, r: 3 }} />
+              <Line dataKey="expected" type="natural" stroke="hsl(var(--muted-foreground))" strokeWidth={1.5} strokeDasharray="3 3" dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+      <CardFooter className="border-t pt-3 bg-muted/10 text-xs">
+        <div className="flex items-center gap-1.5 font-medium text-foreground">
+          Strategy target: <strong style={{ color }}>{profile.targetReturn}</strong>
+          <TrendingUp className="h-4 w-4" style={{ color }} />
+        </div>
+      </CardFooter>
+    </Card>
+  );
 }
