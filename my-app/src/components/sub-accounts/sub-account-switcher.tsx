@@ -43,10 +43,8 @@ export function SubAccountSwitcher({ activeAccount, onAccountSwitched, className
   const getProfileIcon = (level: RiskLevel, className = "h-3.5 w-3.5") => {
     switch (level) {
       case 1: return <ShieldCheck className={`${className} text-emerald-500`} />;
-      case 2: return <TrendingUp className={`${className} text-sky-500`} />;
-      case 3: return <Scale className={`${className} text-indigo-500`} />;
-      case 4: return <Zap className={`${className} text-amber-500`} />;
-      case 5: return <Flame className={`${className} text-rose-500`} />;
+      case 2: return <TrendingUp className={`${className} text-indigo-500`} />;
+      case 3: return <Flame className={`${className} text-rose-500`} />;
     }
   };
 

@@ -34,112 +34,112 @@ export const RISK_PROFILES: Record<RiskLevel, RiskProfile> = ETF_STRATEGIES;
 export const RISK_QUESTIONS: Question[] = [
   {
     id: 1,
-    title: "What is the initial capital amount you are dedicating to this automated portfolio?",
+    title: "What initial capital amount are you dedicating to this automated portfolio?",
     category: "Capital Allocation",
     options: [
-      { id: "A", text: "Less than €2,500", points: 1 },
-      { id: "B", text: "€2,500 – €15,000", points: 2 },
-      { id: "C", text: "€15,000 – €50,000", points: 3 },
-      { id: "D", text: "€50,000+", points: 4 }
+      { id: "A", text: "Less than €2,500", description: "Capital preservation is paramount", points: 1 },
+      { id: "B", text: "€2,500 – €15,000", description: "A foundational capital base for steady growth", points: 2 },
+      { id: "C", text: "€15,000 – €50,000", description: "Substantial capital capable of weathering cyclical market swings", points: 3 },
+      { id: "D", text: "€50,000+", description: "Significant liquidity dedicated to aggressive wealth acceleration", points: 4 }
     ]
   },
   {
     id: 2,
-    title: "What is your expected annualized return over the course of a 12-month period?",
+    title: "What are your annualized return expectations over a 12-month horizon?",
     category: "Return Target",
     options: [
-      { id: "A", text: "4% – 7%", description: "Priority is beating inflation and bank savings with minimal capital risk (Boomer Haven)", points: 1 },
-      { id: "B", text: "8% – 12%", description: "Matching broad equity market benchmark averages (Sleep-Tight)", points: 2 },
-      { id: "C", text: "13% – 20%", description: "Outperforming the market while accepting moderate periodic drawdowns (Steady Grind)", points: 3 },
-      { id: "D", text: "20% – 30%+", description: "Maximum capital multiplication, fully accepting high volatility swings (Apex Hunter / Diamond Hands)", points: 4 }
+      { id: "A", text: "5% – 8%", description: "Beating inflation and savings rates with minimal capital downside (Boomer Haven)", points: 1 },
+      { id: "B", text: "9% – 14%", description: "Matching or slightly beating broad equity market benchmarks", points: 2 },
+      { id: "C", text: "15% – 22%", description: "Strong outperformance while accepting moderate periodic drawdowns (Steady Grind)", points: 3 },
+      { id: "D", text: "25%+", description: "Maximum asymmetric capital expansion, fully accepting extreme volatility (Diamond Hands)", points: 4 }
     ]
   },
   {
     id: 3,
-    title: "How long do you intend to leave your funds invested without requiring withdrawals?",
+    title: "What is your expected investment timeframe before needing withdrawals?",
     category: "Investment Horizon",
     options: [
-      { id: "A", text: "Less than 1 year (Liquidity focus)", points: 1 },
-      { id: "B", text: "1 to 3 years (Medium-term compounder)", points: 2 },
-      { id: "C", text: "3 to 5 years (Full market cycle)", points: 3 },
-      { id: "D", text: "5+ years (Multi-year wealth generation)", points: 4 }
+      { id: "A", text: "Less than 1 year (High liquidity focus)", points: 1 },
+      { id: "B", text: "1 to 3 years (Medium-term growth)", points: 2 },
+      { id: "C", text: "3 to 7 years (Full cyclical compounding)", points: 3 },
+      { id: "D", text: "7+ years (Long-term wealth expansion)", points: 4 }
     ]
   },
   {
     id: 4,
-    title: "How would you psychologically react if your portfolio suffered an unrealized -15% drawdown in a single month?",
-    category: "Drawdown Tolerance",
+    title: "If your portfolio drops 20% in a single month during a market pullback, what is your reaction?",
+    category: "Drawdown Reaction",
     options: [
-      { id: "A", text: "Panic and liquidate immediately to protect remaining cash balance", points: 1 },
-      { id: "B", text: "Feel severe anxiety and consider switching to a safer cash allocation", points: 2 },
-      { id: "C", text: "Stay calm and let the quantitative algorithmic model rebalance automatically", points: 3 },
-      { id: "D", text: "Excited to deposit and deploy additional capital at temporary market discounts", points: 4 }
+      { id: "A", text: "Liquidate immediately to stop any further drawdown", points: 1 },
+      { id: "B", text: "Feel anxious and look to reduce portfolio risk exposure", points: 2 },
+      { id: "C", text: "Stay calm and let the algorithmic model recover over the cycle", points: 3 },
+      { id: "D", text: "View the crash as a high-value discount and allocate more capital", points: 4 }
     ]
   },
   {
     id: 5,
-    title: "What is your primary investment goal with the Gotti Automated Trading Platform?",
-    category: "Primary Objective",
+    title: "Which holding horizon and trading cadence aligns with your philosophy?",
+    category: "Trading Cadence",
     options: [
-      { id: "A", text: "Capital preservation and stable dividend yields (Boomer Haven)", points: 1 },
-      { id: "B", text: "Steady, index-tracking long-term wealth growth (Sleep-Tight)", points: 2 },
-      { id: "C", text: "Balanced alpha and active systematic trend rebalancing (Steady Grind)", points: 3 },
-      { id: "D", text: "Aggressive capital multiplication via breakout equities & high-beta runners (Apex Hunter / Diamond Hands)", points: 4 }
+      { id: "A", text: "Pure long-term buy-and-hold in household blue chips with zero trading noise", points: 1 },
+      { id: "B", text: "Multi-month trend holding in established market leaders with disciplined rebalancing", points: 2 },
+      { id: "C", text: "Dynamic tactical rotation exploiting mid-term sector momentum", points: 3 },
+      { id: "D", text: "Fast-paced tactical momentum targeting volatile breakouts and rapid swings", points: 4 }
     ]
   },
   {
     id: 6,
-    title: "Which best describes your past experience with stock markets, algorithmic trading, and ETFs?",
-    category: "Experience Level",
+    title: "What is your stance on allocating to high-beta, penny, or emerging small-cap equities?",
+    category: "High-Beta Exposure",
     options: [
-      { id: "A", text: "Beginner: Little to no prior investing or trading experience", points: 1 },
-      { id: "B", text: "Intermediate: Familiar with passive index funds and blue-chip equities", points: 2 },
-      { id: "C", text: "Advanced: Active stock investor accustomed to quarterly earnings and volatility", points: 3 },
-      { id: "D", text: "Expert: Experienced algorithmic, derivative, or high-beta momentum trader", points: 4 }
+      { id: "A", text: "Completely avoid; strictly allocate to mega-cap titans (e.g., Apple, Microsoft, Coca-Cola)", points: 1 },
+      { id: "B", text: "Modest exposure (<15%) only as an accessory to large-cap stability", points: 2 },
+      { id: "C", text: "Comfortable with a 25%-40% allocation to generate excess alpha", points: 3 },
+      { id: "D", text: "Heavy allocation; aggressively target high-momentum small-cap breakout runners", points: 4 }
     ]
   },
   {
     id: 7,
-    title: "What is the maximum portfolio drawdown from peak Net Asset Value you are willing to tolerate in a severe bear market?",
-    category: "Max Acceptable Loss",
+    title: "How would you rate your experience with financial markets and drawdowns?",
+    category: "Market Experience",
     options: [
-      { id: "A", text: "Less than 5% maximum drawdown", points: 1 },
-      { id: "B", text: "6% to 15% temporary drawdown", points: 2 },
-      { id: "C", text: "16% to 25% cyclical drawdown", points: 3 },
-      { id: "D", text: "25%+ deep drawdown in exchange for explosive recovery potential", points: 4 }
+      { id: "A", text: "Beginner: I want a conservative, risk-managed automated vault", points: 1 },
+      { id: "B", text: "Intermediate: I understand equity markets, ETFs, and normal corrections", points: 2 },
+      { id: "C", text: "Advanced: I understand sector rotation, beta, volatility spikes, and drawdowns", points: 3 },
+      { id: "D", text: "Experienced: I trade high-volatility momentum, small-caps, and liquidity swings", points: 4 }
     ]
   },
   {
     id: 8,
-    title: "How stable and reliable is your personal regular income / employment cash flow?",
-    category: "Financial Stability",
+    title: "How reliant are you on this specific capital for emergency expenses?",
+    category: "Emergency Liquidity",
     options: [
-      { id: "A", text: "Unpredictable or near retirement; heavily relying on existing savings", points: 1 },
-      { id: "B", text: "Relatively stable, but with limited discretionary surplus each month", points: 2 },
-      { id: "C", text: "Very stable income with consistent monthly savings available", points: 3 },
-      { id: "D", text: "High and secure cash flow with substantial emergency reserves outside Gotti", points: 4 }
+      { id: "A", text: "Highly reliant: This makes up a critical portion of my liquid savings", points: 1 },
+      { id: "B", text: "Moderately reliant: I may require partial capital within 12–18 months", points: 2 },
+      { id: "C", text: "Low reliance: I maintain a separate emergency fund of 6+ months of expenses", points: 3 },
+      { id: "D", text: "Zero reliance: This is 100% dedicated discretionary risk capital", points: 4 }
     ]
   },
   {
     id: 9,
-    title: "What is your preference regarding trading turnover and portfolio holding periods?",
-    category: "Turnover Style",
+    title: "What is the primary mission of this account?",
+    category: "Primary Mission",
     options: [
-      { id: "A", text: "Buy-and-hold forever: ultra-low turnover and minimal rebalancing (Boomer Haven)", points: 1 },
-      { id: "B", text: "Semi-annual rebalancing: multi-year holdings with slow drift correction (Sleep-Tight)", points: 2 },
-      { id: "C", text: "Monthly systematic trend rotation: tactical sector rebalancing (Steady Grind)", points: 3 },
-      { id: "D", text: "Dynamic swing momentum: rapid execution capturing market rotations (Apex Hunter / Diamond Hands)", points: 4 }
+      { id: "A", text: "Capital preservation and consistent dividend accumulation (Boomer Haven)", points: 1 },
+      { id: "B", text: "Balanced wealth growth with controlled, predictable drawdown limits (Steady Grind)", points: 2 },
+      { id: "C", text: "Market outperformance through trend-following sector rotation", points: 3 },
+      { id: "D", text: "Aggressive, high-upside capital multiplication (Diamond Hands)", points: 4 }
     ]
   },
   {
     id: 10,
-    title: "If you had to choose between a guaranteed +6% annual return and a 50/50 chance of +35% or -15%, which would you choose?",
-    category: "Asymmetric Risk Choice",
+    title: "How stable is your primary source of external income?",
+    category: "Income Stability",
     options: [
-      { id: "A", text: "Definitely the guaranteed +6% annual return", points: 1 },
-      { id: "B", text: "Lean towards guaranteed return with a small speculative tilt", points: 2 },
-      { id: "C", text: "Lean towards the 50/50 upside opportunity", points: 3 },
-      { id: "D", text: "Definitely the 50/50 chance for +35% explosive upside", points: 4 }
+      { id: "A", text: "Unpredictable / Variable", points: 1 },
+      { id: "B", text: "Stable with modest recurring savings potential", points: 2 },
+      { id: "C", text: "Highly secure with consistent monthly surplus available to invest", points: 3 },
+      { id: "D", text: "High-earning income stream allowing aggressive recurring deposits", points: 4 }
     ]
   }
 ];
@@ -161,11 +161,13 @@ export function calculateRiskProfile(answersOrScore: Record<number, "A" | "B" | 
     }
   }
 
-  if (totalScore <= 15) return RISK_PROFILES[1];
-  if (totalScore <= 22) return RISK_PROFILES[2];
-  if (totalScore <= 29) return RISK_PROFILES[3];
-  if (totalScore <= 35) return RISK_PROFILES[4];
-  return RISK_PROFILES[5];
+  // 10-Question 3-Tier Scoring Brackets:
+  // 10 – 19 Points -> Level 1: Boomer Haven ETF
+  // 20 – 29 Points -> Level 2: Steady Grind ETF
+  // 30 – 40 Points -> Level 3: Diamond Hands ETF
+  if (totalScore <= 19) return RISK_PROFILES[1];
+  if (totalScore <= 29) return RISK_PROFILES[2];
+  return RISK_PROFILES[3];
 }
 
 export interface FundTransaction {

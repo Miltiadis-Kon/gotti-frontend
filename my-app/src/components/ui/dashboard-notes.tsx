@@ -40,22 +40,18 @@ export function DashboardNotes({ subAccount }: DashboardNotesProps) {
   // Level-specific statistical benchmarks
   const winRateMap: Record<RiskLevel, { rate: string; ratio: string; sub: string }> = {
     1: { rate: "88%", ratio: "44/50", sub: "Ultra-high stability & dividend capture" },
-    2: { rate: "79%", ratio: "39/50", sub: "Reliable index-tracking execution" },
-    3: { rate: "71%", ratio: "35/50", sub: "Systematic trend momentum rebalancing" },
-    4: { rate: "64%", ratio: "32/50", sub: "High-beta growth swing execution" },
-    5: { rate: "58%", ratio: "29/50", sub: "Asymmetric upside momentum rotations" }
+    2: { rate: "74%", ratio: "37/50", sub: "Large/mid-cap growth & momentum rebalancing" },
+    3: { rate: "62%", ratio: "31/50", sub: "High-beta breakouts & tactical momentum" }
   };
 
   const volatilityMap: Record<RiskLevel, { vol: string; beta: string; status: string }> = {
-    1: { vol: "4.8%", beta: "< 0.65", status: "Boomer Haven • Capital preservation & zero stress" },
-    2: { vol: "8.5%", beta: "0.75–0.90", status: "Sleep-Tight • Quality compounders & low drawdown" },
-    3: { vol: "13.5%", beta: "1.00", status: "Steady Grind • Market Beta & systematic tactical alpha" },
-    4: { vol: "24.0%", beta: "1.20–1.50", status: "Apex Hunter • Aggressive momentum & breakout expansion" },
-    5: { vol: "34.5%", beta: "> 1.60", status: "Diamond Hands • Micro-cap breakouts & explosive upside" }
+    1: { vol: "< 22%", beta: "< 0.75", status: "Boomer Haven • Capital preservation & reliable dividends" },
+    2: { vol: "22%–48%", beta: "0.85–1.25", status: "Steady Grind • Systematic trend & sector momentum" },
+    3: { vol: "> 48%", beta: "> 1.35", status: "Diamond Hands • High-beta breakouts & asymmetric alpha" }
   };
 
-  const winStats = winRateMap[activeAccount.riskLevel] || winRateMap[3];
-  const volStats = volatilityMap[activeAccount.riskLevel] || volatilityMap[3];
+  const winStats = winRateMap[activeAccount.riskLevel] || winRateMap[2];
+  const volStats = volatilityMap[activeAccount.riskLevel] || volatilityMap[2];
 
   const targetGoal = (activeAccount.allocatedCapital || 10000) * (1 + (profile.level * 0.06 + 0.05));
 

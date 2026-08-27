@@ -36,7 +36,7 @@ interface CreateSubAccountDialogProps {
 
 export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: CreateSubAccountDialogProps) {
   const [subAccounts, setSubAccounts] = useState<SubAccount[]>([]);
-  const [riskLevel, setRiskLevel] = useState<RiskLevel>(3);
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>(2);
   const [capital, setCapital] = useState("10000");
   const [error, setError] = useState<string | null>(null);
 
@@ -57,16 +57,14 @@ export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: Create
     occupiedMap.set(acc.riskLevel, acc.name);
   });
 
-  const isAllOccupied = subAccounts.length >= 5;
+  const isAllOccupied = subAccounts.length >= 3;
   const selectedProfile = RISK_PROFILES[riskLevel];
 
   const getProfileIcon = (level: RiskLevel, className = "h-4 w-4") => {
     switch (level) {
       case 1: return <ShieldCheck className={`${className} text-emerald-500`} />;
-      case 2: return <TrendingUp className={`${className} text-sky-500`} />;
-      case 3: return <Scale className={`${className} text-indigo-500`} />;
-      case 4: return <Zap className={`${className} text-amber-500`} />;
-      case 5: return <Flame className={`${className} text-rose-500`} />;
+      case 2: return <TrendingUp className={`${className} text-indigo-500`} />;
+      case 3: return <Flame className={`${className} text-rose-500`} />;
     }
   };
 
@@ -75,7 +73,7 @@ export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: Create
     setError(null);
 
     if (isAllOccupied) {
-      setError("Maximum 5/5 sub-accounts reached (1 per Risk Level 1–5).");
+      setError("Maximum 3/3 sub-accounts reached (1 per Risk Level 1–3).");
       return;
     }
 
@@ -110,7 +108,7 @@ export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: Create
             <DialogTitle>Create New ETF Sub-Account</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
-            Open a dedicated sub-account. <strong>Rule:</strong> Each Risk Level (1–5) supports exactly 1 active sub-account.
+            Open a dedicated sub-account. <strong>Rule:</strong> Each Risk Level (1–3) supports exactly 1 active sub-account.
           </DialogDescription>
         </DialogHeader>
 
@@ -119,10 +117,10 @@ export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: Create
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-300 space-y-2">
               <div className="flex items-center gap-2 font-bold text-sm">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
-                All 5 Risk Level Sub-Accounts Are Currently Active
+                All 3 Risk Level Sub-Accounts Are Currently Active
               </div>
               <p className="leading-relaxed">
-                Under <strong>Rule 1</strong>, you can maintain at most one sub-account per risk level (Levels 1 to 5). All 5 slots are currently occupied. To launch a different strategy, delete or adjust an existing sub-account in the Hub.
+                Under <strong>Rule 1</strong>, you can maintain at most one sub-account per risk level (Levels 1 to 3). All 3 slots are currently occupied. To launch a different strategy, delete or adjust an existing sub-account in the Hub.
               </p>
             </div>
             <DialogFooter>
@@ -148,7 +146,7 @@ export function CreateSubAccountDialog({ open, onOpenChange, onCreated }: Create
               </div>
 
               <div className="grid gap-2">
-                {([1, 2, 3, 4, 5] as RiskLevel[]).map((lvl) => {
+                {([1, 2, 3] as RiskLevel[]).map((lvl) => {
                   const p = RISK_PROFILES[lvl];
                   const occupiedByName = occupiedMap.get(lvl);
                   const isOccupied = Boolean(occupiedByName);

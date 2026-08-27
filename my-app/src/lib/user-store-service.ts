@@ -49,115 +49,69 @@ export const ETF_STRATEGIES: Record<RiskLevel, RiskProfile> = {
     strategyName: "Boomer Haven ETF",
     etfName: "Boomer Haven ETF",
     tagline: "Capital preservation, reliable dividends, zero stress.",
-    targetVolatility: "β < 0.65",
-    assetUniverse: "Mega-cap dividend aristocrats & cash-flow staples (KO, PG, JNJ, MSFT, AAPL)",
-    detailedAssetUniverse: "S&P 500 Dividend Aristocrats, mega-cap defensive value, utility & healthcare giants.",
-    turnoverStrategy: "100% Long-term buy-and-hold; quarterly rebalancing; zero panic",
-    holdingStyle: "100% Long-term buy-and-hold; quarterly rebalancing; zero panic",
-    targetReturn: "4% – 7%",
-    bestFor: "Risk-averse users and capital safety.",
-    scoreRange: "10 – 15 Points",
+    targetVolatility: "β < 0.75",
+    assetUniverse: "S&P 500 Dividend Aristocrats, Mega-Cap Value & Defensive Tech (KO, PG, JNJ, MSFT, AAPL)",
+    detailedAssetUniverse: "S&P 500 Dividend Aristocrats, mega-cap defensive value, utility & healthcare titans.",
+    turnoverStrategy: "Multi-year holding, quarterly rebalance drift, low turnover (<20% annual)",
+    holdingStyle: "Multi-year holding, quarterly rebalance drift, low turnover (<20% annual)",
+    targetReturn: "5% – 9%",
+    bestFor: "Conservative / Capital Preservation with minimal downside.",
+    scoreRange: "10 – 19 Points",
     minScore: 10,
-    maxScore: 15,
+    maxScore: 19,
     color: "#10b981", // emerald green
     badgeClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800",
     borderClass: "border-emerald-500",
     bgClass: "from-emerald-500/10 to-transparent",
     iconName: "ShieldCheck",
-    description: "Capital preservation, reliable dividends, zero stress. Prioritizes absolute capital safety and zero panic.",
-    sampleTickers: ["KO", "PG", "JNJ", "MSFT", "AAPL", "VTI"]
+    description: "Conservative / Capital Preservation. Invests in S&P 500 Dividend Aristocrats and mega-cap blue chips with multi-year holding horizon.",
+    sampleTickers: ["KO", "PG", "JNJ", "MSFT", "AAPL"]
   },
   2: {
     level: 2,
-    strategyName: "Sleep-Tight ETF",
-    etfName: "Sleep-Tight ETF",
-    tagline: "Quality compounders that let you sleep through market corrections.",
-    targetVolatility: "β ≈ 0.75 - 0.90",
-    assetUniverse: "Quality large-cap core equities + defensive growth market leaders",
-    detailedAssetUniverse: "Blue-chip technology leaders, stable consumer conglomerates, high-credit financial titans.",
-    turnoverStrategy: "Multi-year horizon with semi-annual drift adjustment; steady compounders",
-    holdingStyle: "Multi-year horizon with semi-annual drift adjustment; steady compounders",
-    targetReturn: "8% – 12%",
-    bestFor: "Steady multi-year wealth accumulation beating inflation and standard benchmarks.",
-    scoreRange: "16 – 22 Points",
-    minScore: 16,
-    maxScore: 22,
-    color: "#06b6d4", // cyan / sky blue
-    badgeClass: "bg-sky-500/10 text-sky-600 border-sky-500/20 dark:bg-sky-950/40 dark:text-sky-400 dark:border-sky-800",
-    borderClass: "border-sky-500",
-    bgClass: "from-sky-500/10 to-transparent",
-    iconName: "TrendingUp",
-    description: "Quality compounders that let you sleep through market corrections. Steady multi-year wealth accumulation beating inflation.",
-    sampleTickers: ["SPY", "VTI", "GOOGL", "AMZN", "UNH", "V"]
-  },
-  3: {
-    level: 3,
     strategyName: "Steady Grind ETF",
     etfName: "Steady Grind ETF",
-    tagline: "Consistent compounding with systematic tactical upside.",
-    targetVolatility: "β ≈ 1.00 (Market Beta)",
-    assetUniverse: "Large & mid-cap growth equities + sector momentum leaders",
-    detailedAssetUniverse: "Blended large & mid-cap growth stocks, top-quartile sector momentum leaders.",
-    turnoverStrategy: "Multi-month holdings with systematic trend filters; disciplined tactical upside",
-    holdingStyle: "Multi-month holdings with systematic trend filters; disciplined tactical upside",
-    targetReturn: "13% – 20%",
-    bestFor: "Investors targeting consistent alpha through dynamic trend-following filters.",
-    scoreRange: "23 – 29 Points",
-    minScore: 23,
+    tagline: "Consistent compounding with systematic sector momentum.",
+    targetVolatility: "β ≈ 0.85 - 1.25",
+    assetUniverse: "Large & Mid-Cap Growth Leaders, Systematic Sector Momentum (QQQ, NVDA, META, AMD, ASML, TSM)",
+    detailedAssetUniverse: "Large & mid-cap growth leaders, top-quartile sector momentum, systematic monthly rebalancing.",
+    turnoverStrategy: "Multi-month trend holding with monthly momentum rebalancing (50%-100% annual)",
+    holdingStyle: "Multi-month trend holding with monthly momentum rebalancing (50%-100% annual)",
+    targetReturn: "10% – 18%",
+    bestFor: "Moderate / Balanced Growth with disciplined market benchmark alpha.",
+    scoreRange: "20 – 29 Points",
+    minScore: 20,
     maxScore: 29,
     color: "#6366f1", // indigo / royal blue
     badgeClass: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800",
     borderClass: "border-indigo-500",
     bgClass: "from-indigo-500/10 to-transparent",
-    iconName: "Scale",
-    description: "Consistent compounding with systematic tactical upside. Seeks consistent alpha through dynamic trend-following filters.",
+    iconName: "TrendingUp",
+    description: "Moderate / Balanced Growth. Multi-month trend holding across large and mid-cap growth leaders with disciplined sector momentum filters.",
     sampleTickers: ["QQQ", "NVDA", "META", "AMD", "ASML", "TSM"]
   },
-  4: {
-    level: 4,
-    strategyName: "Apex Hunter ETF",
-    etfName: "Apex Hunter ETF",
-    tagline: "Aggressive momentum setups, breakout equities, and rapid expansion.",
-    targetVolatility: "β ≈ 1.20 - 1.50",
-    assetUniverse: "High-beta growth equities, mid/small-caps, breakout cyclicals",
-    detailedAssetUniverse: "High-beta growth stocks, emerging mid-caps, cyclical industry breakouts.",
-    turnoverStrategy: "70% medium-term core, 30% short-term tactical swing setups",
-    holdingStyle: "70% medium-term core, 30% short-term tactical swing setups",
-    targetReturn: "20% – 30%",
-    bestFor: "High-tolerance capital targeting aggressive capital multiplication across market cycles.",
-    scoreRange: "30 – 35 Points",
-    minScore: 30,
-    maxScore: 35,
-    color: "#f59e0b", // amber / orange
-    badgeClass: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800",
-    borderClass: "border-amber-500",
-    bgClass: "from-amber-500/10 to-transparent",
-    iconName: "Zap",
-    description: "Aggressive momentum setups, breakout equities, and rapid expansion. Targets high capital multiplication.",
-    sampleTickers: ["TSLA", "PLTR", "ARM", "COIN", "SMCI", "CRWD"]
-  },
-  5: {
-    level: 5,
+  3: {
+    level: 3,
     strategyName: "Diamond Hands ETF",
     etfName: "Diamond Hands ETF",
-    tagline: "Micro-cap breakouts, extreme volatility, and asymmetric upside.",
-    targetVolatility: "β > 1.60",
-    assetUniverse: "Emerging small/micro-caps, high-volatility runners, penny stocks",
-    detailedAssetUniverse: "Micro-caps, high-momentum small-caps, high-volume breakout penny stocks.",
-    turnoverStrategy: "Pure high-turnover alpha; dynamic swing momentum; maximum beta",
-    holdingStyle: "Pure high-turnover alpha; dynamic swing momentum; maximum beta",
-    targetReturn: "30%+",
-    bestFor: "Speculative risk capital ready to absorb major drawdowns in pursuit of explosive returns.",
-    scoreRange: "36 – 40 Points",
-    minScore: 36,
+    tagline: "High-beta equities, dynamic breakouts, and asymmetric alpha.",
+    targetVolatility: "β > 1.35",
+    assetUniverse: "High-Beta Equities, Emerging Small/Micro-Caps, Dynamic Breakout Stocks (MSTR, TSLA, PLTR, COIN, RIVN, MARA)",
+    detailedAssetUniverse: "High-beta growth runners, emerging micro-caps, volatile breakout equities with rapid momentum execution.",
+    turnoverStrategy: "High-turnover tactical swing allocation and daily/weekly breakouts (200%+ annual)",
+    holdingStyle: "High-turnover tactical swing allocation and daily/weekly breakouts (200%+ annual)",
+    targetReturn: "20%+",
+    bestFor: "Aggressive / Speculative Alpha seeking maximum capital expansion.",
+    scoreRange: "30 – 40 Points",
+    minScore: 30,
     maxScore: 40,
     color: "#ef4444", // rose / crimson red
     badgeClass: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800",
     borderClass: "border-rose-500",
     bgClass: "from-rose-500/10 to-transparent",
     iconName: "Flame",
-    description: "Micro-cap breakouts, extreme volatility, and asymmetric upside. Speculative risk capital targeting explosive returns.",
-    sampleTickers: ["MSTR", "NVDA", "RIVN", "SOUN", "MARA", "IONQ"]
+    description: "Aggressive / Speculative Alpha. Tactical momentum targeting volatile breakouts, small-caps, and rapid market rotations.",
+    sampleTickers: ["MSTR", "TSLA", "PLTR", "COIN", "RIVN", "MARA"]
   }
 };
 
@@ -168,75 +122,59 @@ export const ETF_STRATEGIES: Record<RiskLevel, RiskProfile> = {
 export const INITIAL_USER: UserProfile = {
   id: "usr-gotti-demo",
   email: "investor@gotti.ai",
-  riskLevel: 3,
-  riskScore: 26,
+  riskLevel: 2,
+  riskScore: 24,
   strategyName: "Steady Grind ETF",
   isLoggedIn: true,
-  activeSubAccountId: "sub-main-01",
-  totalCashBalance: 11457.05,
-  answers: { 1: "B", 2: "C", 3: "C", 4: "C", 5: "C", 6: "B", 7: "B", 8: "C", 9: "C", 10: "C" },
+  activeSubAccountId: "sub-main-02",
+  totalCashBalance: 8375.00,
+  answers: { 1: "B", 2: "B", 3: "C", 4: "C", 5: "B", 6: "B", 7: "B", 8: "C", 9: "B", 10: "C" },
   createdAt: "2026-01-15T00:00:00.000Z",
   updatedAt: "2026-08-26T12:00:00.000Z"
 };
 
 export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
   {
-    id: "sub-defensive-02",
+    id: "sub-defensive-01",
     name: "Level 1: Boomer Haven ETF",
     riskLevel: 1,
     strategyName: "Boomer Haven ETF",
     allocatedCapital: 25000,
-    currentValue: 26350.00,
-    cashBalance: 2635.00,
-    investedAmount: 23715.00,
-    pnl: 1350.00,
-    pnlPercentage: 5.40,
+    currentValue: 26850.00,
+    cashBalance: 2685.00,
+    investedAmount: 24165.00,
+    pnl: 1850.00,
+    pnlPercentage: 7.40,
     status: "active",
     createdAt: "2026-02-01",
-    holdingsCount: 8,
+    holdingsCount: 5,
     description: "Capital preservation, reliable dividends, zero stress."
   },
   {
-    id: "sub-main-01",
-    name: "Level 3: Steady Grind ETF",
-    riskLevel: 3,
+    id: "sub-main-02",
+    name: "Level 2: Steady Grind ETF",
+    riskLevel: 2,
     strategyName: "Steady Grind ETF",
-    allocatedCapital: 45000,
-    currentValue: 50820.50,
-    cashBalance: 5082.05,
-    investedAmount: 45738.45,
-    pnl: 5820.50,
-    pnlPercentage: 12.93,
+    allocatedCapital: 50000,
+    currentValue: 56900.00,
+    cashBalance: 5690.00,
+    investedAmount: 51210.00,
+    pnl: 6900.00,
+    pnlPercentage: 13.80,
     status: "active",
     createdAt: "2026-01-15",
-    holdingsCount: 12,
-    description: "Consistent compounding with systematic tactical upside."
-  },
-  {
-    id: "sub-alpha-03",
-    name: "Level 4: Apex Hunter ETF",
-    riskLevel: 4,
-    strategyName: "Apex Hunter ETF",
-    allocatedCapital: 30000,
-    currentValue: 37400.00,
-    cashBalance: 3740.00,
-    investedAmount: 33660.00,
-    pnl: 7400.00,
-    pnlPercentage: 24.67,
-    status: "active",
-    createdAt: "2026-03-10",
-    holdingsCount: 16,
-    description: "Aggressive momentum setups, breakout equities, and rapid expansion."
+    holdingsCount: 6,
+    description: "Consistent compounding with systematic sector momentum."
   }
 ];
 
 export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
   {
     id: "tx-101",
-    subAccountId: "sub-main-01",
-    subAccountName: "Level 3: Steady Grind ETF",
+    subAccountId: "sub-main-02",
+    subAccountName: "Level 2: Steady Grind ETF",
     strategyName: "Steady Grind ETF",
-    amount: 15000,
+    amount: 30000,
     type: "Deposit",
     status: "Fulfilled",
     method: "Bank Wire Transfer (•••• 5821)",
@@ -246,29 +184,29 @@ export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
   },
   {
     id: "tx-102",
-    subAccountId: "sub-alpha-03",
-    subAccountName: "Level 4: Apex Hunter ETF",
-    strategyName: "Apex Hunter ETF",
-    amount: 10000,
+    subAccountId: "sub-main-02",
+    subAccountName: "Level 2: Steady Grind ETF",
+    strategyName: "Steady Grind ETF",
+    amount: 20000,
     type: "Deposit",
     status: "Fulfilled",
     method: "Credit Card (Stripe)",
     date: "2026-08-22",
     timestamp: 1787380000000,
-    notes: "Direct high-beta sub-account deployment"
+    notes: "Secondary growth capital deployment"
   },
   {
     id: "tx-103",
-    subAccountId: "sub-defensive-02",
+    subAccountId: "sub-defensive-01",
     subAccountName: "Level 1: Boomer Haven ETF",
     strategyName: "Boomer Haven ETF",
-    amount: 5000,
+    amount: 25000,
     type: "Deposit",
     status: "Fulfilled",
     method: "Debit Card (•••• 1234)",
     date: "2026-08-25",
     timestamp: 1787600000000,
-    notes: "Defensive capital top-up"
+    notes: "Defensive capital allocation"
   }
 ];
 
@@ -288,7 +226,7 @@ export function getUserProfile(): UserProfile {
       return INITIAL_USER;
     }
     const parsed = JSON.parse(raw);
-    const strategy = ETF_STRATEGIES[parsed.riskLevel as RiskLevel] || ETF_STRATEGIES[3];
+    const strategy = ETF_STRATEGIES[parsed.riskLevel as RiskLevel] || ETF_STRATEGIES[2];
     return {
       ...parsed,
       strategyName: strategy.strategyName
@@ -340,7 +278,7 @@ export function isUserAuthenticated(): boolean {
 /**
  * Log in user session
  */
-export function loginUser(email: string, riskLevel: RiskLevel = 3, answers?: Record<number, "A" | "B" | "C" | "D">): UserProfile {
+export function loginUser(email: string, riskLevel: RiskLevel = 2, answers?: Record<number, "A" | "B" | "C" | "D">): UserProfile {
   return updateUserProfile({
     email,
     riskLevel,
@@ -450,12 +388,12 @@ export function isRiskLevelOccupied(level: RiskLevel, excludeSubAccountId?: stri
 }
 
 /**
- * Get unused available risk levels (1-5)
+ * Get unused available risk levels (1-3)
  */
 export function getAvailableRiskLevels(): RiskLevel[] {
   const accounts = getAllSubAccounts();
   const occupied = new Set(accounts.map((a) => a.riskLevel));
-  return ([1, 2, 3, 4, 5] as RiskLevel[]).filter((lvl) => !occupied.has(lvl));
+  return ([1, 2, 3] as RiskLevel[]).filter((lvl) => !occupied.has(lvl));
 }
 
 /**
@@ -476,10 +414,12 @@ export function createSubAccount(
     );
   }
 
-  if (accounts.length >= 5) {
-    throw new Error("Maximum of 5 sub-accounts reached (1 per Risk Level 1–5).");
+  if (accounts.length >= 3) {
+    throw new Error("Maximum of 3 sub-accounts reached (1 per Risk Level 1–3).");
   }
 
+  const profile = ETF_STRATEGIES[riskLevel];
+  const autoName = customName || `Level ${riskLevel}: ${profile.strategyName}`;
   const initialCash = Math.round(allocatedCapital * 0.10 * 100) / 100;
   const initialInvested = Math.round(allocatedCapital * 0.90 * 100) / 100;
 
@@ -637,8 +577,8 @@ export function getAggregatedFinancials(): AggregatedFinancials {
     totalUnrealizedPnlPercentage: +totalUnrealizedPnlPercentage.toFixed(2),
     totalActiveSubAccounts: accounts.length,
     availableCashBuffer: Math.round(totalCashBalance * 100) / 100,
-    maxDrawdownEstimate: accounts.some((a) => a.riskLevel >= 4) ? 14.5 : 5.8,
-    weightedAnnualYieldTarget: "12% – 18%"
+    maxDrawdownEstimate: accounts.some((a) => a.riskLevel === 3) ? 18.5 : 6.2,
+    weightedAnnualYieldTarget: "10% – 18%"
   };
 }
 
@@ -913,32 +853,20 @@ const STRATEGY_HOLDINGS_UNIVERSE: Record<
     { ticker: "AAPL", name: "Apple Inc.", weight: 0.20, sector: "Information Technology", basePrice: 224.80 }
   ],
   2: [
-    { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", weight: 0.30, sector: "Broad Market Core", basePrice: 560.20 },
-    { ticker: "GOOGL", name: "Alphabet Inc.", weight: 0.20, sector: "Communication Services", basePrice: 166.40 },
-    { ticker: "AMZN", name: "Amazon.com Inc.", weight: 0.18, sector: "Consumer Discretionary", basePrice: 178.90 },
-    { ticker: "UNH", name: "UnitedHealth Group", weight: 0.16, sector: "Healthcare", basePrice: 585.10 },
-    { ticker: "V", name: "Visa Inc.", weight: 0.16, sector: "Financials", basePrice: 275.30 }
+    { ticker: "QQQ", name: "Invesco QQQ Trust", weight: 0.25, sector: "Technology Benchmark", basePrice: 480.50 },
+    { ticker: "NVDA", name: "Nvidia Corporation", weight: 0.20, sector: "Semiconductors & AI", basePrice: 128.40 },
+    { ticker: "META", name: "Meta Platforms Inc.", weight: 0.18, sector: "Interactive Media", basePrice: 512.20 },
+    { ticker: "AMD", name: "Advanced Micro Devices", weight: 0.15, sector: "Semiconductors", basePrice: 154.80 },
+    { ticker: "ASML", name: "ASML Holding N.V.", weight: 0.12, sector: "Semiconductor Equipment", basePrice: 890.30 },
+    { ticker: "TSM", name: "Taiwan Semiconductor", weight: 0.10, sector: "Foundry Leaders", basePrice: 172.50 }
   ],
   3: [
-    { ticker: "QQQ", name: "Invesco QQQ Trust", weight: 0.28, sector: "Technology Growth", basePrice: 480.50 },
-    { ticker: "NVDA", name: "Nvidia Corporation", weight: 0.22, sector: "Semiconductors", basePrice: 128.40 },
-    { ticker: "META", name: "Meta Platforms Inc.", weight: 0.18, sector: "Interactive Media", basePrice: 512.20 },
-    { ticker: "AMD", name: "Advanced Micro Devices", weight: 0.16, sector: "Semiconductors", basePrice: 154.80 },
-    { ticker: "ASML", name: "ASML Holding N.V.", weight: 0.16, sector: "Semiconductor Equipment", basePrice: 890.30 }
-  ],
-  4: [
-    { ticker: "TSLA", name: "Tesla Inc.", weight: 0.25, sector: "Automotive & Clean Tech", basePrice: 215.60 },
-    { ticker: "PLTR", name: "Palantir Technologies", weight: 0.22, sector: "Enterprise AI Software", basePrice: 31.40 },
-    { ticker: "ARM", name: "Arm Holdings plc", weight: 0.20, sector: "Semiconductor Architecture", basePrice: 135.20 },
-    { ticker: "COIN", name: "Coinbase Global Inc.", weight: 0.18, sector: "Digital Asset Infrastructure", basePrice: 195.80 },
-    { ticker: "SMCI", name: "Super Micro Computer", weight: 0.15, sector: "AI Server Hardware", basePrice: 620.10 }
-  ],
-  5: [
-    { ticker: "MSTR", name: "MicroStrategy Inc.", weight: 0.30, sector: "Bitcoin Treasury Alpha", basePrice: 145.20 },
-    { ticker: "NVDA", name: "Nvidia Alpha Momentum", weight: 0.25, sector: "AI Accelerator Swings", basePrice: 128.40 },
-    { ticker: "RIVN", name: "Rivian Automotive", weight: 0.18, sector: "EV Growth Momentum", basePrice: 14.80 },
-    { ticker: "MARA", name: "MARA Holdings Inc.", weight: 0.15, sector: "Digital Mining Infrastructure", basePrice: 18.90 },
-    { ticker: "SOUN", name: "SoundHound AI Inc.", weight: 0.12, sector: "Conversational AI Small-Cap", basePrice: 5.40 }
+    { ticker: "MSTR", name: "MicroStrategy Inc.", weight: 0.25, sector: "Bitcoin Alpha Treasury", basePrice: 145.20 },
+    { ticker: "TSLA", name: "Tesla Inc.", weight: 0.20, sector: "Autonomous & EV Growth", basePrice: 215.60 },
+    { ticker: "PLTR", name: "Palantir Technologies", weight: 0.18, sector: "Enterprise AI Software", basePrice: 31.40 },
+    { ticker: "COIN", name: "Coinbase Global Inc.", weight: 0.15, sector: "Digital Asset Infrastructure", basePrice: 195.80 },
+    { ticker: "RIVN", name: "Rivian Automotive", weight: 0.12, sector: "EV Momentum Swings", basePrice: 14.80 },
+    { ticker: "MARA", name: "MARA Holdings Inc.", weight: 0.10, sector: "Digital Mining Infrastructure", basePrice: 18.90 }
   ]
 };
 
@@ -947,7 +875,7 @@ const STRATEGY_HOLDINGS_UNIVERSE: Record<
  */
 export function getSubAccountHoldings(subAccountId: string): HoldingPosition[] {
   const account = getSubAccountById(subAccountId) || getAllSubAccounts()[0] || INITIAL_SUB_ACCOUNTS[0];
-  const universe = STRATEGY_HOLDINGS_UNIVERSE[account.riskLevel] || STRATEGY_HOLDINGS_UNIVERSE[3];
+  const universe = STRATEGY_HOLDINGS_UNIVERSE[account.riskLevel] || STRATEGY_HOLDINGS_UNIVERSE[2];
   const nav = account.currentValue;
 
   return universe.map((asset, idx) => {
@@ -981,18 +909,16 @@ export function getSubAccountWithDetails(subAccountId: string): SubAccountWithHo
   const holdings = getSubAccountHoldings(account.id);
 
   const metricsMap: Record<RiskLevel, { sharpeRatio: number; maxDrawdown: string; volatilityBeta: string; winRate: string; tradeRatio: string }> = {
-    1: { sharpeRatio: 1.85, maxDrawdown: "3.2%", volatilityBeta: "< 0.65", winRate: "88%", tradeRatio: "44/50" },
-    2: { sharpeRatio: 1.55, maxDrawdown: "5.4%", volatilityBeta: "0.75–0.90", winRate: "79%", tradeRatio: "39/50" },
-    3: { sharpeRatio: 1.42, maxDrawdown: "8.1%", volatilityBeta: "1.00", winRate: "71%", tradeRatio: "35/50" },
-    4: { sharpeRatio: 1.30, maxDrawdown: "14.5%", volatilityBeta: "1.20–1.50", winRate: "64%", tradeRatio: "32/50" },
-    5: { sharpeRatio: 1.15, maxDrawdown: "22.0%", volatilityBeta: "> 1.60", winRate: "58%", tradeRatio: "29/50" }
+    1: { sharpeRatio: 1.85, maxDrawdown: "3.2%", volatilityBeta: "< 0.75", winRate: "88%", tradeRatio: "44/50" },
+    2: { sharpeRatio: 1.55, maxDrawdown: "8.1%", volatilityBeta: "0.85–1.25", winRate: "74%", tradeRatio: "37/50" },
+    3: { sharpeRatio: 1.25, maxDrawdown: "22.0%", volatilityBeta: "> 1.35", winRate: "62%", tradeRatio: "31/50" }
   };
 
   return {
     ...account,
     profile,
     holdings,
-    metrics: metricsMap[account.riskLevel] || metricsMap[3]
+    metrics: metricsMap[account.riskLevel] || metricsMap[2]
   };
 }
 

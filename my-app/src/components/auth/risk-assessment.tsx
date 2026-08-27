@@ -34,24 +34,24 @@ interface RiskAssessmentProps {
   initialRiskLevel?: RiskLevel;
 }
 
-export function RiskAssessment({ onComplete, onBack, initialRiskLevel = 3 }: RiskAssessmentProps) {
+export function RiskAssessment({ onComplete, onBack, initialRiskLevel = 2 }: RiskAssessmentProps) {
   const [mode, setMode] = useState<"questionnaire" | "direct">("questionnaire");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({
     1: "B",
-    2: "C",
+    2: "B",
     3: "C",
     4: "C",
-    5: "C",
+    5: "B",
     6: "B",
     7: "B",
     8: "C",
-    9: "C",
+    9: "B",
     10: "C"
   });
   const [selectedDirectLevel, setSelectedDirectLevel] = useState<RiskLevel>(initialRiskLevel);
 
-  // Internal score calculation (A=1, B=2, C=3, D=4) -> Maps to Risk Level 1 to 5
+  // Internal score calculation (A=1, B=2, C=3, D=4) -> Maps to Risk Level 1 to 3
   const totalScore = useMemo(() => {
     return Object.entries(answers).reduce((sum, [qIdStr, optId]) => {
       const qId = Number(qIdStr);
@@ -82,10 +82,6 @@ export function RiskAssessment({ onComplete, onBack, initialRiskLevel = 3 }: Ris
       case 2:
         return <TrendingUp className={className} />;
       case 3:
-        return <Scale className={className} />;
-      case 4:
-        return <Zap className={className} />;
-      case 5:
         return <Flame className={className} />;
     }
   };
@@ -299,8 +295,8 @@ export function RiskAssessment({ onComplete, onBack, initialRiskLevel = 3 }: Ris
               </CardHeader>
               <CardContent className="px-3 pb-3 pt-0">
                 <div className="space-y-1">
-                  {[1, 2, 3, 4, 5].map((lvl) => {
-                    const p = RISK_PROFILES[lvl as RiskLevel];
+                  {([1, 2, 3] as RiskLevel[]).map((lvl) => {
+                    const p = RISK_PROFILES[lvl];
                     const isCurrent = recommendedProfile.level === lvl;
                     return (
                       <div
@@ -325,7 +321,7 @@ export function RiskAssessment({ onComplete, onBack, initialRiskLevel = 3 }: Ris
       {mode === "direct" && (
         <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {([1, 2, 3, 4, 5] as RiskLevel[]).map((level) => {
+            {([1, 2, 3] as RiskLevel[]).map((level) => {
               const profile = RISK_PROFILES[level];
               const isSelected = selectedDirectLevel === level;
               return (

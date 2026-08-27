@@ -1,4 +1,4 @@
-export type RiskLevel = 1 | 2 | 3 | 4 | 5;
+export type RiskLevel = 1 | 2 | 3;
 
 export interface RiskProfile {
   level: RiskLevel;

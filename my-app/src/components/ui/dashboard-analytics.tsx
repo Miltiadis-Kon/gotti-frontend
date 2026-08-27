@@ -49,36 +49,24 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
       { ticker: "AAPL", name: "Apple Inc.", allocation: "20%", pnl: "+$980.00", isPositive: true }
     ],
     2: [
-      { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", allocation: "30%", pnl: "+$1,850.00", isPositive: true },
-      { ticker: "GOOGL", name: "Alphabet Inc.", allocation: "20%", pnl: "+$940.00", isPositive: true },
-      { ticker: "AMZN", name: "Amazon.com Inc.", allocation: "18%", pnl: "-$320.00", isPositive: false },
-      { ticker: "UNH", name: "UnitedHealth Group", allocation: "16%", pnl: "+$510.00", isPositive: true },
-      { ticker: "V", name: "Visa Inc.", allocation: "16%", pnl: "+$680.00", isPositive: true }
+      { ticker: "QQQ", name: "Invesco QQQ Trust", allocation: "25%", pnl: "+$2,450.00", isPositive: true },
+      { ticker: "NVDA", name: "Nvidia Corporation", allocation: "20%", pnl: "+$3,120.00", isPositive: true },
+      { ticker: "META", name: "Meta Platforms Inc.", allocation: "18%", pnl: "+$1,480.00", isPositive: true },
+      { ticker: "AMD", name: "Advanced Micro Devices", allocation: "15%", pnl: "-$430.00", isPositive: false },
+      { ticker: "ASML", name: "ASML Holding N.V.", allocation: "12%", pnl: "+$960.00", isPositive: true },
+      { ticker: "TSM", name: "Taiwan Semiconductor", allocation: "10%", pnl: "+$820.00", isPositive: true }
     ],
     3: [
-      { ticker: "QQQ", name: "Invesco QQQ ETF", allocation: "28%", pnl: "+$2,450.00", isPositive: true },
-      { ticker: "NVDA", name: "Nvidia Corporation", allocation: "22%", pnl: "+$3,120.00", isPositive: true },
-      { ticker: "META", name: "Meta Platforms Inc.", allocation: "18%", pnl: "+$1,480.00", isPositive: true },
-      { ticker: "AMD", name: "Advanced Micro Devices", allocation: "16%", pnl: "-$430.00", isPositive: false },
-      { ticker: "ASML", name: "ASML Holding N.V.", allocation: "16%", pnl: "+$960.00", isPositive: true }
-    ],
-    4: [
-      { ticker: "TSLA", name: "Tesla Inc.", allocation: "25%", pnl: "+$3,840.00", isPositive: true },
-      { ticker: "PLTR", name: "Palantir Technologies", allocation: "22%", pnl: "+$2,950.00", isPositive: true },
-      { ticker: "ARM", name: "Arm Holdings plc", allocation: "20%", pnl: "+$1,820.00", isPositive: true },
-      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "18%", pnl: "-$860.00", isPositive: false },
-      { ticker: "SMCI", name: "Super Micro Computer", allocation: "15%", pnl: "+$1,140.00", isPositive: true }
-    ],
-    5: [
-      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "30%", pnl: "+$6,250.00", isPositive: true },
-      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocation: "25%", pnl: "+$3,420.00", isPositive: true },
-      { ticker: "RIVN", name: "Rivian Automotive", allocation: "18%", pnl: "-$1,240.00", isPositive: false },
-      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "15%", pnl: "+$1,890.00", isPositive: true },
-      { ticker: "SOUN", name: "SoundHound AI Inc.", allocation: "12%", pnl: "+$940.00", isPositive: true }
+      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "25%", pnl: "+$6,250.00", isPositive: true },
+      { ticker: "TSLA", name: "Tesla Inc.", allocation: "20%", pnl: "+$3,420.00", isPositive: true },
+      { ticker: "PLTR", name: "Palantir Technologies", allocation: "18%", pnl: "+$2,950.00", isPositive: true },
+      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "15%", pnl: "-$860.00", isPositive: false },
+      { ticker: "RIVN", name: "Rivian Automotive", allocation: "12%", pnl: "-$1,240.00", isPositive: false },
+      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "10%", pnl: "+$1,890.00", isPositive: true }
     ]
   };
 
-  const positions = holdingsMap[activeAccount.riskLevel] || holdingsMap[3];
+  const positions = holdingsMap[activeAccount.riskLevel] || holdingsMap[2];
 
   return (
     <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent">

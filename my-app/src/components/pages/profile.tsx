@@ -48,8 +48,8 @@ export function ProfileContent() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"strategy" | "account" | "security">("strategy");
   const [userEmail, setUserEmail] = useState("investor@gotti.ai");
-  const [riskLevel, setRiskLevel] = useState<RiskLevel>(3);
-  const [riskScore, setRiskScore] = useState<number | undefined>(26);
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>(2);
+  const [riskScore, setRiskScore] = useState<number | undefined>(24);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Pop-up confirmation state for switching risk level
@@ -93,10 +93,8 @@ export function ProfileContent() {
   const getProfileIcon = (level: RiskLevel, className = "h-5 w-5") => {
     switch (level) {
       case 1: return <ShieldCheck className={`${className} text-emerald-500`} />;
-      case 2: return <TrendingUp className={`${className} text-sky-500`} />;
-      case 3: return <Scale className={`${className} text-indigo-500`} />;
-      case 4: return <Zap className={`${className} text-amber-500`} />;
-      case 5: return <Flame className={`${className} text-rose-500`} />;
+      case 2: return <TrendingUp className={`${className} text-indigo-500`} />;
+      case 3: return <Flame className={`${className} text-rose-500`} />;
     }
   };
 
@@ -224,11 +222,11 @@ export function ProfileContent() {
                   <CardHeader>
                     <CardTitle>Adjust Your Risk Profile Level</CardTitle>
                     <CardDescription>
-                      Click any of the 5 Risk Level & ETF profiles below to switch your automated trading allocation. A confirmation prompt will verify your selection.
+                      Click any of the 3 Risk Level & ETF profiles below to switch your automated trading allocation. A confirmation prompt will verify your selection.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {([1, 2, 3, 4, 5] as RiskLevel[]).map((lvl) => {
+                    {([1, 2, 3] as RiskLevel[]).map((lvl) => {
                       const p = RISK_PROFILES[lvl];
                       const isSelected = riskLevel === lvl;
                       return (

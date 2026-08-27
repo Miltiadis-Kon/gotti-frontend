@@ -76,15 +76,13 @@ export function AddFundsContent() {
   }, []);
 
   const selectedAccount = subAccounts.find((a) => a.id === selectedSubAccountId) || subAccounts[0];
-  const selectedProfile = selectedAccount ? RISK_PROFILES[selectedAccount.riskLevel] : RISK_PROFILES[3];
+  const selectedProfile = selectedAccount ? RISK_PROFILES[selectedAccount.riskLevel] : RISK_PROFILES[2];
 
   const getProfileIcon = (level: RiskLevel, className = "h-4 w-4") => {
     switch (level) {
       case 1: return <ShieldCheck className={`${className} text-emerald-500`} />;
-      case 2: return <TrendingUp className={`${className} text-sky-500`} />;
-      case 3: return <Scale className={`${className} text-indigo-500`} />;
-      case 4: return <Zap className={`${className} text-amber-500`} />;
-      case 5: return <Flame className={`${className} text-rose-500`} />;
+      case 2: return <TrendingUp className={`${className} text-indigo-500`} />;
+      case 3: return <Flame className={`${className} text-rose-500`} />;
     }
   };
 

@@ -73,36 +73,24 @@ export function PortofolioAllocation({ subAccount }: AllocationProps) {
       { ticker: "AAPL", name: "Apple Inc.", allocationNum: 0.20, allocation: "20%" }
     ],
     2: [
-      { ticker: "SPY", name: "SPDR S&P 500 ETF Trust", allocationNum: 0.30, allocation: "30%" },
-      { ticker: "GOOGL", name: "Alphabet Inc.", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "AMZN", name: "Amazon.com Inc.", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "UNH", name: "UnitedHealth Group", allocationNum: 0.16, allocation: "16%" },
-      { ticker: "V", name: "Visa Inc.", allocationNum: 0.16, allocation: "16%" }
+      { ticker: "QQQ", name: "Invesco QQQ Trust", allocationNum: 0.25, allocation: "25%" },
+      { ticker: "NVDA", name: "Nvidia Corporation", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "META", name: "Meta Platforms Inc.", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "AMD", name: "Advanced Micro Devices", allocationNum: 0.15, allocation: "15%" },
+      { ticker: "ASML", name: "ASML Holding N.V.", allocationNum: 0.12, allocation: "12%" },
+      { ticker: "TSM", name: "Taiwan Semiconductor", allocationNum: 0.10, allocation: "10%" }
     ],
     3: [
-      { ticker: "QQQ", name: "Invesco QQQ ETF", allocationNum: 0.28, allocation: "28%" },
-      { ticker: "NVDA", name: "Nvidia Corporation", allocationNum: 0.22, allocation: "22%" },
-      { ticker: "META", name: "Meta Platforms Inc.", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "AMD", name: "Advanced Micro Devices", allocationNum: 0.16, allocation: "16%" },
-      { ticker: "ASML", name: "ASML Holding N.V.", allocationNum: 0.16, allocation: "16%" }
-    ],
-    4: [
-      { ticker: "TSLA", name: "Tesla Inc.", allocationNum: 0.25, allocation: "25%" },
-      { ticker: "PLTR", name: "Palantir Technologies", allocationNum: 0.22, allocation: "22%" },
-      { ticker: "ARM", name: "Arm Holdings plc", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "COIN", name: "Coinbase Global Inc.", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "SMCI", name: "Super Micro Computer", allocationNum: 0.15, allocation: "15%" }
-    ],
-    5: [
-      { ticker: "MSTR", name: "MicroStrategy Inc.", allocationNum: 0.30, allocation: "30%" },
-      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocationNum: 0.25, allocation: "25%" },
-      { ticker: "RIVN", name: "Rivian Automotive", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "MARA", name: "MARA Holdings Inc.", allocationNum: 0.15, allocation: "15%" },
-      { ticker: "SOUN", name: "SoundHound AI Inc.", allocationNum: 0.12, allocation: "12%" }
+      { ticker: "MSTR", name: "MicroStrategy Inc.", allocationNum: 0.25, allocation: "25%" },
+      { ticker: "TSLA", name: "Tesla Inc.", allocationNum: 0.20, allocation: "20%" },
+      { ticker: "PLTR", name: "Palantir Technologies", allocationNum: 0.18, allocation: "18%" },
+      { ticker: "COIN", name: "Coinbase Global Inc.", allocationNum: 0.15, allocation: "15%" },
+      { ticker: "RIVN", name: "Rivian Automotive", allocationNum: 0.12, allocation: "12%" },
+      { ticker: "MARA", name: "MARA Holdings Inc.", allocationNum: 0.10, allocation: "10%" }
     ]
   };
 
-  const list = holdingsMap[activeAccount.riskLevel] || holdingsMap[3];
+  const list = holdingsMap[activeAccount.riskLevel] || holdingsMap[2];
 
   return (
     <Card
@@ -184,36 +172,24 @@ export function PortfolioPieChart({ subAccount }: AllocationProps) {
       { name: "AAPL", value: 20, color: "#047857" }
     ],
     2: [
-      { name: "SPY", value: 30, color: "#06b6d4" },
-      { name: "GOOGL", value: 20, color: "#38bdf8" },
-      { name: "AMZN", value: 18, color: "#0284c7" },
-      { name: "UNH", value: 16, color: "#7dd3fc" },
-      { name: "V", value: 16, color: "#0369a1" }
+      { name: "QQQ", value: 25, color: "#6366f1" },
+      { name: "NVDA", value: 20, color: "#818cf8" },
+      { name: "META", value: 18, color: "#4f46e5" },
+      { name: "AMD", value: 15, color: "#a5b4fc" },
+      { name: "ASML", value: 12, color: "#4338ca" },
+      { name: "TSM", value: 10, color: "#3730a3" }
     ],
     3: [
-      { name: "QQQ", value: 28, color: "#6366f1" },
-      { name: "NVDA", value: 22, color: "#818cf8" },
-      { name: "META", value: 18, color: "#4f46e5" },
-      { name: "AMD", value: 16, color: "#a5b4fc" },
-      { name: "ASML", value: 16, color: "#4338ca" }
-    ],
-    4: [
-      { name: "TSLA", value: 25, color: "#f59e0b" },
-      { name: "PLTR", value: 22, color: "#fbbf24" },
-      { name: "ARM", value: 20, color: "#d97706" },
-      { name: "COIN", value: 18, color: "#fde68a" },
-      { name: "SMCI", value: 15, color: "#b45309" }
-    ],
-    5: [
-      { name: "MSTR", value: 30, color: "#ef4444" },
-      { name: "NVDA", value: 25, color: "#f87171" },
-      { name: "RIVN", value: 18, color: "#dc2626" },
-      { name: "MARA", value: 15, color: "#fca5a5" },
-      { name: "SOUN", value: 12, color: "#b91c1c" }
+      { name: "MSTR", value: 25, color: "#ef4444" },
+      { name: "TSLA", value: 20, color: "#f87171" },
+      { name: "PLTR", value: 18, color: "#dc2626" },
+      { name: "COIN", value: 15, color: "#fca5a5" },
+      { name: "RIVN", value: 12, color: "#b91c1c" },
+      { name: "MARA", value: 10, color: "#991b1b" }
     ]
   };
 
-  const chartData = pieData[activeAccount.riskLevel] || pieData[3];
+  const chartData = pieData[activeAccount.riskLevel] || pieData[2];
 
   return (
     <Card
@@ -289,35 +265,23 @@ export function SectorBarChart({ subAccount }: AllocationProps) {
       { sector: "Consumer Staples", pct: 42 },
       { sector: "Healthcare", pct: 28 },
       { sector: "Mega-Cap Tech", pct: 20 },
-      { sector: "Utilities", pct: 10 }
+      { sector: "Defensive Value", pct: 10 }
     ],
     2: [
-      { sector: "Broad Equity (S&P)", pct: 35 },
-      { sector: "Technology Core", pct: 30 },
-      { sector: "Healthcare", pct: 18 },
-      { sector: "Financials", pct: 17 }
+      { sector: "Technology Benchmark", pct: 35 },
+      { sector: "Semiconductors & AI", pct: 32 },
+      { sector: "Interactive Media", pct: 18 },
+      { sector: "Semiconductor Equipment", pct: 15 }
     ],
     3: [
-      { sector: "Semiconductors & AI", pct: 44 },
-      { sector: "Software & Cloud", pct: 32 },
-      { sector: "Digital Media", pct: 16 },
-      { sector: "Hardware", pct: 8 }
-    ],
-    4: [
-      { sector: "Autonomous & EV", pct: 32 },
-      { sector: "Enterprise AI", pct: 28 },
-      { sector: "Crypto Infrastructure", pct: 22 },
-      { sector: "Semiconductors", pct: 18 }
-    ],
-    5: [
-      { sector: "Bitcoin Alpha Holding", pct: 40 },
-      { sector: "High-Beta Tech Swings", pct: 30 },
-      { sector: "Speculative AI / Robotics", pct: 20 },
-      { sector: "Micro-Cap Breakouts", pct: 10 }
+      { sector: "Bitcoin Alpha Holding", pct: 30 },
+      { sector: "Autonomous & EV", pct: 24 },
+      { sector: "Enterprise AI Software", pct: 22 },
+      { sector: "Crypto Mining & Momentum", pct: 24 }
     ]
   };
 
-  const sectors = sectorDataMap[activeAccount.riskLevel] || sectorDataMap[3];
+  const sectors = sectorDataMap[activeAccount.riskLevel] || sectorDataMap[2];
 
   return (
     <Card
@@ -439,9 +403,9 @@ export function EquityPieChart({ subAccount }: AllocationProps) {
   const color = profile.color;
 
   const data = [
-    { name: "Mega & Large-Cap", value: activeAccount.riskLevel <= 2 ? 80 : activeAccount.riskLevel === 3 ? 60 : 35, color: color },
-    { name: "Mid-Cap Growth", value: activeAccount.riskLevel <= 2 ? 20 : activeAccount.riskLevel === 3 ? 30 : 40, color: "#818cf8" },
-    { name: "High-Beta / Speculative", value: activeAccount.riskLevel <= 2 ? 0 : activeAccount.riskLevel === 3 ? 10 : 25, color: "#f59e0b" }
+    { name: "Mega & Large-Cap", value: activeAccount.riskLevel === 1 ? 85 : activeAccount.riskLevel === 2 ? 65 : 20, color: color },
+    { name: "Mid-Cap Growth", value: activeAccount.riskLevel === 1 ? 15 : activeAccount.riskLevel === 2 ? 30 : 35, color: "#818cf8" },
+    { name: "High-Beta / Small-Caps", value: activeAccount.riskLevel === 1 ? 0 : activeAccount.riskLevel === 2 ? 5 : 45, color: "#ef4444" }
   ];
 
   return (

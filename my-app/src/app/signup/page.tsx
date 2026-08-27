@@ -46,8 +46,8 @@ export default function SignupPage() {
     answers?: Record<number, "A" | "B" | "C" | "D">;
   }>({
     email: "",
-    riskLevel: 3,
-    assignedProfile: RISK_PROFILES[3]
+    riskLevel: 2,
+    assignedProfile: RISK_PROFILES[2]
   });
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export default function SignupPage() {
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold">● Running</span>
                 </div>
                 <p className="text-muted-foreground leading-relaxed text-[11px]">
-                  Under <strong>Rule 1</strong>, you can manage up to 5 segregated sub-accounts (1 per Risk Level) directly from the Sub-Accounts Hub without creating a new login.
+                  Under <strong>Rule 1</strong>, you can manage up to 3 segregated sub-accounts (1 per Risk Level 1–3) directly from the Sub-Accounts Hub without creating a new login.
                 </p>
               </div>
             </CardContent>

@@ -38,14 +38,12 @@ export function PortofolioNotes({ subAccount }: PortofolioNotesProps) {
   };
 
   const riskStatsMap: Record<RiskLevel, { returnStr: string; riskStr: string; drawdownStr: string; divStr: string }> = {
-    1: { returnStr: "4% – 7%", riskStr: "4.8%", drawdownStr: "3.2%", divStr: "85%" },
-    2: { returnStr: "8% – 12%", riskStr: "8.5%", drawdownStr: "5.4%", divStr: "80%" },
-    3: { returnStr: "13% – 20%", riskStr: "13.5%", drawdownStr: "8.1%", divStr: "75%" },
-    4: { returnStr: "20% – 30%", riskStr: "24.0%", drawdownStr: "14.5%", divStr: "68%" },
-    5: { returnStr: "30%+", riskStr: "34.5%", drawdownStr: "22.0%", divStr: "60%" }
+    1: { returnStr: "5% – 9%", riskStr: "< 22%", drawdownStr: "< 15%", divStr: "85%" },
+    2: { returnStr: "10% – 18%", riskStr: "22% – 48%", drawdownStr: "15% – 30%", divStr: "78%" },
+    3: { returnStr: "20%+", riskStr: "> 48%", drawdownStr: "30% – 55%+", divStr: "65%" }
   };
 
-  const stats = riskStatsMap[activeAccount.riskLevel] || riskStatsMap[3];
+  const stats = riskStatsMap[activeAccount.riskLevel] || riskStatsMap[2];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">

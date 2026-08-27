@@ -57,7 +57,7 @@ export default function SubAccountsHubPage() {
 
   // Edit risk strategy dialog state
   const [editingAccount, setEditingAccount] = useState<SubAccount | null>(null);
-  const [selectedEditLevel, setSelectedEditLevel] = useState<RiskLevel>(3);
+  const [selectedEditLevel, setSelectedEditLevel] = useState<RiskLevel>(2);
   const [editError, setEditError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -75,10 +75,8 @@ export default function SubAccountsHubPage() {
   const getProfileIcon = (level: RiskLevel, className = "h-5 w-5") => {
     switch (level) {
       case 1: return <ShieldCheck className={`${className} text-emerald-500`} />;
-      case 2: return <TrendingUp className={`${className} text-sky-500`} />;
-      case 3: return <Scale className={`${className} text-indigo-500`} />;
-      case 4: return <Zap className={`${className} text-amber-500`} />;
-      case 5: return <Flame className={`${className} text-rose-500`} />;
+      case 2: return <TrendingUp className={`${className} text-indigo-500`} />;
+      case 3: return <Flame className={`${className} text-rose-500`} />;
     }
   };
 
@@ -156,17 +154,17 @@ export default function SubAccountsHubPage() {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Segregated ETF Sub-Accounts Hub</h1>
             </div>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage multiple automated strategy portfolios under your account. <strong>Rule:</strong> Maximum 1 sub-account per Risk Level (Levels 1 to 5).
+              Manage multiple automated strategy portfolios under your account. <strong>Rule:</strong> Maximum 1 sub-account per Risk Level (Levels 1 to 3).
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button
               onClick={() => setIsCreateOpen(true)}
               className="gap-2 font-medium text-xs sm:text-sm"
-              disabled={subAccounts.length >= 5}
+              disabled={subAccounts.length >= 3}
             >
               <PlusCircle className="h-4 w-4" />
-              {subAccounts.length >= 5 ? "Max 5/5 Sub-Accounts Reached" : "Create New Sub-Account"}
+              {subAccounts.length >= 3 ? "Max 3/3 Sub-Accounts Reached" : "Create New Sub-Account"}
             </Button>
           </div>
         </div>
@@ -220,10 +218,10 @@ export default function SubAccountsHubPage() {
           <Card className="bg-card/90 shadow-sm border-border/60">
             <CardHeader className="pb-2">
               <CardDescription className="text-xs">Sub-Accounts Capacity</CardDescription>
-              <CardTitle className="text-2xl font-extrabold font-mono">{subAccounts.length} / 5</CardTitle>
+              <CardTitle className="text-2xl font-extrabold font-mono">{subAccounts.length} / 3</CardTitle>
             </CardHeader>
             <CardContent className="pt-0 text-[11px] text-muted-foreground">
-              {5 - subAccounts.length} Risk Levels available to activate
+              {3 - subAccounts.length} Risk Levels available to activate
             </CardContent>
           </Card>
         </div>
@@ -396,7 +394,7 @@ export default function SubAccountsHubPage() {
               )}
 
               <div className="space-y-2 py-2">
-                {([1, 2, 3, 4, 5] as RiskLevel[]).map((lvl) => {
+                {([1, 2, 3] as RiskLevel[]).map((lvl) => {
                   const p = RISK_PROFILES[lvl];
                   const occupiedBy = subAccounts.find((a) => a.riskLevel === lvl && a.id !== editingAccount.id);
                   const isOccupiedByOther = Boolean(occupiedBy);

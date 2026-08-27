@@ -36,12 +36,8 @@ export function ProfileSummary({ email, assignedProfile, score, onRetake }: Prof
       case 1:
         return <ShieldCheck className="h-7 w-7 text-emerald-500" />;
       case 2:
-        return <TrendingUp className="h-7 w-7 text-sky-500" />;
+        return <TrendingUp className="h-7 w-7 text-indigo-500" />;
       case 3:
-        return <Scale className="h-7 w-7 text-indigo-500" />;
-      case 4:
-        return <Zap className="h-7 w-7 text-amber-500" />;
-      case 5:
         return <Flame className="h-7 w-7 text-rose-500" />;
     }
   };

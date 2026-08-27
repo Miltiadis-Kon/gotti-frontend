@@ -108,10 +108,8 @@ export default function Dashboard() {
   const getProfileIcon = (level: RiskLevel) => {
     switch (level) {
       case 1: return <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />;
-      case 2: return <TrendingUp className="h-3.5 w-3.5 text-sky-500" />;
-      case 3: return <Scale className="h-3.5 w-3.5 text-indigo-500" />;
-      case 4: return <Zap className="h-3.5 w-3.5 text-amber-500" />;
-      case 5: return <Flame className="h-3.5 w-3.5 text-rose-500" />;
+      case 2: return <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />;
+      case 3: return <Flame className="h-3.5 w-3.5 text-rose-500" />;
     }
   };
 
@@ -215,7 +213,7 @@ export default function Dashboard() {
                 <Layers className="h-4 w-4" />
                 Sub-Accounts Hub
                 <Badge variant="secondary" className="ml-auto flex h-5 px-1.5 shrink-0 items-center justify-center rounded-full text-[10px]">
-                  {subAccounts.length}/5
+                  {subAccounts.length}/3
                 </Badge>
               </Link>
               <Link
@@ -248,7 +246,7 @@ export default function Dashboard() {
           <div className="mt-auto p-4 space-y-3">
             <Link href="/sub-accounts">
               <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs">
-                <Layers className="h-3.5 w-3.5" /> Manage {subAccounts.length}/5 Sub-Accounts
+                <Layers className="h-3.5 w-3.5" /> Manage {subAccounts.length}/3 Sub-Accounts
               </Button>
             </Link>
           </div>
@@ -321,7 +319,7 @@ export default function Dashboard() {
                     className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                   >
                     <Layers className="h-5 w-5" />
-                    Sub-Accounts Hub ({subAccounts.length}/5)
+                    Sub-Accounts Hub ({subAccounts.length}/3)
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
@@ -358,7 +356,7 @@ export default function Dashboard() {
               <div className="mt-auto space-y-2">
                 <Link href="/sub-accounts">
                   <Button className="w-full text-xs gap-1.5">
-                    <Layers className="h-3.5 w-3.5" /> Sub-Accounts Hub ({subAccounts.length}/5)
+                    <Layers className="h-3.5 w-3.5" /> Sub-Accounts Hub ({subAccounts.length}/3)
                   </Button>
                 </Link>
               </div>
@@ -404,7 +402,7 @@ export default function Dashboard() {
                 Profile & Risk Settings
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/sub-accounts")} className="text-xs cursor-pointer">
-                Manage Sub-Accounts ({subAccounts.length}/5)
+                Manage Sub-Accounts ({subAccounts.length}/3)
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/orders")} className="text-xs cursor-pointer">
                 Trade Orders

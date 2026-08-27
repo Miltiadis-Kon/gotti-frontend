@@ -52,7 +52,7 @@ export function PorotfolioPieChart({ subAccount }: VisualizerProps) {
   }, [subAccount]);
 
   const activeAccount = subAccount || internalAccount;
-  const profile = RISK_PROFILES[activeAccount.riskLevel] || RISK_PROFILES[3];
+  const profile = RISK_PROFILES[activeAccount.riskLevel] || RISK_PROFILES[2];
   const color = profile.color;
 
   const holdingsDistribution: Record<RiskLevel, Array<{ name: string; value: number; fill: string }>> = {
@@ -64,36 +64,24 @@ export function PorotfolioPieChart({ subAccount }: VisualizerProps) {
       { name: "AAPL (Apple)", value: 20, fill: "#047857" }
     ],
     2: [
-      { name: "SPY (S&P 500)", value: 30, fill: "#06b6d4" },
-      { name: "GOOGL (Alphabet)", value: 20, fill: "#38bdf8" },
-      { name: "AMZN (Amazon)", value: 18, fill: "#0284c7" },
-      { name: "UNH (UnitedHealth)", value: 16, fill: "#7dd3fc" },
-      { name: "V (Visa)", value: 16, fill: "#0369a1" }
+      { name: "QQQ (Nasdaq)", value: 25, fill: "#6366f1" },
+      { name: "NVDA (Nvidia)", value: 20, fill: "#818cf8" },
+      { name: "META (Meta)", value: 18, fill: "#4f46e5" },
+      { name: "AMD (AMD Inc.)", value: 15, fill: "#a5b4fc" },
+      { name: "ASML (ASML)", value: 12, fill: "#4338ca" },
+      { name: "TSM (TSMC)", value: 10, fill: "#3730a3" }
     ],
     3: [
-      { name: "QQQ (Nasdaq)", value: 28, fill: "#6366f1" },
-      { name: "NVDA (Nvidia)", value: 22, fill: "#818cf8" },
-      { name: "META (Meta)", value: 18, fill: "#4f46e5" },
-      { name: "AMD (AMD Inc.)", value: 16, fill: "#a5b4fc" },
-      { name: "ASML (ASML)", value: 16, fill: "#4338ca" }
-    ],
-    4: [
-      { name: "TSLA (Tesla)", value: 25, fill: "#f59e0b" },
-      { name: "PLTR (Palantir)", value: 22, fill: "#fbbf24" },
-      { name: "ARM (Arm)", value: 20, fill: "#d97706" },
-      { name: "COIN (Coinbase)", value: 18, fill: "#fde68a" },
-      { name: "SMCI (SuperMicro)", value: 15, fill: "#b45309" }
-    ],
-    5: [
-      { name: "MSTR (MicroStrategy)", value: 30, fill: "#ef4444" },
-      { name: "NVDA (Alpha)", value: 25, fill: "#f87171" },
-      { name: "RIVN (Rivian)", value: 18, fill: "#dc2626" },
-      { name: "MARA (MARA)", value: 15, fill: "#fca5a5" },
-      { name: "SOUN (SoundHound)", value: 12, fill: "#b91c1c" }
+      { name: "MSTR (MicroStrategy)", value: 25, fill: "#ef4444" },
+      { name: "TSLA (Tesla)", value: 20, fill: "#f87171" },
+      { name: "PLTR (Palantir)", value: 18, fill: "#dc2626" },
+      { name: "COIN (Coinbase)", value: 15, fill: "#fca5a5" },
+      { name: "RIVN (Rivian)", value: 12, fill: "#b91c1c" },
+      { name: "MARA (MARA)", value: 10, fill: "#991b1b" }
     ]
   };
 
-  const chartData = holdingsDistribution[activeAccount.riskLevel] || holdingsDistribution[3];
+  const chartData = holdingsDistribution[activeAccount.riskLevel] || holdingsDistribution[2];
 
   return (
     <Card
@@ -304,43 +292,31 @@ export function PortofolioDifferenceTable({ subAccount }: VisualizerProps) {
   }, [subAccount]);
 
   const activeAccount = subAccount || internalAccount;
-  const profile = RISK_PROFILES[activeAccount.riskLevel] || RISK_PROFILES[3];
+  const profile = RISK_PROFILES[activeAccount.riskLevel] || RISK_PROFILES[2];
   const color = profile.color;
 
   const metricMap: Record<RiskLevel, Array<{ metric: string; gotti_metric: string; snp_metric: string }>> = {
     1: [
-      { metric: "Target 1-Year Yield", gotti_metric: "4% – 7%", snp_metric: "9.80%" },
+      { metric: "Target 1-Year Yield", gotti_metric: "5% – 9%", snp_metric: "9.80%" },
       { metric: "Sharpe Ratio", gotti_metric: "1.85", snp_metric: "1.10" },
-      { metric: "Max Drawdown", gotti_metric: "3.20%", snp_metric: "8.50%" },
-      { metric: "Volatility (Beta)", gotti_metric: "4.80% (β < 0.65)", snp_metric: "14.20% (β 1.00)" }
+      { metric: "Max Drawdown", gotti_metric: "< -15% (3.2%)", snp_metric: "8.50%" },
+      { metric: "Volatility (Beta)", gotti_metric: "< 22% (β < 0.75)", snp_metric: "14.20% (β 1.00)" }
     ],
     2: [
-      { metric: "Target 1-Year Yield", gotti_metric: "8% – 12%", snp_metric: "9.80%" },
+      { metric: "Target 1-Year Yield", gotti_metric: "10% – 18%", snp_metric: "9.80%" },
       { metric: "Sharpe Ratio", gotti_metric: "1.55", snp_metric: "1.10" },
-      { metric: "Max Drawdown", gotti_metric: "5.40%", snp_metric: "8.50%" },
-      { metric: "Volatility (Beta)", gotti_metric: "8.50% (β 0.85)", snp_metric: "14.20% (β 1.00)" }
+      { metric: "Max Drawdown", gotti_metric: "-15% to -30% (8.1%)", snp_metric: "8.50%" },
+      { metric: "Volatility (Beta)", gotti_metric: "22%–48% (β 0.85–1.25)", snp_metric: "14.20% (β 1.00)" }
     ],
     3: [
-      { metric: "Target 1-Year Yield", gotti_metric: "13% – 20%", snp_metric: "9.80%" },
-      { metric: "Sharpe Ratio", gotti_metric: "1.42", snp_metric: "1.10" },
-      { metric: "Max Drawdown", gotti_metric: "8.10%", snp_metric: "8.50%" },
-      { metric: "Volatility (Beta)", gotti_metric: "13.50% (β 1.00)", snp_metric: "14.20% (β 1.00)" }
-    ],
-    4: [
-      { metric: "Target 1-Year Yield", gotti_metric: "20% – 30%", snp_metric: "9.80%" },
-      { metric: "Sharpe Ratio", gotti_metric: "1.30", snp_metric: "1.10" },
-      { metric: "Max Drawdown", gotti_metric: "14.50%", snp_metric: "8.50%" },
-      { metric: "Volatility (Beta)", gotti_metric: "24.00% (β 1.35)", snp_metric: "14.20% (β 1.00)" }
-    ],
-    5: [
-      { metric: "Target 1-Year Yield", gotti_metric: "30%+", snp_metric: "9.80%" },
-      { metric: "Sharpe Ratio", gotti_metric: "1.15", snp_metric: "1.10" },
-      { metric: "Max Drawdown", gotti_metric: "22.00%", snp_metric: "8.50%" },
-      { metric: "Volatility (Beta)", gotti_metric: "34.50% (β > 1.60)", snp_metric: "14.20% (β 1.00)" }
+      { metric: "Target 1-Year Yield", gotti_metric: "20%+", snp_metric: "9.80%" },
+      { metric: "Sharpe Ratio", gotti_metric: "1.25", snp_metric: "1.10" },
+      { metric: "Max Drawdown", gotti_metric: "-30% to -55%+ (22.0%)", snp_metric: "8.50%" },
+      { metric: "Volatility (Beta)", gotti_metric: "> 48% (β > 1.35)", snp_metric: "14.20% (β 1.00)" }
     ]
   };
 
-  const metrics = metricMap[activeAccount.riskLevel] || metricMap[3];
+  const metrics = metricMap[activeAccount.riskLevel] || metricMap[2];
 
   return (
     <Card

@@ -72,7 +72,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 • Risk-Calibrated Portfolios:
               </strong>
               <p className="pl-3">
-                Your selected risk level (Levels 1–5) dictates the mathematical asset universe, volatility boundaries, and target annualized return expectations of your strategy.
+                Your assigned risk level (Levels 1–3) dictates which of the 3 automated ETFs your capital is allocated to: <strong>Boomer Haven</strong> (Level 1), <strong>Steady Grind</strong> (Level 2), or <strong>Diamond Hands</strong> (Level 3).
               </p>
             </div>
 
@@ -81,34 +81,25 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 • 100% Automated Execution:
               </strong>
               <p className="pl-3">
-                All portfolio rebalancing, drift corrections, entry/exit executions, and risk management are handled algorithmically by systematic software. Manual order entry or custom trading overrides are strictly disabled.
+                Asset selection, rebalancing, stop-losses, and order execution are performed algorithmically. Manual trading and custom overrides are disabled.
               </p>
             </div>
 
             <div className="space-y-1 border-t pt-2">
               <strong className="text-foreground flex items-center gap-1.5 font-semibold">
-                • Independent Multi-ETF Segregation:
+                • Segregated Multi-ETF Vaults:
               </strong>
               <p className="pl-3">
-                You can run multiple strategy ETFs simultaneously (e.g., holding both a Level 1 Defensive ETF and a Level 4 Expansion ETF). Each ETF operates as a distinct, segregated sub-account requiring its own allocated capital and individual funding.
+                You can invest in multiple ETFs simultaneously, but each operates as an independent portfolio vault and must be funded separately.
               </p>
             </div>
 
             <div className="space-y-1 border-t pt-2">
               <strong className="text-foreground flex items-center gap-1.5 font-semibold">
-                • Real-Time Performance Dashboard:
+                • Real-Time Transparency:
               </strong>
               <p className="pl-3">
-                You have continuous visibility into your portfolio’s Net Asset Value (NAV), current asset weightings, live unrealized/realized PnL, cash reserves, and historical yield metrics.
-              </p>
-            </div>
-
-            <div className="space-y-1 border-t pt-2">
-              <strong className="text-foreground flex items-center gap-1.5 font-semibold">
-                • Systematic Capital Deployment:
-              </strong>
-              <p className="pl-3">
-                When you deposit funds into an ETF, capital is systematically allocated across that strategy’s underlying basket based on real-time rebalancing rules.
+                Track live Net Asset Value (NAV), profit/loss, asset weightings, and historical performance metrics on your dashboard.
               </p>
             </div>
           </div>
@@ -120,7 +111,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <AlertTriangle className="h-4 w-4" />
             </div>
-            <span>Risk Disclosure & Market Realities</span>
+            <span>Risk Disclosure & Platform Terms</span>
           </div>
 
           <div className="grid gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs leading-relaxed text-muted-foreground">
@@ -129,39 +120,42 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 • Capital at Risk:
               </strong>
               <p className="pl-3">
-                Financial markets are inherently volatile. The value of your portfolio can fluctuate significantly, and you may lose some or all of your invested principal.
+                Financial markets carry inherent risk of capital loss. Historical backtests and model targets do not guarantee future yields.
               </p>
             </div>
 
             <div className="space-y-1 border-t border-amber-500/20 pt-2">
               <strong className="text-foreground font-semibold">
-                • No Performance Guarantees:
+                • Algorithmic & System Disclaimer:
               </strong>
               <p className="pl-3">
-                Target annual returns (e.g., 4% to 30%+) and historical backtest metrics are model projections designed for strategy calibration; they do not represent guaranteed outcomes or fixed yields.
+                The platform operates systematically based on mathematical models. Platform operators and software developers accept <strong>no liability or responsibility</strong> for portfolio losses, drawdowns, market slippage, or exchange interruptions.
               </p>
             </div>
 
             <div className="space-y-1.5 border-t border-amber-500/20 pt-2">
               <strong className="text-foreground font-semibold">
-                • Strategy-Specific Volatility:
+                • Strategy-Specific Risk Profiles:
               </strong>
               <div className="pl-3 space-y-1.5">
                 <div className="rounded-md bg-background/80 p-2 border border-border/60">
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Levels 1–2:</span> Prioritize capital preservation and blue-chip stability but remain exposed to broad macroeconomic downturns.
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Level 1 (Boomer Haven):</span> Conservative / Capital Preservation targeting 5%–9% annualized yield with low volatility sensitivity (&beta; &lt; 0.75).
                 </div>
                 <div className="rounded-md bg-background/80 p-2 border border-border/60">
-                  <span className="font-semibold text-rose-600 dark:text-rose-400">Levels 4–5:</span> Allocate to high-beta equities, micro-caps, penny stocks, and momentum swings, carrying severe volatility and substantial maximum drawdown risks (potentially exceeding 20%–40% in adverse market cycles).
+                  <span className="font-semibold text-indigo-600 dark:text-indigo-400">Level 2 (Steady Grind):</span> Moderate / Balanced Growth targeting 10%–18% annualized yield matching market benchmark beta (&beta; &asymp; 0.85 - 1.25).
+                </div>
+                <div className="rounded-md bg-background/80 p-2 border border-border/60">
+                  <span className="font-semibold text-rose-600 dark:text-rose-400">Level 3 (Diamond Hands):</span> Aggressive / Speculative Alpha targeting 20%+ return via high-beta equities and breakout momentum (&beta; &gt; 1.35).
                 </div>
               </div>
             </div>
 
             <div className="space-y-1 border-t border-amber-500/20 pt-2">
               <strong className="text-foreground font-semibold">
-                • Execution & Liquidity Friction:
+                • Discretionary Risk Capital:
               </strong>
               <p className="pl-3">
-                Portfolio performance may be impacted by market liquidity, bid-ask spreads, execution slippage, exchange connectivity, and unforeseen volatility spikes.
+                Users must only invest capital they can afford to lose.
               </p>
             </div>
           </div>
@@ -182,7 +176,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 • Zero Financial Liability:
               </strong>
               <p className="pl-3">
-                The automated bot, platform operators, and software developers accept <strong className="text-foreground">no liability or responsibility</strong> for financial losses, capital erosion, or missed market opportunities resulting from algorithm execution, market crashes, software interruptions, or model divergence.
+                The automated platform, operators, and developers accept <strong className="text-foreground">no liability or responsibility</strong> for financial losses, capital erosion, or missed market opportunities resulting from algorithm execution, market crashes, or model divergence.
               </p>
             </div>
 
@@ -191,16 +185,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 • Non-Advisory Status:
               </strong>
               <p className="pl-3">
-                This platform is a technology execution tool providing automated model portfolios. It does not provide personalized investment, tax, legal, or fiduciary advice.
-              </p>
-            </div>
-
-            <div className="space-y-1 border-t pt-2">
-              <strong className="text-foreground font-semibold">
-                • Sole User Responsibility:
-              </strong>
-              <p className="pl-3">
-                You retain full, sole responsibility for selecting your risk tolerance profile, monitoring your accounts, and allocating only discretionary risk capital that you can afford to lose.
+                This platform is a quantitative execution technology. It does not provide personalized investment, tax, legal, or fiduciary advice.
               </p>
             </div>
           </div>
@@ -238,7 +223,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 htmlFor="consent-automated"
                 className="text-xs font-medium leading-relaxed text-foreground cursor-pointer"
               >
-                <strong className="text-primary font-semibold">Automated Management:</strong> I understand that my portfolio will be executed 100% automatically by algorithmic models, and that manual trading is disabled.
+                <strong className="text-primary font-semibold">Automated Execution:</strong> I understand that execution is 100% automated across my selected ETF(s) and manual order entry is disabled.
               </label>
             </div>
 
@@ -254,7 +239,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 htmlFor="consent-multi-etf"
                 className="text-xs font-medium leading-relaxed text-foreground cursor-pointer"
               >
-                <strong className="text-primary font-semibold">Multi-ETF Funding:</strong> I understand that each strategy ETF operates independently and must be funded separately.
+                <strong className="text-primary font-semibold">Independent Vaults:</strong> I acknowledge that each of the 3 strategy ETFs is an independent vault requiring separate funding.
               </label>
             </div>
 
@@ -270,7 +255,7 @@ export function PlatformDisclosure({ onAccept, onBack }: PlatformDisclosureProps
                 htmlFor="consent-waiver"
                 className="text-xs font-medium leading-relaxed text-foreground cursor-pointer"
               >
-                <strong className="text-primary font-semibold">Risk & Liability Waiver:</strong> I acknowledge that trading involves substantial risk of loss, past performance does not guarantee future results, and the platform/bot is not liable for any portfolio losses incurred.
+                <strong className="text-primary font-semibold">Risk & Liability Waiver:</strong> I accept that trading involves substantial risk of loss and confirm the platform bears zero liability for portfolio drawdowns.
               </label>
             </div>
           </div>
