@@ -14,6 +14,7 @@ import {
 } from "@/lib/risk-assessment-data";
 import { SubAccount, RiskLevel } from "@/types/risk-profile";
 import { ShieldCheck, TrendingUp, Scale, Zap, Flame, Target } from "lucide-react";
+import { SystemHealthCard } from "@/components/dashboard/system-health-card";
 
 export function DashboardContent() {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(DEFAULT_SUB_ACCOUNTS[0]);
@@ -44,6 +45,9 @@ export function DashboardContent() {
 
   return (
     <div className="flex min-h-screen w-full flex-col space-y-6">
+      {/* Infrastructure & Pipeline Health */}
+      <SystemHealthCard />
+
       {/* Active Sub-Account Strategy Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div>

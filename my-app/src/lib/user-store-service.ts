@@ -1010,7 +1010,9 @@ export function getSubAccountWithDetails(subAccountId: string): SubAccountWithHo
  */
 export function exportFullUserData(): FullUserSnapshot {
   const user = getUserProfile();
-  const subAccounts = getAllSubAccounts().map((a) => getSubAccountWithDetails(a.id));
+  const subAccounts = getAllSubAccounts()
+    .map((a) => getSubAccountWithDetails(a.id))
+    .filter((a): a is SubAccountWithHoldings => a !== null);
   const aggregatedFinancials = getAggregatedFinancials();
   const transactions = getAllTransactions();
 
