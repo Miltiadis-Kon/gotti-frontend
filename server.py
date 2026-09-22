@@ -30,17 +30,9 @@ def get_stock_data(symbol: str = "AAPL", period: str = "1y"):
             return hist.to_json()
     except Exception as e:
         print(f"Warning: Failed to fetch live data from yfinance: {e}")
-
-    # Fallback mock series (30 days)
-    now_ms = int(time.time() * 1000)
-    day_ms = 86400000
-    mock_close = {}
-    base_price = 150.0
-    for i in range(365, -1, -1):
-        ts = str(now_ms - i * day_ms)
-        val = base_price + (i * 0.15) + ((i % 7) * 1.8) - ((i % 13) * 1.2)
-        mock_close[ts] = round(val, 2)
-    return json.dumps({"Close": mock_close})
+        return json.dumps({"error": f"Failed to fetch live data for {symbol}"})
+    
+    return json.dumps({"error": "No data found"})
 
 if __name__ == "__main__":
     import uvicorn

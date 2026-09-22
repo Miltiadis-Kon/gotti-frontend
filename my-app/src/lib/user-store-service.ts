@@ -120,95 +120,39 @@ export const ETF_STRATEGIES: Record<RiskLevel, RiskProfile> = {
 // ==============================================================================
 
 export const INITIAL_USER: UserProfile = {
-  id: "usr-gotti-demo",
-  email: "investor@gotti.ai",
+  id: "",
+  email: "",
   riskLevel: 2,
-  riskScore: 24,
-  strategyName: "Steady Grind ETF",
-  isLoggedIn: true,
-  activeSubAccountId: "sub-main-02",
-  totalCashBalance: 8375.00,
-  answers: { 1: "B", 2: "B", 3: "C", 4: "C", 5: "B", 6: "B", 7: "B", 8: "C", 9: "B", 10: "C" },
-  createdAt: "2026-01-15T00:00:00.000Z",
-  updatedAt: "2026-08-26T12:00:00.000Z"
+  riskScore: 0,
+  strategyName: "",
+  isLoggedIn: false,
+  activeSubAccountId: "",
+  totalCashBalance: 0,
+  answers: {},
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 };
 
 export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
   {
-    id: "sub-defensive-01",
-    name: "Level 1: Boomer Haven ETF",
+    id: "sub-1",
+    name: "Primary Fund",
     riskLevel: 1,
     strategyName: "Boomer Haven ETF",
-    allocatedCapital: 25000,
-    currentValue: 26850.00,
-    cashBalance: 2685.00,
-    investedAmount: 24165.00,
-    pnl: 1850.00,
-    pnlPercentage: 7.40,
+    allocatedCapital: 10000,
+    currentValue: 10000,
+    cashBalance: 10000,
+    investedAmount: 0,
+    pnl: 0,
+    pnlPercentage: 0,
     status: "active",
-    createdAt: "2026-02-01",
-    holdingsCount: 5,
-    description: "Capital preservation, reliable dividends, zero stress."
-  },
-  {
-    id: "sub-main-02",
-    name: "Level 2: Steady Grind ETF",
-    riskLevel: 2,
-    strategyName: "Steady Grind ETF",
-    allocatedCapital: 50000,
-    currentValue: 56900.00,
-    cashBalance: 5690.00,
-    investedAmount: 51210.00,
-    pnl: 6900.00,
-    pnlPercentage: 13.80,
-    status: "active",
-    createdAt: "2026-01-15",
-    holdingsCount: 6,
-    description: "Consistent compounding with systematic sector momentum."
+    createdAt: new Date().toISOString(),
+    holdingsCount: 0,
+    description: "Conservative Capital Preservation"
   }
 ];
 
-export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
-  {
-    id: "tx-101",
-    subAccountId: "sub-main-02",
-    subAccountName: "Level 2: Steady Grind ETF",
-    strategyName: "Steady Grind ETF",
-    amount: 30000,
-    type: "Deposit",
-    status: "Fulfilled",
-    method: "Bank Wire Transfer (•••• 5821)",
-    date: "2026-08-20",
-    timestamp: 1787200000000,
-    notes: "Initial portfolio onboarding allocation"
-  },
-  {
-    id: "tx-102",
-    subAccountId: "sub-main-02",
-    subAccountName: "Level 2: Steady Grind ETF",
-    strategyName: "Steady Grind ETF",
-    amount: 20000,
-    type: "Deposit",
-    status: "Fulfilled",
-    method: "Credit Card (Stripe)",
-    date: "2026-08-22",
-    timestamp: 1787380000000,
-    notes: "Secondary growth capital deployment"
-  },
-  {
-    id: "tx-103",
-    subAccountId: "sub-defensive-01",
-    subAccountName: "Level 1: Boomer Haven ETF",
-    strategyName: "Boomer Haven ETF",
-    amount: 25000,
-    type: "Deposit",
-    status: "Fulfilled",
-    method: "Debit Card (•••• 1234)",
-    date: "2026-08-25",
-    timestamp: 1787600000000,
-    notes: "Defensive capital allocation"
-  }
-];
+export const INITIAL_TRANSACTIONS: TransactionRecord[] = [];
 
 // ==============================================================================
 // DOMAIN 1: USER PROFILE & AUTHENTICATION SERVICES
@@ -276,6 +220,108 @@ export function isUserAuthenticated(): boolean {
 }
 
 /**
+ * Initialize a brand new registered user session with a fresh primary sub-account
+ * and clean zeroed balances (no demo artifacts or previous user deposits).
+ */
+export function registerNewUserSession(params: {
+  email: string;
+  riskLevel: RiskLevel;
+  riskScore?: number;
+  answers?: Record<number, "A" | "B" | "C" | "D">;
+  initialDeposit?: number;
+}): UserProfile {
+  const riskLevel = (params.riskLevel || 2) as RiskLevel;
+  const strategy = ETF_STRATEGIES[riskLevel] || ETF_STRATEGIES[2];
+  const sanitizedEmail = params.email.trim().toLowerCase();
+  const emailPrefix = sanitizedEmail.split("@")[0].replace(/[^a-zA-Z0-9_-]/g, "");
+  const userId = `usr-${emailPrefix}`;
+  const subAccountId = `sub-${userId}-lvl${riskLevel}`;
+
+  const initialCapital = params.initialDeposit || 0;
+  const initialCash = Math.round(initialCapital * 0.10 * 100) / 100;
+  const initialInvested = Math.round(initialCapital * 0.90 * 100) / 100;
+
+  // 1. Create the user's primary sub-account matching their assessed risk tier
+  const primarySubAccount: SubAccount = {
+    id: subAccountId,
+    name: `Level ${riskLevel}: ${strategy.strategyName}`,
+    riskLevel: riskLevel,
+    strategyName: strategy.strategyName,
+    allocatedCapital: initialCapital,
+    currentValue: initialCapital,
+    cashBalance: initialCash,
+    investedAmount: initialInvested,
+    pnl: 0,
+    pnlPercentage: 0,
+    status: "active",
+    createdAt: new Date().toISOString().split("T")[0],
+    holdingsCount: strategy.sampleTickers.length,
+    description: strategy.description
+  };
+
+  // 2. Create the clean UserProfile
+  const newUserProfile: UserProfile = {
+    id: userId,
+    email: sanitizedEmail,
+    riskLevel: riskLevel,
+    riskScore: params.riskScore || (riskLevel === 1 ? 15 : riskLevel === 2 ? 25 : 35),
+    strategyName: strategy.strategyName,
+    isLoggedIn: true,
+    activeSubAccountId: subAccountId,
+    totalCashBalance: initialCash,
+    answers: params.answers,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  // 3. Save fresh user state to localStorage (clearing all previous demo data)
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(newUserProfile));
+      localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify([primarySubAccount]));
+      localStorage.setItem(STORAGE_KEYS.ACTIVE_SUB_ACCOUNT, subAccountId);
+
+      if (initialCapital > 0) {
+        const initialTx: TransactionRecord = {
+          id: `tx-${Date.now()}`,
+          subAccountId: subAccountId,
+          subAccountName: primarySubAccount.name,
+          strategyName: primarySubAccount.strategyName,
+          amount: initialCapital,
+          type: "Deposit",
+          status: "Fulfilled",
+          method: "Initial Account Deposit",
+          notes: "Initial portfolio onboarding allocation",
+          date: new Date().toISOString().split("T")[0],
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([initialTx]));
+      } else {
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+      }
+    } catch (err) {
+      console.error("[GottiStore] Failed to initialize new user session:", err);
+    }
+  }
+
+  // 4. Sync with Backend API asynchronously
+  if (typeof window !== "undefined") {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000/api"}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: sanitizedEmail,
+        riskLevel: riskLevel,
+        riskScore: params.riskScore,
+        answers: params.answers
+      })
+    }).catch((err) => console.warn("[GottiStore] Backend registration sync warning:", err));
+  }
+
+  return newUserProfile;
+}
+
+/**
  * Log in user session
  */
 export function loginUser(email: string, riskLevel: RiskLevel = 2, answers?: Record<number, "A" | "B" | "C" | "D">): UserProfile {
@@ -294,6 +340,9 @@ export function logoutUser(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+    localStorage.removeItem(STORAGE_KEYS.SUB_ACCOUNTS);
+    localStorage.removeItem(STORAGE_KEYS.ACTIVE_SUB_ACCOUNT);
+    localStorage.removeItem(STORAGE_KEYS.TRANSACTIONS);
   } catch (err) {
     console.error("[GottiStore] Logout failed:", err);
   }
@@ -311,6 +360,28 @@ export function getAllSubAccounts(): SubAccount[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SUB_ACCOUNTS);
     if (!raw) {
+      const profile = getUserProfile();
+      if (profile.id !== "usr-gotti-demo" && profile.isLoggedIn) {
+        const strategy = ETF_STRATEGIES[profile.riskLevel] || ETF_STRATEGIES[2];
+        const primary: SubAccount = {
+          id: profile.activeSubAccountId || `sub-${profile.id}-lvl${profile.riskLevel}`,
+          name: `Level ${profile.riskLevel}: ${strategy.strategyName}`,
+          riskLevel: profile.riskLevel,
+          strategyName: strategy.strategyName,
+          allocatedCapital: 0,
+          currentValue: 0,
+          cashBalance: 0,
+          investedAmount: 0,
+          pnl: 0,
+          pnlPercentage: 0,
+          status: "active",
+          createdAt: new Date().toISOString().split("T")[0],
+          holdingsCount: strategy.sampleTickers.length,
+          description: strategy.description
+        };
+        localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify([primary]));
+        return [primary];
+      }
       localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify(INITIAL_SUB_ACCOUNTS));
       return INITIAL_SUB_ACCOUNTS;
     }
@@ -321,12 +392,14 @@ export function getAllSubAccounts(): SubAccount[] {
         const p = ETF_STRATEGIES[acc.riskLevel];
         const cashBalance = typeof acc.cashBalance === "number" ? acc.cashBalance : Math.round(acc.currentValue * 0.10 * 100) / 100;
         const investedAmount = typeof acc.investedAmount === "number" ? acc.investedAmount : Math.round((acc.currentValue - cashBalance) * 100) / 100;
+        const stratName = p ? p.strategyName : (acc.strategyName || "Unknown Strategy");
+        const accName = acc.name || "";
         return {
           ...acc,
           cashBalance,
           investedAmount,
-          strategyName: p ? p.strategyName : acc.strategyName,
-          name: acc.name.startsWith("Level ") ? `Level ${acc.riskLevel}: ${p.strategyName}` : acc.name
+          strategyName: stratName,
+          name: accName.startsWith("Level ") ? `Level ${acc.riskLevel}: ${stratName}` : (accName || `Level ${acc.riskLevel}: ${stratName}`)
         };
       })
       .sort((a, b) => a.riskLevel - b.riskLevel);
@@ -347,14 +420,14 @@ export function getSubAccountById(subAccountId: string): SubAccount | undefined 
  * Get the currently selected / active sub-account ID
  */
 export function getActiveSubAccountId(): string {
-  if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS[0].id;
+  if (typeof window === "undefined") return "";
   try {
     const active = localStorage.getItem(STORAGE_KEYS.ACTIVE_SUB_ACCOUNT);
     if (active) return active;
     const accounts = getAllSubAccounts();
-    return accounts[0]?.id || INITIAL_SUB_ACCOUNTS[0].id;
+    return accounts[0]?.id || "";
   } catch {
-    return INITIAL_SUB_ACCOUNTS[0].id;
+    return "";
   }
 }
 
@@ -376,7 +449,7 @@ export function setActiveSubAccountId(id: string): void {
 export function getActiveSubAccount(): SubAccount {
   const activeId = getActiveSubAccountId();
   const accounts = getAllSubAccounts();
-  return accounts.find((a) => a.id === activeId) || accounts[0] || INITIAL_SUB_ACCOUNTS[0];
+  return accounts.find((a) => a.id === activeId) || accounts[0] || undefined;
 }
 
 /**
@@ -698,6 +771,11 @@ export function getAllTransactions(): TransactionRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
     if (!raw) {
+      const profile = getUserProfile();
+      if (profile.id !== "usr-gotti-demo" && profile.isLoggedIn) {
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+        return [];
+      }
       localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
       return INITIAL_TRANSACTIONS;
     }
@@ -874,15 +952,15 @@ const STRATEGY_HOLDINGS_UNIVERSE: Record<
  * Get full position details for a specific sub-account
  */
 export function getSubAccountHoldings(subAccountId: string): HoldingPosition[] {
-  const account = getSubAccountById(subAccountId) || getAllSubAccounts()[0] || INITIAL_SUB_ACCOUNTS[0];
+  const account = getSubAccountById(subAccountId) || getAllSubAccounts()[0];
+    if (!account) return [];
   const universe = STRATEGY_HOLDINGS_UNIVERSE[account.riskLevel] || STRATEGY_HOLDINGS_UNIVERSE[2];
   const nav = account.currentValue;
 
   return universe.map((asset, idx) => {
     const allocatedAmount = Math.round(nav * asset.weight);
-    const mockPnlRatio = (idx % 2 === 0 ? 0.08 : -0.03) + (account.riskLevel * 0.02);
-    const unrealizedPnl = Math.round(allocatedAmount * mockPnlRatio);
-    const unrealizedPnlPercentage = +(mockPnlRatio * 100).toFixed(2);
+    const unrealizedPnl = 0;
+    const unrealizedPnlPercentage = 0;
 
     return {
       ticker: asset.ticker,
@@ -903,15 +981,16 @@ export function getSubAccountHoldings(subAccountId: string): HoldingPosition[] {
 /**
  * Return detailed sub-account object with holdings and strategy metrics
  */
-export function getSubAccountWithDetails(subAccountId: string): SubAccountWithHoldings {
-  const account = getSubAccountById(subAccountId) || getAllSubAccounts()[0] || INITIAL_SUB_ACCOUNTS[0];
+export function getSubAccountWithDetails(subAccountId: string): SubAccountWithHoldings | null {
+  const account = getSubAccountById(subAccountId) || getAllSubAccounts()[0];
+  if (!account) return null;
   const profile = ETF_STRATEGIES[account.riskLevel];
   const holdings = getSubAccountHoldings(account.id);
 
   const metricsMap: Record<RiskLevel, { sharpeRatio: number; maxDrawdown: string; volatilityBeta: string; winRate: string; tradeRatio: string }> = {
-    1: { sharpeRatio: 1.85, maxDrawdown: "3.2%", volatilityBeta: "< 0.75", winRate: "88%", tradeRatio: "44/50" },
-    2: { sharpeRatio: 1.55, maxDrawdown: "8.1%", volatilityBeta: "0.85–1.25", winRate: "74%", tradeRatio: "37/50" },
-    3: { sharpeRatio: 1.25, maxDrawdown: "22.0%", volatilityBeta: "> 1.35", winRate: "62%", tradeRatio: "31/50" }
+    1: { sharpeRatio: 0, maxDrawdown: "0%", volatilityBeta: "0", winRate: "0%", tradeRatio: "0/0" },
+    2: { sharpeRatio: 0, maxDrawdown: "0%", volatilityBeta: "0", winRate: "0%", tradeRatio: "0/0" },
+    3: { sharpeRatio: 0, maxDrawdown: "0%", volatilityBeta: "0", winRate: "0%", tradeRatio: "0/0" }
   };
 
   return {
@@ -972,7 +1051,7 @@ export function resetToDefaultState(): FullUserSnapshot {
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(INITIAL_USER));
     localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify(INITIAL_SUB_ACCOUNTS));
-    localStorage.setItem(STORAGE_KEYS.ACTIVE_SUB_ACCOUNT, INITIAL_SUB_ACCOUNTS[0].id);
+    localStorage.setItem(STORAGE_KEYS.ACTIVE_SUB_ACCOUNT, "");
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
   }
   return exportFullUserData();

@@ -103,7 +103,7 @@ export default function Dashboard() {
     router.push("/signup");
   };
 
-  const activeProfile = RISK_PROFILES[activeSubAccount.riskLevel];
+  const activeProfile = activeSubAccount?.riskLevel ? RISK_PROFILES[activeSubAccount.riskLevel] : RISK_PROFILES[1];
 
   const getProfileIcon = (level: RiskLevel) => {
     switch (level) {

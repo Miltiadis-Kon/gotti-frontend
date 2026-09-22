@@ -5,6 +5,7 @@ import {
   INITIAL_TRANSACTIONS,
   getUserProfile,
   updateUserProfile,
+  registerNewUserSession,
   isUserAuthenticated,
   logoutUser as serviceLogoutUser,
   getAllSubAccounts,
@@ -203,14 +204,15 @@ export function logoutUser(): void {
 }
 
 export function storeUser(user: { email: string; riskLevel: RiskLevel; riskScore?: number; answers?: Record<number, "A" | "B" | "C" | "D"> }): void {
-  updateUserProfile({
+  registerNewUserSession({
     email: user.email,
     riskLevel: user.riskLevel,
     riskScore: user.riskScore,
-    answers: user.answers,
-    isLoggedIn: true
+    answers: user.answers
   });
 }
+
+export { registerNewUserSession };
 
 export function getSubAccounts(): SubAccount[] {
   return getAllSubAccounts();

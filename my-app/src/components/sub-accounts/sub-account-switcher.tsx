@@ -59,7 +59,8 @@ export function SubAccountSwitcher({ activeAccount, onAccountSwitched, className
     onAccountSwitched(newAcc);
   };
 
-  const activeProfile = RISK_PROFILES[activeAccount.riskLevel];
+  const currentAccount = activeAccount || subAccounts[0];
+  const activeProfile = currentAccount?.riskLevel ? RISK_PROFILES[currentAccount.riskLevel] : RISK_PROFILES[1];
 
   return (
     <>
@@ -70,12 +71,12 @@ export function SubAccountSwitcher({ activeAccount, onAccountSwitched, className
             className={`flex items-center justify-between gap-2 h-9 px-2.5 text-xs bg-background/95 hover:bg-muted/80 border-border/80 ${className}`}
           >
             <div className="flex items-center gap-1.5 truncate">
-              {getProfileIcon(activeAccount.riskLevel)}
+              {getProfileIcon(currentAccount?.riskLevel || 1)}
               <span className="font-bold text-foreground truncate max-w-[120px] sm:max-w-[160px]">
                 {activeProfile.strategyName}
               </span>
               <Badge className={`${activeProfile.badgeClass} px-1.5 py-0 text-[10px]`}>
-                L{activeAccount.riskLevel}
+                L{currentAccount?.riskLevel || 1}
               </Badge>
             </div>
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0 opacity-60" />
@@ -98,7 +99,7 @@ export function SubAccountSwitcher({ activeAccount, onAccountSwitched, className
               .sort((a, b) => a.riskLevel - b.riskLevel)
               .map((acc) => {
                 const profile = RISK_PROFILES[acc.riskLevel];
-              const isActive = acc.id === activeAccount.id;
+                const isActive = acc.id === currentAccount?.id;
               return (
                 <DropdownMenuItem
                   key={acc.id}
