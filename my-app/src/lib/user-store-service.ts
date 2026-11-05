@@ -22,6 +22,7 @@ import {
   SubAccountWithHoldings,
   FullUserSnapshot
 } from "@/types/user-data";
+import { getBackendApiUrl, getVisualizeApiUrl } from "@/lib/api-config";
 
 // ==============================================================================
 // CONFIGURATION & BACKEND ADAPTER SWITCH
@@ -29,7 +30,7 @@ import {
 
 /** Set to true when your FastAPI / PostgreSQL server is running */
 export const USE_BACKEND_API = false;
-export const API_BASE_URL = "http://127.0.0.1:8000/api";
+export const API_BASE_URL = getVisualizeApiUrl();
 
 const STORAGE_KEYS = {
   USER_PROFILE: "gotti_user_profile",
@@ -135,20 +136,52 @@ export const INITIAL_USER: UserProfile = {
 
 export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
   {
-    id: "sub-1",
-    name: "Primary Fund",
+    id: "sub-defensive-01",
+    name: "Level 1: Boomer Haven ETF",
     riskLevel: 1,
     strategyName: "Boomer Haven ETF",
-    allocatedCapital: 10000,
-    currentValue: 10000,
-    cashBalance: 10000,
+    allocatedCapital: 26000,
+    currentValue: 27350,
+    cashBalance: 3635,
+    investedAmount: 23715,
+    pnl: 1350,
+    pnlPercentage: 5.13,
+    status: "active",
+    createdAt: "2026-02-01",
+    holdingsCount: 5,
+    description: "S&P 500 Dividend Aristocrats, Mega-Cap Value & Defensive Tech. Pure buy & hold."
+  },
+  {
+    id: "sub-main-02",
+    name: "Level 2: Steady Grind ETF",
+    riskLevel: 2,
+    strategyName: "Steady Grind ETF",
+    allocatedCapital: 45600,
+    currentValue: 51420.5,
+    cashBalance: 5682.05,
+    investedAmount: 45738.45,
+    pnl: 5820.5,
+    pnlPercentage: 12.93,
+    status: "active",
+    createdAt: "2026-01-15",
+    holdingsCount: 5,
+    description: "Large & Mid-Cap Growth Leaders, Systematic Sector Momentum. Multi-month swings."
+  },
+  {
+    id: "sub-alpha-03",
+    name: "Level 3: Diamond Hands ETF",
+    riskLevel: 3,
+    strategyName: "Diamond Hands ETF",
+    allocatedCapital: 1000000,
+    currentValue: 1000000,
+    cashBalance: 1000000,
     investedAmount: 0,
     pnl: 0,
     pnlPercentage: 0,
     status: "active",
-    createdAt: new Date().toISOString(),
-    holdingsCount: 0,
-    description: "Conservative Capital Preservation"
+    createdAt: "2026-03-10",
+    holdingsCount: 6,
+    description: "High-Beta Equities, Emerging Small/Micro-Caps, Dynamic Breakout Stocks. Tactical momentum."
   }
 ];
 
@@ -306,7 +339,7 @@ export function registerNewUserSession(params: {
 
   // 4. Sync with Backend API asynchronously
   if (typeof window !== "undefined") {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000/api"}/auth/register`, {
+    fetch(`${getBackendApiUrl()}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -939,12 +972,12 @@ const STRATEGY_HOLDINGS_UNIVERSE: Record<
     { ticker: "TSM", name: "Taiwan Semiconductor", weight: 0.10, sector: "Foundry Leaders", basePrice: 172.50 }
   ],
   3: [
-    { ticker: "MSTR", name: "MicroStrategy Inc.", weight: 0.25, sector: "Bitcoin Alpha Treasury", basePrice: 145.20 },
-    { ticker: "TSLA", name: "Tesla Inc.", weight: 0.20, sector: "Autonomous & EV Growth", basePrice: 215.60 },
-    { ticker: "PLTR", name: "Palantir Technologies", weight: 0.18, sector: "Enterprise AI Software", basePrice: 31.40 },
-    { ticker: "COIN", name: "Coinbase Global Inc.", weight: 0.15, sector: "Digital Asset Infrastructure", basePrice: 195.80 },
-    { ticker: "RIVN", name: "Rivian Automotive", weight: 0.12, sector: "EV Momentum Swings", basePrice: 14.80 },
-    { ticker: "MARA", name: "MARA Holdings Inc.", weight: 0.10, sector: "Digital Mining Infrastructure", basePrice: 18.90 }
+    { ticker: "MSTR", name: "MicroStrategy Inc.", weight: 0.25, sector: "Bitcoin Alpha Treasury", basePrice: 240.50 },
+    { ticker: "TSLA", name: "Tesla Inc.", weight: 0.20, sector: "Autonomous & EV Growth", basePrice: 220.80 },
+    { ticker: "PLTR", name: "Palantir Technologies", weight: 0.18, sector: "Enterprise AI Software", basePrice: 42.50 },
+    { ticker: "COIN", name: "Coinbase Global Inc.", weight: 0.15, sector: "Digital Asset Infrastructure", basePrice: 210.00 },
+    { ticker: "NVDA", name: "Nvidia Alpha Momentum", weight: 0.12, sector: "AI Accelerator Swings", basePrice: 140.00 },
+    { ticker: "MARA", name: "MARA Holdings Inc.", weight: 0.10, sector: "Digital Mining Infrastructure", basePrice: 19.50 }
   ]
 };
 

@@ -85,7 +85,7 @@ export function PortofolioAllocation({ subAccount }: AllocationProps) {
       { ticker: "TSLA", name: "Tesla Inc.", allocationNum: 0.20, allocation: "20%" },
       { ticker: "PLTR", name: "Palantir Technologies", allocationNum: 0.18, allocation: "18%" },
       { ticker: "COIN", name: "Coinbase Global Inc.", allocationNum: 0.15, allocation: "15%" },
-      { ticker: "RIVN", name: "Rivian Automotive", allocationNum: 0.12, allocation: "12%" },
+      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocationNum: 0.12, allocation: "12%" },
       { ticker: "MARA", name: "MARA Holdings Inc.", allocationNum: 0.10, allocation: "10%" }
     ]
   };

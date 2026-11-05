@@ -57,12 +57,12 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
       { ticker: "TSM", name: "Taiwan Semiconductor", allocation: "10%", pnl: "+$820.00", isPositive: true }
     ],
     3: [
-      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "25%", pnl: "+$6,250.00", isPositive: true },
-      { ticker: "TSLA", name: "Tesla Inc.", allocation: "20%", pnl: "+$3,420.00", isPositive: true },
-      { ticker: "PLTR", name: "Palantir Technologies", allocation: "18%", pnl: "+$2,950.00", isPositive: true },
-      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "15%", pnl: "-$860.00", isPositive: false },
-      { ticker: "RIVN", name: "Rivian Automotive", allocation: "12%", pnl: "-$1,240.00", isPositive: false },
-      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "10%", pnl: "+$1,890.00", isPositive: true }
+      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "25%", pnl: "+$0.00", isPositive: true },
+      { ticker: "TSLA", name: "Tesla Inc.", allocation: "20%", pnl: "+$0.00", isPositive: true },
+      { ticker: "PLTR", name: "Palantir Technologies", allocation: "18%", pnl: "+$0.00", isPositive: true },
+      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "15%", pnl: "+$0.00", isPositive: true },
+      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocation: "12%", pnl: "+$0.00", isPositive: true },
+      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "10%", pnl: "+$0.00", isPositive: true }
     ]
   };
 
