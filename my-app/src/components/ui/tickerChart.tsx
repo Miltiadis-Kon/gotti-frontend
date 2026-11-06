@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { getVisualizeApiUrl } from "@/lib/api-config";
 import {
   Card,
   CardContent,
@@ -32,7 +33,7 @@ const TickerChart = () => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/stock_data"
+          `${getVisualizeApiUrl()}/stock_data`
         );
         const data = response.data;
         const parsedData = JSON.parse(data);

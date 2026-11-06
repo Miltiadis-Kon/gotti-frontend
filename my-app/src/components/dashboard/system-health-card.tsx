@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Database, Activity, HardDrive, RefreshCw, CheckCircle2, AlertTriangle, XCircle, ShieldCheck } from "lucide-react";
+import { getBackendApiUrl } from "@/lib/api-config";
 
 interface SystemHealthData {
   overall_status: "HEALTHY" | "DEGRADED" | "OFFLINE" | string;
@@ -39,7 +40,7 @@ export function SystemHealthCard() {
     setLoading(true);
     try {
       // Backend admin endpoint
-      const res = await fetch("http://localhost:10000/api/v1/admin/system-health", {
+      const res = await fetch(`${getBackendApiUrl()}/v1/admin/system-health`, {
         headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {

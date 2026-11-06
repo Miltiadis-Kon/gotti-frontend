@@ -20,7 +20,7 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -39,286 +39,291 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { RefreshCw, Activity, ExternalLink, ShieldAlert } from "lucide-react";
+import { getBackendApiUrl } from "@/lib/api-config";
 import { OrderData } from "./columns";
 
-const data: OrderData[] = [
+export const columns: ColumnDef<OrderData>[] = [
   {
-    id: 1,
-    date: "01/08/24",
-    symbol: "AAPL",
-    name: "Apple Inc.",
-    status: "Open",
-    buyPrice: 148.97,
-    sellPrice: "-",
-    profit: "-",
-    orderAmount: 100,
-    totalAmount: 15029,
-    type: "Buy",
-  },
-  {
-    id: 2,
-    date: "02/08/24",
-    symbol: "MSFT",
-    name: "Microsoft Corporation",
-    status: "Closed",
-    buyPrice: 301.15,
-    sellPrice: 301.29,
-    profit: -14,
-    orderAmount: 100,
-    totalAmount: 30129,
-    type: "Sell",
-  },
-  {
-    id: 3,
-    date: "02/08/24",
-    symbol: "GOOGL",
-    name: "Alphabet Inc.",
-    status: "Closed",
-    buyPrice: 2800.0,
-    sellPrice: 2900.0,
-    profit: 100.0,
-    orderAmount: 10,
-    totalAmount: 29000.0,
-    type: "Buy",
-  },
-  {
-    id: 4,
-    date: "03/08/24",
-    symbol: "AMZN",
-    name: "Amazon.com, Inc.",
-    status: "Closed",
-    buyPrice: 3500.0,
-    sellPrice: 3400.0,
-    profit: -100.0,
-    orderAmount: 5,
-    totalAmount: 17000.0,
-    type: "Sell",
-  },
-];
-
-const columns: ColumnDef<OrderData>[] = [
-    /*
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+    accessorKey: "id",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        #ID
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  */
-  {
-    accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <Button
-          style={{ margin: "0rem", padding: "0rem" }}
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="capitalize" style={{ margin: "0rem", padding: "0rem" }}>
-        {row.getValue("status")}
+      <div className="font-mono text-xs font-semibold text-muted-foreground">
+        #{row.getValue("id")}
       </div>
     ),
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Status
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const status = String(row.getValue("status") || "Open");
+      const isOpen = status.toLowerCase() === "open";
+      return (
+        <Badge
+          variant="outline"
+          className={
+            isOpen
+              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30 font-medium text-xs flex items-center gap-1 w-fit"
+              : "bg-muted text-muted-foreground border-border font-normal text-xs w-fit"
+          }
+        >
+          {isOpen && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />}
+          {status}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "type",
-    header: ({ column }) => {
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Side
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const side = String(row.getValue("type") || "Buy").toUpperCase();
+      const isBuy = side === "BUY";
       return (
-        <Button
-          style={{ margin: "0rem", padding: "0rem" }}
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <Badge
+          className={
+            isBuy
+              ? "bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-[11px] px-2"
+              : "bg-rose-600 hover:bg-rose-700 text-white font-mono text-[11px] px-2"
+          }
         >
-          Buy/Sell
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+          {side}
+        </Badge>
       );
     },
-    cell: ({ row }) => (
-      <div className="capitalize" style={{ margin: "0rem", padding: "0rem" }}>
-        {row.getValue("type")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      return (
-        <Button
-          style={{ margin: "0rem", padding: "0rem" }}
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase" style={{ margin: "0rem", padding: "0rem" }}>
-        {row.getValue("date")}
-      </div>
-    ),
   },
   {
     accessorKey: "symbol",
-    header: ({ column }) => {
-      return (
-        <Button
-          style={{ margin: "0rem", padding: "0rem" }}
-          className="text-left"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ticker
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold text-left"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Ticker
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
     cell: ({ row }) => (
-      <div className="uppercase" style={{ margin: "0rem", padding: "0rem" }}>
+      <div className="font-mono font-bold text-sm tracking-wide text-foreground">
         {row.getValue("symbol")}
       </div>
     ),
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="capitalize" style={{ margin: "0rem", padding: "0rem" }}>
-        {row.getValue("name")}
-      </div>
-    ),
+    header: "Strategy / Asset",
+    cell: ({ row }) => {
+      const name = String(row.getValue("name") || "");
+      const isLive = name.includes("Live");
+      return (
+        <div className="flex flex-col">
+          <span className="font-medium text-xs text-foreground">
+            {name.replace(" Live", "")}
+          </span>
+          {isLive && (
+            <span className="text-[10px] text-emerald-500 font-mono flex items-center gap-1">
+              <Activity className="h-2.5 w-2.5" /> Alpaca Live Execution
+            </span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "orderAmount",
-    header: () => <div style={{ margin: "0rem", padding: "0rem" }}>Amount</div>,
+    header: () => <div className="text-right font-bold">Shares</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("orderAmount"));
-      return <div style={{ margin: "0rem", padding: "0rem" }}>{amount}</div>;
+      const amt = parseFloat(row.getValue("orderAmount") || 0);
+      return (
+        <div className="text-right font-mono text-xs font-medium">
+          {amt.toLocaleString()}
+        </div>
+      );
     },
   },
   {
     accessorKey: "buyPrice",
-    header: () => (
-      <div style={{ margin: "0rem", padding: "0rem" }}>Trade Open</div>
-    ),
+    header: () => <div className="text-right font-bold">Entry Price</div>,
     cell: ({ row }) => {
-      const amount = isNaN(parseFloat(row.getValue("buyPrice")))
-        ? "-"
-        : parseFloat(row.getValue("buyPrice"));
-      return <div style={{ margin: "0rem", padding: "0rem" }}>{amount}</div>;
+      const side = String(row.original.type || "").toUpperCase();
+      const bp = parseFloat(String(row.original.buyPrice));
+      const sp = parseFloat(String(row.original.sellPrice));
+      const entryVal = side === "BUY" ? bp : sp;
+
+      if (isNaN(entryVal) || entryVal <= 0) {
+        return <div className="text-right font-mono text-xs text-muted-foreground">-</div>;
+      }
+      return (
+        <div className="text-right font-mono text-xs font-semibold text-foreground">
+          ${entryVal.toFixed(2)}
+        </div>
+      );
     },
   },
   {
     accessorKey: "sellPrice",
-    header: () => (
-      <div style={{ margin: "0rem", padding: "0rem" }}>Trade Closed</div>
-    ),
+    header: () => <div className="text-right font-bold">Exit Price</div>,
     cell: ({ row }) => {
-      const amount = isNaN(parseFloat(row.getValue("sellPrice")))
-        ? "-"
-        : parseFloat(row.getValue("sellPrice"));
-      return <div style={{ margin: "0rem", padding: "0rem" }}>{amount}</div>;
+      const side = String(row.original.type || "").toUpperCase();
+      const bp = parseFloat(String(row.original.buyPrice));
+      const sp = parseFloat(String(row.original.sellPrice));
+      const status = String(row.original.status || "");
+      const exitVal = side === "BUY" ? sp : bp;
+
+      if (status.toLowerCase() === "open" || isNaN(exitVal) || exitVal <= 0) {
+        return (
+          <div className="text-right font-mono text-xs text-muted-foreground italic">
+            Pending
+          </div>
+        );
+      }
+      return (
+        <div className="text-right font-mono text-xs font-semibold text-foreground">
+          ${exitVal.toFixed(2)}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalAmount",
+    header: () => <div className="text-right font-bold">Total Capital</div>,
+    cell: ({ row }) => {
+      const tot = parseFloat(row.getValue("totalAmount") || 0);
+      return (
+        <div className="text-right font-mono text-xs font-bold text-foreground">
+          ${tot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </div>
+      );
     },
   },
   {
     accessorKey: "profit",
-    header: ({ column }) => {
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold ml-auto flex"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Realized P&L
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const status = String(row.original.status || "");
+      const rawProfit = parseFloat(String(row.getValue("profit")));
+
+      if (status.toLowerCase() === "open" || isNaN(rawProfit)) {
+        return (
+          <div className="text-right font-mono text-xs text-muted-foreground">
+            -
+          </div>
+        );
+      }
+
+      const isPos = rawProfit > 0;
+      const isZero = Math.abs(rawProfit) < 0.01;
+
       return (
-        <Button
-          style={{ margin: "0rem", padding: "0rem" }}
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <div
+          className={`text-right font-mono text-xs font-bold ${
+            isZero
+              ? "text-muted-foreground"
+              : isPos
+              ? "text-emerald-500"
+              : "text-rose-500"
+          }`}
         >
-          Profit
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+          {isPos ? `+$${rawProfit.toFixed(2)}` : `$${rawProfit.toFixed(2)}`}
+        </div>
       );
     },
-    cell: ({ row }) => (
-      <div className="lowercase" style={{ margin: "0rem", padding: "0rem" }}>
-        {isNaN(parseFloat(row.getValue("profit")))
-          ? "-"
-          : parseFloat(row.getValue("profit")).toFixed(2)}
-      </div>
-    ),
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const OrderData = row.original;
-
-      function ReportTrade(id: number): void {
-        throw new Error("Function not implemented.");
-      }
-
-      function HideTrade(id: number): void {
-        throw new Error("Function not implemented.");
-      }
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(OrderData.id.toString())
-              }
-            >
-              Copy OrderData ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => ReportTrade(OrderData.id)}>
-              Report Trade
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => HideTrade(OrderData.id)}>
-              Hide Trade
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    accessorKey: "date",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold ml-auto flex"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Date
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-right font-mono text-xs text-muted-foreground">
+        {row.getValue("date")}
+      </div>
+    ),
   },
 ];
 
 export default function Orders() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [data, setData] = React.useState<OrderData[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
+  const [isRefreshing, setIsRefreshing] = React.useState<boolean>(false);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "id", desc: true },
+  ]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const fetchOrders = React.useCallback(async (showIndicator = false) => {
+    if (showIndicator) setIsRefreshing(true);
+    try {
+      const baseUrl = getBackendApiUrl();
+      const res = await fetch(`${baseUrl}/orders?limit=100`, { cache: "no-store" });
+      if (res.ok) {
+        const orders = await res.json();
+        setData(orders);
+        setLastUpdated(new Date());
+      }
+    } catch (err) {
+      console.error("Error fetching live orders from backend:", err);
+    } finally {
+      setLoading(false);
+      if (showIndicator) setIsRefreshing(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchOrders(false);
+    const interval = setInterval(() => {
+      fetchOrders(false);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   const table = useReactTable({
     data,
@@ -337,113 +342,173 @@ export default function Orders() {
       columnVisibility,
       rowSelection,
     },
+    initialState: {
+      pagination: {
+        pageSize: 15,
+      },
+    },
   });
 
+  const openCount = data.filter((d) => String(d.status).toLowerCase() === "open").length;
+  const closedCount = data.filter((d) => String(d.status).toLowerCase() === "closed").length;
+
   return (
-    <div className="w-full">
-      <div className="flex items-center py-2">
+    <div className="w-full space-y-4">
+      {/* Top Status & Summary Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Live Trades & Execution Orders
+            </h1>
+            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 flex items-center gap-1.5 font-mono text-xs">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Alpaca Level 3 Connected
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+            <span>
+              Real-time synchronization with Diamond Hands ETF (Paper Account)
+            </span>
+            {lastUpdated && (
+              <>
+                <span>•</span>
+                <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+              </>
+            )}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-card">
+            🟢 Open: <strong className="ml-1 text-emerald-500">{openCount}</strong>
+          </Badge>
+          <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-card">
+            ⚪ Closed: <strong className="ml-1 text-foreground">{closedCount}</strong>
+          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchOrders(true)}
+            disabled={isRefreshing}
+            className="h-8 gap-1.5 text-xs ml-1"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {/* Filters & Column Controls */}
+      <div className="flex items-center justify-between gap-2">
         <Input
-          placeholder="Filter symbol..."
+          placeholder="Filter by symbol (e.g. ARM, GILD)..."
           value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("symbol")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-xs h-9 text-xs"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-1 h-4 w-4" />
+            <Button variant="outline" size="sm" className="ml-auto h-9 text-xs">
+              Columns <ChevronDownIcon className="ml-1 h-3.5 w-3.5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize text-xs"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border p-0">
-        <Table className="p-1">
-          <TableHeader className="text-left">
+
+      {/* Main Table */}
+      <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="p-0 text-left">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead className="text-left" key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="text-xs font-bold text-foreground py-3">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground text-xs">
+                  <div className="flex items-center justify-center gap-2">
+                    <RefreshCw className="h-4 w-4 animate-spin text-primary" />
+                    <span>Connecting to backend & fetching live Alpaca orders...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="p-0 m-0 text-left"
                   key={row.id}
+                  className="hover:bg-muted/40 transition-colors"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="py-2.5">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24">
-                  No results.
+                <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground text-xs">
+                  No orders recorded yet. Live trade daemon is scanning market.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-2">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between text-xs text-muted-foreground py-1">
+        <div>
+          Showing {table.getRowModel().rows.length} of {data.length} total orders
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className="h-8 text-xs"
           >
             Previous
           </Button>
+          <span className="font-mono text-xs">
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {Math.max(1, table.getPageCount())}
+          </span>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className="h-8 text-xs"
           >
             Next
           </Button>

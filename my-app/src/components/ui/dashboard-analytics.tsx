@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowUpRight, Target } from "lucide-react";
+import { ArrowUpRight, Activity } from "lucide-react";
 import Link from "next/link";
 import {
   RISK_PROFILES,
@@ -17,13 +17,30 @@ import {
   DEFAULT_SUB_ACCOUNTS
 } from "@/lib/risk-assessment-data";
 import { RiskLevel, SubAccount } from "@/types/risk-profile";
+import { getBackendApiUrl } from "@/lib/api-config";
 
 interface DashboardAnalyticsProps {
   subAccount?: SubAccount;
 }
 
+interface LiveOrderItem {
+  id: number;
+  date: string;
+  symbol: string;
+  name: string;
+  type: "Buy" | "Sell";
+  buyPrice: number | "-";
+  sellPrice: number | "-";
+  profit: number | "-";
+  orderAmount: number;
+  totalAmount: number;
+  status: "Open" | "Closed";
+}
+
 export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [liveOrders, setLiveOrders] = useState<LiveOrderItem[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState<boolean>(true);
 
   useEffect(() => {
     if (subAccount) {
@@ -36,11 +53,47 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
     setActiveAccount(current);
   }, [subAccount]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLiveTrades = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/orders?limit=30`, { cache: "no-store" });
+        if (res.ok) {
+          const data: LiveOrderItem[] = await res.json();
+          if (isMounted) {
+            setLiveOrders(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live trades for dashboard:", err);
+      } finally {
+        if (isMounted) setLoadingOrders(false);
+      }
+    };
+
+    fetchLiveTrades();
+    const interval = setInterval(fetchLiveTrades, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
 
-  // Real underlying stock holdings per strategy
-  const holdingsMap: Record<RiskLevel, Array<{ ticker: string; name: string; allocation: string; pnl: string; isPositive: boolean }>> = {
+  // Extract unique active symbols or most recent orders
+  const recentSymbolsMap = new Map<string, LiveOrderItem>();
+  for (const o of liveOrders) {
+    if (!recentSymbolsMap.has(o.symbol)) {
+      recentSymbolsMap.set(o.symbol, o);
+    }
+  }
+  const distinctRecentOrders = Array.from(recentSymbolsMap.values()).slice(0, 6);
+
+  // Fallback model holdings if no live orders available
+  const fallbackHoldings: Record<RiskLevel, Array<{ ticker: string; name: string; allocation: string; pnl: string; isPositive: boolean }>> = {
     1: [
       { ticker: "KO", name: "The Coca-Cola Company", allocation: "22%", pnl: "+$840.00", isPositive: true },
       { ticker: "PG", name: "Procter & Gamble Co.", allocation: "20%", pnl: "+$620.50", isPositive: true },
@@ -66,7 +119,8 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
     ]
   };
 
-  const positions = holdingsMap[activeAccount.riskLevel] || holdingsMap[2];
+  const hasLiveOrders = distinctRecentOrders.length > 0;
+  const openCount = liveOrders.filter((o) => String(o.status).toLowerCase() === "open").length;
 
   return (
     <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 bg-transparent">
@@ -78,7 +132,7 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
         </CardContent>
       </Card>
 
-      {/* Recent Positions for Active ETF Column */}
+      {/* Live Positions / Orders for Active ETF Column */}
       <Card
         className="border-2 shadow-md bg-card flex flex-col justify-between"
         style={{ borderColor: `${color}60`, boxShadow: `0 0 12px ${color}08` }}
@@ -86,14 +140,26 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
       >
         <CardHeader className="flex justify-between flex-row items-center pb-3">
           <div className="space-y-0.5">
-            <CardTitle className="text-base font-bold">Model Portfolio Holdings</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base font-bold">
+                {hasLiveOrders ? "Live Systematic Trades" : "Model Portfolio Holdings"}
+              </CardTitle>
+              {hasLiveOrders && (
+                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 text-[10px] font-mono flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Alpaca Live
+                </Badge>
+              )}
+            </div>
             <CardDescription className="text-xs">
-              Systematic positions in {activeAccount.name}
+              {hasLiveOrders
+                ? `${openCount} active positions in ${activeAccount.name}`
+                : `Systematic positions in ${activeAccount.name}`}
             </CardDescription>
           </div>
           <Button asChild size="sm" variant="ghost" className="h-8 text-xs gap-1">
-            <Link href="/sub-accounts">
-              All ETF Hub
+            <Link href="/orders">
+              All Orders
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </Button>
@@ -102,40 +168,115 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
         <Separator className="bg-border mb-2" />
 
         <CardContent className="grid gap-3 pt-0 pb-3">
-          {positions.map((pos) => (
-            <div key={pos.ticker} className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
-              <div className="flex items-center gap-3">
-                <Avatar
-                  className="h-8 w-8 text-xs font-bold font-mono border"
-                  style={{ backgroundColor: `${color}15`, borderColor: `${color}40`, color }}
+          {hasLiveOrders ? (
+            distinctRecentOrders.map((order) => {
+              const isOpen = String(order.status).toLowerCase() === "open";
+              const isBuy = String(order.type).toUpperCase() === "BUY";
+              const entryPrice = isBuy
+                ? Number(order.buyPrice) || 0
+                : Number(order.sellPrice) || 0;
+              const profitNum = Number(order.profit);
+              const hasProfit = !isNaN(profitNum) && !isOpen;
+
+              return (
+                <div
+                  key={`${order.symbol}-${order.id}`}
+                  className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-muted/40 transition-colors"
                 >
-                  <AvatarFallback style={{ backgroundColor: `${color}20`, color }}>
-                    {pos.ticker.slice(0, 3)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-foreground font-mono">{pos.ticker}</span>
-                    <span className="text-[10px] text-muted-foreground font-medium">({pos.allocation})</span>
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      className="h-8 w-8 text-xs font-bold font-mono border"
+                      style={{ backgroundColor: `${color}15`, borderColor: `${color}40`, color }}
+                    >
+                      <AvatarFallback style={{ backgroundColor: `${color}20`, color }}>
+                        {order.symbol.slice(0, 3)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-foreground font-mono">
+                          {order.symbol}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={
+                            isBuy
+                              ? "text-[9px] px-1 py-0 border-emerald-500/40 text-emerald-500 font-mono"
+                              : "text-[9px] px-1 py-0 border-rose-500/40 text-rose-500 font-mono"
+                          }
+                        >
+                          {order.type}
+                        </Badge>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          {Number(order.orderAmount).toLocaleString()} shares
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1 font-mono">
+                        Entry: ${entryPrice.toFixed(2)} | Total: ${(Number(order.totalAmount) || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground line-clamp-1">
-                    {pos.name}
-                  </p>
+
+                  <div className="text-right">
+                    <Badge
+                      variant="outline"
+                      className={
+                        isOpen
+                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30 text-[10px] font-mono"
+                          : "bg-muted text-muted-foreground text-[10px] font-mono"
+                      }
+                    >
+                      {isOpen ? "Open" : "Closed"}
+                    </Badge>
+                    {hasProfit && (
+                      <div
+                        className={`font-mono text-[11px] font-bold mt-0.5 ${
+                          profitNum >= 0 ? "text-emerald-500" : "text-rose-500"
+                        }`}
+                      >
+                        {profitNum >= 0 ? `+$${profitNum.toFixed(2)}` : `$${profitNum.toFixed(2)}`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            (fallbackHoldings[activeAccount.riskLevel] || fallbackHoldings[2]).map((pos) => (
+              <div key={pos.ticker} className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    className="h-8 w-8 text-xs font-bold font-mono border"
+                    style={{ backgroundColor: `${color}15`, borderColor: `${color}40`, color }}
+                  >
+                    <AvatarFallback style={{ backgroundColor: `${color}20`, color }}>
+                      {pos.ticker.slice(0, 3)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-foreground font-mono">{pos.ticker}</span>
+                      <span className="text-[10px] text-muted-foreground font-medium">({pos.allocation})</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground line-clamp-1">
+                      {pos.name}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="font-mono text-xs font-bold text-right"
+                  style={{ color: pos.isPositive ? color : "hsl(var(--destructive))" }}
+                >
+                  {pos.pnl}
                 </div>
               </div>
-              <div
-                className="font-mono text-xs font-bold text-right"
-                style={{ color: pos.isPositive ? color : "hsl(var(--destructive))" }}
-              >
-                {pos.pnl}
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </CardContent>
 
         <CardFooter className="border-t pt-2.5 pb-2.5 text-[11px] text-muted-foreground flex justify-between bg-muted/10">
-          <span>Universe: <strong className="text-foreground">{profile.sampleTickers.length} Assets</strong></span>
-          <span>Rebalanced: <strong className="text-foreground">Today</strong></span>
+          <span>Broker: <strong className="text-emerald-500 font-mono">Alpaca Level 3</strong></span>
+          <span>Live Synchronized: <strong className="text-foreground">Every 5s</strong></span>
         </CardFooter>
       </Card>
     </div>

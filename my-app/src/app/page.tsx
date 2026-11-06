@@ -22,6 +22,7 @@ import {
   Layers,
   ChevronDown,
   ArrowUpRight,
+  ExternalLink,
   LogOut
 } from "lucide-react";
 
@@ -50,6 +51,7 @@ import { useRouter } from "next/navigation";
 
 import { DashboardContent } from "@/components/pages/dashboard";
 import { TradesContent } from "@/components/pages/portfolio";
+import Orders from "@/app/orders/page";
 import EvaluationContent from "@/components/pages/evaluation";
 import { AddFundsContent } from "@/components/pages/addFunds";
 import { ProfileContent } from "@/components/pages/profile";
@@ -73,9 +75,16 @@ export default function Dashboard() {
   const [activeSubAccount, setActiveSubAccount] = useState<SubAccount>(DEFAULT_SUB_ACCOUNTS[0]);
   const [userEmail, setUserEmail] = useState<string>("investor@gotti.ai");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  const [hostName, setHostName] = useState<string>("localhost");
+  const [hostProto, setHostProto] = useState<string>("http:");
   const router = useRouter();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHostName(window.location.hostname);
+      setHostProto(window.location.protocol);
+    }
+
     const accs = getSubAccounts();
     setSubAccounts(accs);
     const activeId = getActiveSubAccountId();
@@ -117,6 +126,8 @@ export default function Dashboard() {
     switch (view) {
       case "dashboard":
         return <DashboardContent />;
+      case "orders":
+        return <Orders />;
       case "trades":
         return <TradesContent />;
       case "evaluation":
@@ -197,6 +208,17 @@ export default function Dashboard() {
               </Link>
               <Link
                 href="#"
+                className={getLinkClass("orders")}
+                onClick={() => handleLinkClick("orders")}
+              >
+                <Layers className="h-4 w-4" />
+                Live Trades & Orders
+                <Badge variant="outline" className="ml-auto flex h-5 px-1.5 shrink-0 items-center justify-center rounded-full text-[10px] bg-emerald-500/10 text-emerald-500 border-emerald-500/30 font-mono">
+                  LIVE
+                </Badge>
+              </Link>
+              <Link
+                href="#"
                 className={getLinkClass("trades")}
                 onClick={() => handleLinkClick("trades")}
               >
@@ -240,6 +262,63 @@ export default function Dashboard() {
                 <UserRound className="h-4 w-4" />
                 Profile & Risk
               </Link>
+
+              {/* Ecosystem Microservices */}
+              <div className="pt-3 pb-1 px-3">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                  Ecosystem Hub
+                </div>
+              </div>
+              <a
+                href={`${hostProto}//${hostName}:10000/evaluate`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-all hover:text-indigo-400 hover:bg-muted/50"
+              >
+                <Scale className="h-3.5 w-3.5 text-indigo-400" />
+                <span>Ticker Evaluator</span>
+                <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+              </a>
+              <a
+                href={`${hostProto}//${hostName}:8000/chart`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-all hover:text-cyan-400 hover:bg-muted/50"
+              >
+                <TrendingUp className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Key Levels Chart</span>
+                <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+              </a>
+              <a
+                href={`${hostProto}//${hostName}:8000/strategies`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-all hover:text-cyan-300 hover:bg-muted/50"
+              >
+                <Sliders className="h-3.5 w-3.5 text-cyan-300" />
+                <span>Strategy Hub</span>
+                <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+              </a>
+              <a
+                href={`${hostProto}//${hostName}:8080/`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-all hover:text-amber-400 hover:bg-muted/50"
+              >
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                <span>Stock Alchemist</span>
+                <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+              </a>
+              <a
+                href={`${hostProto}//${hostName}:5000/`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-all hover:text-emerald-400 hover:bg-muted/50"
+              >
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Grams Nutrition</span>
+                <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+              </a>
             </nav>
           </div>
 
@@ -306,6 +385,16 @@ export default function Dashboard() {
                 <SheetClose asChild>
                   <Link
                     href="#"
+                    className={getLinkClassMobile("orders")}
+                    onClick={() => handleLinkClick("orders")}
+                  >
+                    <Layers className="h-5 w-5" />
+                    Live Trades & Orders
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="#"
                     className={getLinkClassMobile("trades")}
                     onClick={() => handleLinkClick("trades")}
                   >
@@ -351,6 +440,73 @@ export default function Dashboard() {
                     <UserRound className="h-5 w-5" />
                     Profile & Risk
                   </Link>
+                </SheetClose>
+
+                {/* Ecosystem Microservices */}
+                <div className="pt-3 pb-1 px-1 border-t mt-2">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                    Ecosystem Hub
+                  </div>
+                </div>
+                <SheetClose asChild>
+                  <a
+                    href={`${hostProto}//${hostName}:10000/evaluate`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-indigo-400"
+                  >
+                    <Scale className="h-5 w-5 text-indigo-400" />
+                    <span>Ticker Evaluator</span>
+                    <ExternalLink className="h-4 w-4 ml-auto opacity-50" />
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a
+                    href={`${hostProto}//${hostName}:8000/chart`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-cyan-400"
+                  >
+                    <TrendingUp className="h-5 w-5 text-cyan-400" />
+                    <span>Key Levels Chart</span>
+                    <ExternalLink className="h-4 w-4 ml-auto opacity-50" />
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a
+                    href={`${hostProto}//${hostName}:8000/strategies`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-cyan-300"
+                  >
+                    <Sliders className="h-5 w-5 text-cyan-300" />
+                    <span>Strategy Hub</span>
+                    <ExternalLink className="h-4 w-4 ml-auto opacity-50" />
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a
+                    href={`${hostProto}//${hostName}:8080/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-amber-400"
+                  >
+                    <Zap className="h-5 w-5 text-amber-400" />
+                    <span>Stock Alchemist</span>
+                    <ExternalLink className="h-4 w-4 ml-auto opacity-50" />
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a
+                    href={`${hostProto}//${hostName}:5000/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-emerald-400"
+                  >
+                    <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                    <span>Grams Nutrition</span>
+                    <ExternalLink className="h-4 w-4 ml-auto opacity-50" />
+                  </a>
                 </SheetClose>
               </nav>
               <div className="mt-auto space-y-2">

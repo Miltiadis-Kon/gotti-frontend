@@ -7,6 +7,8 @@
  * 4. Live News Wire & AI Catalyst Intelligence
  */
 
+import { getVisualizeApiUrl } from "@/lib/api-config";
+
 export interface InstitutionalAuditCheckpoint {
   id: number;
   checkpoint: string;
@@ -2030,16 +2032,17 @@ function generateProceduralEvaluation(symbol: string): CompleteStockEvaluation {
 export async function getStockEvaluation(ticker: string): Promise<CompleteStockEvaluation> {
   const clean = ticker.toUpperCase().trim();
 
-  // 1. Try local server API if running on 127.0.0.1:8000
+  // 1. Try local/remote visualize API on port 8000
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 1200);
+    const vizApi = getVisualizeApiUrl();
 
     const [evalRes, qRes, pRes, nRes] = await Promise.all([
-      fetch(`http://127.0.0.1:8000/api/evaluate/${clean}`, { signal: controller.signal }).catch(() => null),
-      fetch(`http://127.0.0.1:8000/api/quarters/${clean}`, { signal: controller.signal }).catch(() => null),
-      fetch(`http://127.0.0.1:8000/api/peers/${clean}`, { signal: controller.signal }).catch(() => null),
-      fetch(`http://127.0.0.1:8000/api/news/${clean}`, { signal: controller.signal }).catch(() => null)
+      fetch(`${vizApi}/evaluate/${clean}`, { signal: controller.signal }).catch(() => null),
+      fetch(`${vizApi}/quarters/${clean}`, { signal: controller.signal }).catch(() => null),
+      fetch(`${vizApi}/peers/${clean}`, { signal: controller.signal }).catch(() => null),
+      fetch(`${vizApi}/news/${clean}`, { signal: controller.signal }).catch(() => null)
     ]);
 
     clearTimeout(timeoutId);
