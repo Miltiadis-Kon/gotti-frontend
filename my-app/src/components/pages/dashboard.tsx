@@ -27,9 +27,13 @@ export function DashboardContent() {
     };
 
     loadAccount();
-    // Poll for changes when switching in header/switcher
-    const interval = setInterval(loadAccount, 1000);
-    return () => clearInterval(interval);
+    const handleUpdate = () => loadAccount();
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    const interval = setInterval(loadAccount, 2000);
+    return () => {
+      window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
+      clearInterval(interval);
+    };
   }, []);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];

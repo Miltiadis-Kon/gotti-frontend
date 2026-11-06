@@ -28,6 +28,7 @@ interface LiveOrderItem {
   date: string;
   symbol: string;
   name: string;
+  etfLevel?: number;
   type: "Buy" | "Sell";
   buyPrice: number | "-";
   sellPrice: number | "-";
@@ -47,10 +48,23 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
       setActiveAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setActiveAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    return () => window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
   }, [subAccount]);
 
   useEffect(() => {
@@ -58,7 +72,8 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
     const fetchLiveTrades = async () => {
       try {
         const baseUrl = getBackendApiUrl();
-        const res = await fetch(`${baseUrl}/orders?limit=30`, { cache: "no-store" });
+        // User requirement: depending on which sub account I am, update live trades and orders there
+        const res = await fetch(`${baseUrl}/orders?limit=30&etf_level=${activeAccount.riskLevel}`, { cache: "no-store" });
         if (res.ok) {
           const data: LiveOrderItem[] = await res.json();
           if (isMounted) {
@@ -73,12 +88,12 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
     };
 
     fetchLiveTrades();
-    const interval = setInterval(fetchLiveTrades, 5000);
+    const interval = setInterval(fetchLiveTrades, 4000);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [activeAccount.riskLevel]);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
@@ -95,27 +110,14 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
   // Fallback model holdings if no live orders available
   const fallbackHoldings: Record<RiskLevel, Array<{ ticker: string; name: string; allocation: string; pnl: string; isPositive: boolean }>> = {
     1: [
-      { ticker: "KO", name: "The Coca-Cola Company", allocation: "22%", pnl: "+$840.00", isPositive: true },
-      { ticker: "PG", name: "Procter & Gamble Co.", allocation: "20%", pnl: "+$620.50", isPositive: true },
-      { ticker: "JNJ", name: "Johnson & Johnson", allocation: "18%", pnl: "+$410.00", isPositive: true },
-      { ticker: "MSFT", name: "Microsoft Corporation", allocation: "20%", pnl: "+$1,250.00", isPositive: true },
-      { ticker: "AAPL", name: "Apple Inc.", allocation: "20%", pnl: "+$980.00", isPositive: true }
+      { ticker: "QQQ", name: "Invesco QQQ Trust (DCA)", allocation: "50%", pnl: "+$0.00", isPositive: true },
+      { ticker: "SPY", name: "SPDR S&P 500 ETF (DCA)", allocation: "50%", pnl: "+$0.00", isPositive: true }
     ],
     2: [
-      { ticker: "QQQ", name: "Invesco QQQ Trust", allocation: "25%", pnl: "+$2,450.00", isPositive: true },
-      { ticker: "NVDA", name: "Nvidia Corporation", allocation: "20%", pnl: "+$3,120.00", isPositive: true },
-      { ticker: "META", name: "Meta Platforms Inc.", allocation: "18%", pnl: "+$1,480.00", isPositive: true },
-      { ticker: "AMD", name: "Advanced Micro Devices", allocation: "15%", pnl: "-$430.00", isPositive: false },
-      { ticker: "ASML", name: "ASML Holding N.V.", allocation: "12%", pnl: "+$960.00", isPositive: true },
-      { ticker: "TSM", name: "Taiwan Semiconductor", allocation: "10%", pnl: "+$820.00", isPositive: true }
+      { ticker: "USD", name: "Cash Reserve (Awaiting Morning Catalysts)", allocation: "100%", pnl: "+$0.00", isPositive: true }
     ],
     3: [
-      { ticker: "MSTR", name: "MicroStrategy Inc.", allocation: "25%", pnl: "+$0.00", isPositive: true },
-      { ticker: "TSLA", name: "Tesla Inc.", allocation: "20%", pnl: "+$0.00", isPositive: true },
-      { ticker: "PLTR", name: "Palantir Technologies", allocation: "18%", pnl: "+$0.00", isPositive: true },
-      { ticker: "COIN", name: "Coinbase Global Inc.", allocation: "15%", pnl: "+$0.00", isPositive: true },
-      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocation: "12%", pnl: "+$0.00", isPositive: true },
-      { ticker: "MARA", name: "MARA Holdings Inc.", allocation: "10%", pnl: "+$0.00", isPositive: true }
+      { ticker: "USD", name: "Tactical Cash Reserve", allocation: "100%", pnl: "+$0.00", isPositive: true }
     ]
   };
 
@@ -177,6 +179,8 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
                 : Number(order.sellPrice) || 0;
               const profitNum = Number(order.profit);
               const hasProfit = !isNaN(profitNum) && !isOpen;
+              // Clean name: never show [L1], [L2], [L3]
+              const cleanStrategy = String(order.name || "").replace(/^\[L[1-3]\]\s*/, "").replace(" Live", "");
 
               return (
                 <div
@@ -208,7 +212,7 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
                           {order.type}
                         </Badge>
                         <span className="text-[10px] text-muted-foreground font-mono">
-                          {Number(order.orderAmount).toLocaleString()} shares
+                          {Number(order.orderAmount).toLocaleString()} shs • {cleanStrategy}
                         </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground line-clamp-1 font-mono">
@@ -275,8 +279,8 @@ export function DashboardAnalytics({ subAccount }: DashboardAnalyticsProps) {
         </CardContent>
 
         <CardFooter className="border-t pt-2.5 pb-2.5 text-[11px] text-muted-foreground flex justify-between bg-muted/10">
-          <span>Broker: <strong className="text-emerald-500 font-mono">Alpaca Level 3</strong></span>
-          <span>Live Synchronized: <strong className="text-foreground">Every 5s</strong></span>
+          <span>Broker: <strong className="text-emerald-500 font-mono">Alpaca Level {activeAccount.riskLevel} ({profile.strategyName})</strong></span>
+          <span>Live Synchronized: <strong className="text-foreground">Every 4s</strong></span>
         </CardFooter>
       </Card>
     </div>

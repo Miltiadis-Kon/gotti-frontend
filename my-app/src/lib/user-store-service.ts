@@ -140,12 +140,12 @@ export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
     name: "Level 1: Boomer Haven ETF",
     riskLevel: 1,
     strategyName: "Boomer Haven ETF",
-    allocatedCapital: 26000,
-    currentValue: 27350,
-    cashBalance: 3635,
-    investedAmount: 23715,
-    pnl: 1350,
-    pnlPercentage: 5.13,
+    allocatedCapital: 1000000.0,
+    currentValue: 999920.08,
+    cashBalance: 999920.08,
+    investedAmount: 0.0,
+    pnl: -79.92,
+    pnlPercentage: -0.008,
     status: "active",
     createdAt: "2026-02-01",
     holdingsCount: 5,
@@ -156,12 +156,12 @@ export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
     name: "Level 2: Steady Grind ETF",
     riskLevel: 2,
     strategyName: "Steady Grind ETF",
-    allocatedCapital: 45600,
-    currentValue: 51420.5,
-    cashBalance: 5682.05,
-    investedAmount: 45738.45,
-    pnl: 5820.5,
-    pnlPercentage: 12.93,
+    allocatedCapital: 100000.0,
+    currentValue: 101251.95,
+    cashBalance: 101251.95,
+    investedAmount: 0.0,
+    pnl: 1251.95,
+    pnlPercentage: 1.252,
     status: "active",
     createdAt: "2026-01-15",
     holdingsCount: 5,
@@ -172,12 +172,12 @@ export const INITIAL_SUB_ACCOUNTS: SubAccount[] = [
     name: "Level 3: Diamond Hands ETF",
     riskLevel: 3,
     strategyName: "Diamond Hands ETF",
-    allocatedCapital: 1000000,
-    currentValue: 1000000,
-    cashBalance: 1000000,
-    investedAmount: 0,
-    pnl: 0,
-    pnlPercentage: 0,
+    allocatedCapital: 1000000.0,
+    currentValue: 993784.45,
+    cashBalance: 598286.77,
+    investedAmount: 395404.62,
+    pnl: -6215.55,
+    pnlPercentage: -0.6216,
     status: "active",
     createdAt: "2026-03-10",
     holdingsCount: 6,
@@ -385,11 +385,51 @@ export function logoutUser(): void {
 // DOMAIN 2: MULTI-SUB-ACCOUNT MANAGEMENT (RULE 1 ENFORCED)
 // ==============================================================================
 
+let _isSyncingSubAccounts = false;
+let _lastSubAccountsSyncTime = 0;
+
+export async function syncSubAccountsWithBackend(): Promise<SubAccount[]> {
+  if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
+  if (_isSyncingSubAccounts || Date.now() - _lastSubAccountsSyncTime < 2000) {
+    return getAllSubAccounts();
+  }
+  _isSyncingSubAccounts = true;
+  try {
+    const res = await fetch(`${getBackendApiUrl()}/sub-accounts`, { cache: "no-store" });
+    if (res.ok) {
+      const data: SubAccount[] = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify(data));
+        _lastSubAccountsSyncTime = Date.now();
+        window.dispatchEvent(new CustomEvent("gotti_sub_accounts_updated", { detail: data }));
+        return data;
+      }
+    }
+  } catch (err) {
+    console.debug("[GottiStore] Backend sub-accounts sync notice:", err);
+  } finally {
+    _isSyncingSubAccounts = false;
+  }
+  return getAllSubAccounts();
+}
+
+if (typeof window !== "undefined") {
+  setTimeout(() => {
+    syncSubAccountsWithBackend();
+    setInterval(syncSubAccountsWithBackend, 4000);
+  }, 100);
+}
+
+
 /**
  * Get all active segregated ETF sub-accounts
  */
 export function getAllSubAccounts(): SubAccount[] {
   if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
+  // Trigger background sync with backend if needed
+  if (Date.now() - _lastSubAccountsSyncTime > 4000) {
+    syncSubAccountsWithBackend().catch(() => {});
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SUB_ACCOUNTS);
     if (!raw) {

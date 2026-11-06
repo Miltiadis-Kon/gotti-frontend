@@ -31,6 +31,7 @@ import {
   DEFAULT_SUB_ACCOUNTS
 } from "@/lib/risk-assessment-data";
 import { RiskLevel, SubAccount } from "@/types/risk-profile";
+import { getBackendApiUrl } from "@/lib/api-config";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface VisualizerProps {
@@ -39,49 +40,67 @@ interface VisualizerProps {
 
 export function PorotfolioPieChart({ subAccount }: VisualizerProps) {
   const [internalAccount, setInternalAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [liveHoldings, setLiveHoldings] = useState<Array<{ name: string; value: number; fill: string }>>([]);
 
   useEffect(() => {
     if (subAccount) {
       setInternalAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setInternalAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setInternalAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setInternalAccount(current);
+    };
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    return () => window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
   }, [subAccount]);
 
   const activeAccount = subAccount || internalAccount;
   const profile = RISK_PROFILES[activeAccount.riskLevel] || RISK_PROFILES[2];
   const color = profile.color;
 
-  const holdingsDistribution: Record<RiskLevel, Array<{ name: string; value: number; fill: string }>> = {
-    1: [
-      { name: "KO (Coca-Cola)", value: 22, fill: "#10b981" },
-      { name: "PG (P&G)", value: 20, fill: "#34d399" },
-      { name: "JNJ (Johnson)", value: 18, fill: "#6ee7b7" },
-      { name: "MSFT (Microsoft)", value: 20, fill: "#059669" },
-      { name: "AAPL (Apple)", value: 20, fill: "#047857" }
-    ],
-    2: [
-      { name: "QQQ (Nasdaq)", value: 25, fill: "#6366f1" },
-      { name: "NVDA (Nvidia)", value: 20, fill: "#818cf8" },
-      { name: "META (Meta)", value: 18, fill: "#4f46e5" },
-      { name: "AMD (AMD Inc.)", value: 15, fill: "#a5b4fc" },
-      { name: "ASML (ASML)", value: 12, fill: "#4338ca" },
-      { name: "TSM (TSMC)", value: 10, fill: "#3730a3" }
-    ],
-    3: [
-      { name: "MSTR (MicroStrategy)", value: 25, fill: "#ef4444" },
-      { name: "TSLA (Tesla)", value: 20, fill: "#f87171" },
-      { name: "PLTR (Palantir)", value: 18, fill: "#dc2626" },
-      { name: "COIN (Coinbase)", value: 15, fill: "#fca5a5" },
-      { name: "RIVN (Rivian)", value: 12, fill: "#b91c1c" },
-      { name: "MARA (MARA)", value: 10, fill: "#991b1b" }
-    ]
-  };
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHoldings = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/sub-accounts/${activeAccount.id}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && Array.isArray(data.holdings) && data.holdings.length > 0) {
+            const palette = ["#ef4444", "#f87171", "#6366f1", "#818cf8", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+            setLiveHoldings(data.holdings.map((h: any, i: number) => ({
+              name: `${h.ticker} (${h.name.replace(" Live Position", "")})`,
+              value: Math.max(1, Math.round(h.weightPercentage)),
+              fill: h.ticker === "USD" ? "#10b981" : palette[i % palette.length]
+            })));
+          }
+        }
+      } catch (err) {
+        console.debug("Notice: Visualizer holdings fetch error:", err);
+      }
+    };
+    fetchHoldings();
+    const interval = setInterval(fetchHoldings, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [activeAccount.id]);
 
-  const chartData = holdingsDistribution[activeAccount.riskLevel] || holdingsDistribution[2];
+  const chartData = liveHoldings.length > 0
+    ? liveHoldings
+    : [{ name: "USD Cash Reserve", value: 100, fill: "#10b981" }];
 
   return (
     <Card

@@ -41,56 +41,84 @@ import {
   DEFAULT_SUB_ACCOUNTS
 } from "@/lib/risk-assessment-data";
 import { RiskLevel, SubAccount } from "@/types/risk-profile";
+import { getBackendApiUrl } from "@/lib/api-config";
 
 interface AllocationProps {
   subAccount?: SubAccount;
 }
 
+interface LiveHoldingItem {
+  ticker: string;
+  name: string;
+  weightPercentage: number;
+  weightDecimal: number;
+  allocatedAmount: number;
+  unrealizedPnl: number;
+  unrealizedPnlPercentage: number;
+  currentPrice: number;
+  sharesOwned: number;
+  sector: string;
+  isPositive: boolean;
+}
+
 export function PortofolioAllocation({ subAccount }: AllocationProps) {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [liveHoldings, setLiveHoldings] = useState<LiveHoldingItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (subAccount) {
       setActiveAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setActiveAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    return () => window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
   }, [subAccount]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHoldings = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/sub-accounts/${activeAccount.id}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.holdings) {
+            setLiveHoldings(data.holdings);
+          }
+        }
+      } catch (err) {
+        console.debug("Notice: Live holdings fetch error:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchHoldings();
+    const interval = setInterval(fetchHoldings, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [activeAccount.id]);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
   const totalVal = activeAccount.currentValue;
-
-  const holdingsMap: Record<RiskLevel, Array<{ ticker: string; name: string; allocationNum: number; allocation: string }>> = {
-    1: [
-      { ticker: "KO", name: "The Coca-Cola Company", allocationNum: 0.22, allocation: "22%" },
-      { ticker: "PG", name: "Procter & Gamble Co.", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "JNJ", name: "Johnson & Johnson", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "MSFT", name: "Microsoft Corporation", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "AAPL", name: "Apple Inc.", allocationNum: 0.20, allocation: "20%" }
-    ],
-    2: [
-      { ticker: "QQQ", name: "Invesco QQQ Trust", allocationNum: 0.25, allocation: "25%" },
-      { ticker: "NVDA", name: "Nvidia Corporation", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "META", name: "Meta Platforms Inc.", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "AMD", name: "Advanced Micro Devices", allocationNum: 0.15, allocation: "15%" },
-      { ticker: "ASML", name: "ASML Holding N.V.", allocationNum: 0.12, allocation: "12%" },
-      { ticker: "TSM", name: "Taiwan Semiconductor", allocationNum: 0.10, allocation: "10%" }
-    ],
-    3: [
-      { ticker: "MSTR", name: "MicroStrategy Inc.", allocationNum: 0.25, allocation: "25%" },
-      { ticker: "TSLA", name: "Tesla Inc.", allocationNum: 0.20, allocation: "20%" },
-      { ticker: "PLTR", name: "Palantir Technologies", allocationNum: 0.18, allocation: "18%" },
-      { ticker: "COIN", name: "Coinbase Global Inc.", allocationNum: 0.15, allocation: "15%" },
-      { ticker: "NVDA", name: "Nvidia Alpha Momentum", allocationNum: 0.12, allocation: "12%" },
-      { ticker: "MARA", name: "MARA Holdings Inc.", allocationNum: 0.10, allocation: "10%" }
-    ]
-  };
-
-  const list = holdingsMap[activeAccount.riskLevel] || holdingsMap[2];
 
   return (
     <Card
@@ -105,7 +133,7 @@ export function PortofolioAllocation({ subAccount }: AllocationProps) {
           </Badge>
         </div>
         <CardDescription className="text-xs">
-          Systematic basket allocation for {activeAccount.name}
+          Live holdings and cash liquidity for {activeAccount.name}
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
@@ -115,29 +143,63 @@ export function PortofolioAllocation({ subAccount }: AllocationProps) {
               <TableHead className="text-xs">Ticker</TableHead>
               <TableHead className="text-xs">Asset Name</TableHead>
               <TableHead className="text-right text-xs">Weight</TableHead>
+              <TableHead className="text-right text-xs">Shares</TableHead>
+              <TableHead className="text-right text-xs">Price</TableHead>
               <TableHead className="text-right text-xs">Balance</TableHead>
+              <TableHead className="text-right text-xs">Unrealized P&L</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {list.map((item) => (
-              <TableRow key={item.ticker}>
-                <TableCell className="font-mono font-bold text-xs" style={{ color }}>{item.ticker}</TableCell>
-                <TableCell className="text-xs text-foreground font-medium">{item.name}</TableCell>
-                <TableCell className="text-right font-mono text-xs">{item.allocation}</TableCell>
+            {liveHoldings.length > 0 ? (
+              liveHoldings.map((item) => (
+                <TableRow key={item.ticker}>
+                  <TableCell className="font-mono font-bold text-xs" style={{ color: item.ticker === 'USD' ? '#10b981' : color }}>
+                    {item.ticker}
+                  </TableCell>
+                  <TableCell className="text-xs text-foreground font-medium">{item.name}</TableCell>
+                  <TableCell className="text-right font-mono text-xs">{item.weightPercentage.toFixed(1)}%</TableCell>
+                  <TableCell className="text-right font-mono text-xs text-muted-foreground">
+                    {item.ticker === 'USD' ? '-' : `${Math.abs(item.sharesOwned).toLocaleString()}`}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-xs text-muted-foreground">
+                    ${item.currentPrice.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono font-bold text-xs">
+                    ${Math.abs(item.allocatedAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </TableCell>
+                  <TableCell className="text-right font-mono font-bold text-xs">
+                    {item.ticker === 'USD' ? (
+                      <span className="text-muted-foreground text-[11px] font-normal">Cash Liquid</span>
+                    ) : (
+                      <span className={item.unrealizedPnl >= 0 ? "text-emerald-500" : "text-rose-500"}>
+                        {item.unrealizedPnl >= 0 ? "+" : ""}${item.unrealizedPnl.toFixed(2)}
+                      </span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell className="font-mono font-bold text-xs" style={{ color: '#10b981' }}>USD</TableCell>
+                <TableCell className="text-xs text-foreground font-medium">US Dollar Liquidity & Cash Reserves</TableCell>
+                <TableCell className="text-right font-mono text-xs">100.0%</TableCell>
+                <TableCell className="text-right font-mono text-xs text-muted-foreground">-</TableCell>
+                <TableCell className="text-right font-mono text-xs text-muted-foreground">$1.00</TableCell>
                 <TableCell className="text-right font-mono font-bold text-xs">
-                  ${Math.round(totalVal * item.allocationNum).toLocaleString()}
+                  ${totalVal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </TableCell>
+                <TableCell className="text-right font-mono text-xs text-muted-foreground">Cash Liquid</TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
           <TableFooter>
             <TableRow>
               <TableCell className="font-bold text-xs">Total Portfolio NAV</TableCell>
-              <TableCell></TableCell>
-              <TableCell className="text-right font-mono font-bold text-xs">100%</TableCell>
+              <TableCell colSpan={4}></TableCell>
               <TableCell className="text-right font-mono font-extrabold text-xs" style={{ color }}>
                 ${totalVal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableFooter>
         </Table>
@@ -148,48 +210,67 @@ export function PortofolioAllocation({ subAccount }: AllocationProps) {
 
 export function PortfolioPieChart({ subAccount }: AllocationProps) {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [liveHoldings, setLiveHoldings] = useState<LiveHoldingItem[]>([]);
 
   useEffect(() => {
     if (subAccount) {
       setActiveAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setActiveAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    return () => window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
   }, [subAccount]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHoldings = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/sub-accounts/${activeAccount.id}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.holdings) {
+            setLiveHoldings(data.holdings);
+          }
+        }
+      } catch (err) {
+        console.debug("Notice: Live holdings pie fetch error:", err);
+      }
+    };
+    fetchHoldings();
+    const interval = setInterval(fetchHoldings, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [activeAccount.id]);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
 
-  const pieData: Record<RiskLevel, Array<{ name: string; value: number; color: string }>> = {
-    1: [
-      { name: "KO", value: 22, color: "#10b981" },
-      { name: "PG", value: 20, color: "#34d399" },
-      { name: "JNJ", value: 18, color: "#6ee7b7" },
-      { name: "MSFT", value: 20, color: "#059669" },
-      { name: "AAPL", value: 20, color: "#047857" }
-    ],
-    2: [
-      { name: "QQQ", value: 25, color: "#6366f1" },
-      { name: "NVDA", value: 20, color: "#818cf8" },
-      { name: "META", value: 18, color: "#4f46e5" },
-      { name: "AMD", value: 15, color: "#a5b4fc" },
-      { name: "ASML", value: 12, color: "#4338ca" },
-      { name: "TSM", value: 10, color: "#3730a3" }
-    ],
-    3: [
-      { name: "MSTR", value: 25, color: "#ef4444" },
-      { name: "TSLA", value: 20, color: "#f87171" },
-      { name: "PLTR", value: 18, color: "#dc2626" },
-      { name: "COIN", value: 15, color: "#fca5a5" },
-      { name: "RIVN", value: 12, color: "#b91c1c" },
-      { name: "MARA", value: 10, color: "#991b1b" }
-    ]
-  };
-
-  const chartData = pieData[activeAccount.riskLevel] || pieData[2];
+  const palette = ["#ef4444", "#f87171", "#6366f1", "#818cf8", "#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
+  const chartData = liveHoldings.length > 0
+    ? liveHoldings.map((h, i) => ({
+        name: h.ticker,
+        value: Math.max(1, Math.round(h.weightPercentage)),
+        color: h.ticker === "USD" ? "#10b981" : palette[i % palette.length]
+      }))
+    : [{ name: "USD", value: 100, color: "#10b981" }];
 
   return (
     <Card

@@ -15,6 +15,7 @@ import {
   DEFAULT_SUB_ACCOUNTS
 } from "@/lib/risk-assessment-data";
 import { RiskLevel, SubAccount } from "@/types/risk-profile";
+import { getBackendApiUrl } from "@/lib/api-config";
 
 interface DashboardNotesProps {
   subAccount?: SubAccount;
@@ -22,22 +23,81 @@ interface DashboardNotesProps {
 
 export function DashboardNotes({ subAccount }: DashboardNotesProps) {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [liveMetrics, setLiveMetrics] = useState<{ winRate: string; tradeRatio: string } | null>(null);
 
   useEffect(() => {
     if (subAccount) {
       setActiveAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setActiveAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    const interval = setInterval(loadCurrent, 3000);
+    return () => {
+      window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
+      clearInterval(interval);
+    };
   }, [subAccount]);
+
+  // Fetch live sub-account metrics (real win rate & trade ratio from MySQL orders)
+  useEffect(() => {
+    let isMounted = true;
+    const fetchMetrics = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/sub-accounts/${activeAccount.id}`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.metrics) {
+            setLiveMetrics({
+              winRate: data.metrics.winRate || "60%",
+              tradeRatio: data.metrics.tradeRatio || "30/50"
+            });
+            // Also sync live balances if available
+            if (data.currentValue !== undefined) {
+              setActiveAccount((prev) => ({
+                ...prev,
+                currentValue: Number(data.currentValue),
+                cashBalance: Number(data.cashBalance),
+                investedAmount: Number(data.investedAmount),
+                allocatedCapital: Number(data.allocatedCapital),
+                pnl: Number(data.pnl),
+                pnlPercentage: Number(data.pnlPercentage)
+              }));
+            }
+          }
+        }
+      } catch (err) {
+        console.debug("Notice: Live metrics fetch error:", err);
+      }
+    };
+
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [activeAccount.id]);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
 
-  // Level-specific statistical benchmarks
+  // Level-specific statistical benchmarks fallback
   const winRateMap: Record<RiskLevel, { rate: string; ratio: string; sub: string }> = {
     1: { rate: "88%", ratio: "44/50", sub: "Ultra-high stability & dividend capture" },
     2: { rate: "74%", ratio: "37/50", sub: "Large/mid-cap growth & momentum rebalancing" },
@@ -52,8 +112,6 @@ export function DashboardNotes({ subAccount }: DashboardNotesProps) {
 
   const winStats = winRateMap[activeAccount.riskLevel] || winRateMap[2];
   const volStats = volatilityMap[activeAccount.riskLevel] || volatilityMap[2];
-
-  const targetGoal = (activeAccount.allocatedCapital || 10000) * (1 + (profile.level * 0.06 + 0.05));
 
   const cardBorderStyle = {
     borderColor: `${color}60`,
@@ -83,8 +141,8 @@ export function DashboardNotes({ subAccount }: DashboardNotesProps) {
             ${activeAccount.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
           <div className="text-[11px] text-muted-foreground flex items-center justify-between pt-0.5 border-t border-border/40">
-            <span>Cash: <strong className="text-foreground font-mono">${(activeAccount.cashBalance || activeAccount.currentValue * 0.1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
-            <span>Invested: <strong className="text-foreground font-mono">${(activeAccount.investedAmount || activeAccount.currentValue * 0.9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+            <span>Cash: <strong className="text-foreground font-mono">${(activeAccount.cashBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+            <span>Invested: <strong className="text-foreground font-mono">${(activeAccount.investedAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
           </div>
         </CardContent>
       </Card>
@@ -107,10 +165,10 @@ export function DashboardNotes({ subAccount }: DashboardNotesProps) {
         </CardHeader>
         <CardContent className="space-y-1">
           <div className="text-xl sm:text-2xl font-extrabold font-mono text-foreground">
-            {winStats.rate}
+            {liveMetrics?.winRate || winStats.rate}
           </div>
           <p className="text-xs text-muted-foreground leading-snug">
-            Gotti executed <strong className="text-foreground">{winStats.ratio}</strong> profitable trades for {activeAccount.name}.
+            Gotti executed <strong className="text-foreground">{liveMetrics?.tradeRatio || winStats.ratio}</strong> profitable trades for {activeAccount.name}.
           </p>
         </CardContent>
       </Card>

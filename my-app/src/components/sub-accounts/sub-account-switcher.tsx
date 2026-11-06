@@ -37,6 +37,18 @@ interface SubAccountSwitcherProps {
 
 export function SubAccountSwitcher({ activeAccount, onAccountSwitched, className = "" }: SubAccountSwitcherProps) {
   const [subAccounts, setSubAccounts] = useState<SubAccount[]>(getSubAccounts());
+
+  React.useEffect(() => {
+    const handleUpdate = () => {
+      setSubAccounts(getSubAccounts());
+    };
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    const interval = setInterval(handleUpdate, 3000);
+    return () => {
+      window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
+      clearInterval(interval);
+    };
+  }, []);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const router = useRouter();
 

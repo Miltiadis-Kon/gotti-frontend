@@ -35,40 +35,74 @@ import {
 import { Separator } from "@/components/ui/separator"
 
 import { RISK_PROFILES, getSubAccounts, getActiveSubAccountId, DEFAULT_SUB_ACCOUNTS } from "@/lib/risk-assessment-data";
+import { getBackendApiUrl } from "@/lib/api-config";
 import { SubAccount } from "@/types/risk-profile";
 import { Badge } from "@/components/ui/badge";
 import React, { useState, useEffect } from "react";
 
 export function WeeklyPnLChart({ subAccount }: { subAccount?: SubAccount }) {
   const [activeAccount, setActiveAccount] = useState<SubAccount>(subAccount || DEFAULT_SUB_ACCOUNTS[0]);
+  const [dailyPoints, setDailyPoints] = useState<Array<{ date: string; volume: number }>>([]);
 
   useEffect(() => {
     if (subAccount) {
       setActiveAccount(subAccount);
       return;
     }
-    const accs = getSubAccounts();
-    const activeId = getActiveSubAccountId();
-    const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
-    setActiveAccount(current);
+    const loadCurrent = () => {
+      const accs = getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+    loadCurrent();
+
+    const handleUpdate = (e: any) => {
+      const accs: SubAccount[] = e.detail || getSubAccounts();
+      const activeId = getActiveSubAccountId();
+      const current = accs.find((a) => a.id === activeId) || accs[0] || DEFAULT_SUB_ACCOUNTS[0];
+      setActiveAccount(current);
+    };
+
+    window.addEventListener("gotti_sub_accounts_updated", handleUpdate);
+    return () => window.removeEventListener("gotti_sub_accounts_updated", handleUpdate);
   }, [subAccount]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchVolume = async () => {
+      try {
+        const baseUrl = getBackendApiUrl();
+        const res = await fetch(`${baseUrl}/sub-accounts/${activeAccount.id}/daily-pnl`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && Array.isArray(data) && data.length > 0) {
+            setDailyPoints(data.map((d: any) => ({ date: d.date, volume: Number(d.volume) || 0 })));
+          }
+        }
+      } catch (err) {
+        console.debug("Notice: Daily volume fetch error:", err);
+      }
+    };
+    fetchVolume();
+    const interval = setInterval(fetchVolume, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [activeAccount.id]);
 
   const profile = RISK_PROFILES[activeAccount.riskLevel];
   const color = profile.color;
 
-  const baseVolume = Math.round(activeAccount.currentValue * 0.28);
+  const weeklyData = dailyPoints.length > 0
+    ? dailyPoints
+    : [
+        { date: "Baseline", volume: 0 },
+        { date: "Today", volume: Math.round(activeAccount.investedAmount || 0) }
+      ];
 
-  const weeklyData = [
-    { date: "2026-08-20", volume: Math.round(baseVolume * 0.85) },
-    { date: "2026-08-21", volume: Math.round(baseVolume * 1.15) },
-    { date: "2026-08-22", volume: Math.round(baseVolume * 0.95) },
-    { date: "2026-08-23", volume: Math.round(baseVolume * 0.65) },
-    { date: "2026-08-24", volume: Math.round(baseVolume * 1.35) },
-    { date: "2026-08-25", volume: Math.round(baseVolume * 1.05) },
-    { date: "2026-08-26", volume: Math.round(baseVolume * 1.25) },
-  ];
-
-  const avgVolume = Math.round(weeklyData.reduce((s, d) => s + d.volume, 0) / weeklyData.length);
+  const avgVolume = Math.round(weeklyData.reduce((s, d) => s + d.volume, 0) / (weeklyData.length || 1));
   const todayVolume = weeklyData[weeklyData.length - 1].volume;
 
   return (
