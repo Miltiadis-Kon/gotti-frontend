@@ -5,10 +5,11 @@ export type OrderData = {
     date: string;
     symbol: string;
     name: string;
+    etfLevel?: number;
     type: "Buy" | "Sell";
-    buyPrice: number| "-";
-    sellPrice: number| "-";
-    profit: number| "-";
+    buyPrice: number | "-";
+    sellPrice: number | "-";
+    profit: number | "-";
     orderAmount: number;
     totalAmount: number;
     status: "Open" | "Closed";
@@ -22,6 +23,10 @@ export const columns: ColumnDef<OrderData>[] = [
     {
         accessorKey: "id",
         header: "ID",
+    },
+    {
+        accessorKey: "etfLevel",
+        header: "ETF Tier",
     },
     {
         accessorKey: "date",

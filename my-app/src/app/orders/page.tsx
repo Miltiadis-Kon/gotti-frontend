@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   CaretSortIcon,
   ChevronDownIcon,
-  DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -25,9 +24,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -39,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { RefreshCw, Activity, ExternalLink, ShieldAlert } from "lucide-react";
+import { RefreshCw, Activity, Layers, ShieldCheck, Zap, Scale } from "lucide-react";
 import { getBackendApiUrl } from "@/lib/api-config";
 import { OrderData } from "./columns";
 
@@ -61,6 +57,49 @@ export const columns: ColumnDef<OrderData>[] = [
         #{row.getValue("id")}
       </div>
     ),
+  },
+  {
+    accessorKey: "etfLevel",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 font-bold"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        ETF Tier
+        <CaretSortIcon className="ml-1 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const lvl = Number(row.original.etfLevel || 3);
+      if (lvl === 1) {
+        return (
+          <Badge
+            variant="outline"
+            className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
+          >
+            <ShieldCheck className="h-3 w-3" /> L1 Boomer
+          </Badge>
+        );
+      } else if (lvl === 2) {
+        return (
+          <Badge
+            variant="outline"
+            className="bg-sky-500/15 text-sky-400 border-sky-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
+          >
+            <Scale className="h-3 w-3" /> L2 Steady
+          </Badge>
+        );
+      }
+      return (
+        <Badge
+          variant="outline"
+          className="bg-purple-500/15 text-purple-400 border-purple-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
+        >
+          <Zap className="h-3 w-3" /> L3 Diamond
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "status",
@@ -142,12 +181,13 @@ export const columns: ColumnDef<OrderData>[] = [
     accessorKey: "name",
     header: "Strategy / Asset",
     cell: ({ row }) => {
-      const name = String(row.getValue("name") || "");
-      const isLive = name.includes("Live");
+      const rawName = String(row.getValue("name") || "");
+      const cleanName = rawName.replace(/^\[L[1-3]\]\s*/, "").replace(" Live", "");
+      const isLive = rawName.includes("Live");
       return (
         <div className="flex flex-col">
           <span className="font-medium text-xs text-foreground">
-            {name.replace(" Live", "")}
+            {cleanName}
           </span>
           {isLive && (
             <span className="text-[10px] text-emerald-500 font-mono flex items-center gap-1">
@@ -162,7 +202,7 @@ export const columns: ColumnDef<OrderData>[] = [
     accessorKey: "orderAmount",
     header: () => <div className="text-right font-bold">Shares</div>,
     cell: ({ row }) => {
-      const amt = parseFloat(row.getValue("orderAmount") || 0);
+      const amt = parseFloat(String(row.getValue("orderAmount") || 0));
       return (
         <div className="text-right font-mono text-xs font-medium">
           {amt.toLocaleString()}
@@ -217,7 +257,7 @@ export const columns: ColumnDef<OrderData>[] = [
     accessorKey: "totalAmount",
     header: () => <div className="text-right font-bold">Total Capital</div>,
     cell: ({ row }) => {
-      const tot = parseFloat(row.getValue("totalAmount") || 0);
+      const tot = parseFloat(String(row.getValue("totalAmount") || 0));
       return (
         <div className="text-right font-mono text-xs font-bold text-foreground">
           ${tot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -289,6 +329,7 @@ export const columns: ColumnDef<OrderData>[] = [
 
 export default function Orders() {
   const [data, setData] = React.useState<OrderData[]>([]);
+  const [selectedEtf, setSelectedEtf] = React.useState<"all" | "1" | "2" | "3">("all");
   const [loading, setLoading] = React.useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = React.useState<boolean>(false);
@@ -303,7 +344,7 @@ export default function Orders() {
     if (showIndicator) setIsRefreshing(true);
     try {
       const baseUrl = getBackendApiUrl();
-      const res = await fetch(`${baseUrl}/orders?limit=100`, { cache: "no-store" });
+      const res = await fetch(`${baseUrl}/orders?limit=150`, { cache: "no-store" });
       if (res.ok) {
         const orders = await res.json();
         setData(orders);
@@ -325,8 +366,17 @@ export default function Orders() {
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
+  const l1Count = React.useMemo(() => data.filter((d) => Number(d.etfLevel) === 1).length, [data]);
+  const l2Count = React.useMemo(() => data.filter((d) => Number(d.etfLevel) === 2).length, [data]);
+  const l3Count = React.useMemo(() => data.filter((d) => Number(d.etfLevel || 3) === 3).length, [data]);
+
+  const filteredData = React.useMemo(() => {
+    if (selectedEtf === "all") return data;
+    return data.filter((d) => Number(d.etfLevel || 3) === Number(selectedEtf));
+  }, [data, selectedEtf]);
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -349,26 +399,26 @@ export default function Orders() {
     },
   });
 
-  const openCount = data.filter((d) => String(d.status).toLowerCase() === "open").length;
-  const closedCount = data.filter((d) => String(d.status).toLowerCase() === "closed").length;
+  const openCount = filteredData.filter((d) => String(d.status).toLowerCase() === "open").length;
+  const closedCount = filteredData.filter((d) => String(d.status).toLowerCase() === "closed").length;
 
   return (
     <div className="w-full space-y-4">
       {/* Top Status & Summary Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Live Trades & Execution Orders
             </h1>
             <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 flex items-center gap-1.5 font-mono text-xs">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Alpaca Level 3 Connected
+              Alpaca Multi-Account Live
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
             <span>
-              Real-time synchronization with Diamond Hands ETF (Paper Account)
+              Real-time segregated execution across Boomer Haven (L1), Steady Grind (L2), and Diamond Hands (L3) ETFs
             </span>
             {lastUpdated && (
               <>
@@ -379,7 +429,7 @@ export default function Orders() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="outline" className="font-mono text-xs px-2.5 py-1 bg-card">
             🟢 Open: <strong className="ml-1 text-emerald-500">{openCount}</strong>
           </Badge>
@@ -399,10 +449,56 @@ export default function Orders() {
         </div>
       </div>
 
+      {/* ETF Tier Selector Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <Button
+          variant={selectedEtf === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setSelectedEtf("all")}
+          className="h-8 text-xs font-semibold gap-1.5"
+        >
+          <Layers className="h-3.5 w-3.5" />
+          All Portfolios ({data.length})
+        </Button>
+        <Button
+          variant={selectedEtf === "3" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setSelectedEtf("3")}
+          className={`h-8 text-xs font-semibold gap-1.5 ${
+            selectedEtf === "3" ? "bg-purple-600 hover:bg-purple-700 text-white" : "text-purple-400 hover:bg-purple-950/20"
+          }`}
+        >
+          <Zap className="h-3.5 w-3.5" />
+          🚀 Level 3: Diamond Hands ({l3Count})
+        </Button>
+        <Button
+          variant={selectedEtf === "2" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setSelectedEtf("2")}
+          className={`h-8 text-xs font-semibold gap-1.5 ${
+            selectedEtf === "2" ? "bg-sky-600 hover:bg-sky-700 text-white" : "text-sky-400 hover:bg-sky-950/20"
+          }`}
+        >
+          <Scale className="h-3.5 w-3.5" />
+          ⚖️ Level 2: Steady Grind ({l2Count})
+        </Button>
+        <Button
+          variant={selectedEtf === "1" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setSelectedEtf("1")}
+          className={`h-8 text-xs font-semibold gap-1.5 ${
+            selectedEtf === "1" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-emerald-400 hover:bg-emerald-950/20"
+          }`}
+        >
+          <ShieldCheck className="h-3.5 w-3.5" />
+          🛡️ Level 1: Boomer Haven ({l1Count})
+        </Button>
+      </div>
+
       {/* Filters & Column Controls */}
       <div className="flex items-center justify-between gap-2">
         <Input
-          placeholder="Filter by symbol (e.g. ARM, GILD)..."
+          placeholder="Filter by symbol (e.g. QQQ, SPY, ARM, GILD)..."
           value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("symbol")?.setFilterValue(event.target.value)
@@ -476,7 +572,7 @@ export default function Orders() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground text-xs">
-                  No orders recorded yet. Live trade daemon is scanning market.
+                  No orders recorded for this tier yet. Live execution engine is active.
                 </TableCell>
               </TableRow>
             )}
@@ -487,7 +583,7 @@ export default function Orders() {
       {/* Pagination Controls */}
       <div className="flex items-center justify-between text-xs text-muted-foreground py-1">
         <div>
-          Showing {table.getRowModel().rows.length} of {data.length} total orders
+          Showing {table.getRowModel().rows.length} of {filteredData.length} total orders in this view
         </div>
         <div className="flex items-center gap-2">
           <Button
