@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { RefreshCw, Activity, Layers, ShieldCheck, Zap, Scale } from "lucide-react";
+import { RefreshCw, Activity, Layers, ShieldCheck, TrendingUp, Flame } from "lucide-react";
 import { getBackendApiUrl } from "@/lib/api-config";
 import { OrderData } from "./columns";
 
@@ -78,25 +78,25 @@ export const columns: ColumnDef<OrderData>[] = [
             variant="outline"
             className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
           >
-            <ShieldCheck className="h-3 w-3" /> L1 Boomer
+            <ShieldCheck className="h-3 w-3 text-emerald-400" /> 🛡️ L1 Boomer
           </Badge>
         );
       } else if (lvl === 2) {
         return (
           <Badge
             variant="outline"
-            className="bg-sky-500/15 text-sky-400 border-sky-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
+            className="bg-indigo-500/15 text-indigo-400 border-indigo-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
           >
-            <Scale className="h-3 w-3" /> L2 Steady
+            <TrendingUp className="h-3 w-3 text-indigo-400" /> 📈 L2 Steady
           </Badge>
         );
       }
       return (
         <Badge
           variant="outline"
-          className="bg-purple-500/15 text-purple-400 border-purple-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
+          className="bg-rose-500/15 text-rose-400 border-rose-500/30 font-mono text-[11px] font-semibold flex items-center gap-1 w-fit"
         >
-          <Zap className="h-3 w-3" /> L3 Diamond
+          <Flame className="h-3 w-3 text-rose-400" /> 🔥 L3 Diamond
         </Badge>
       );
     },
@@ -465,29 +465,35 @@ export default function Orders() {
           size="sm"
           onClick={() => setSelectedEtf("3")}
           className={`h-8 text-xs font-semibold gap-1.5 ${
-            selectedEtf === "3" ? "bg-purple-600 hover:bg-purple-700 text-white" : "text-purple-400 hover:bg-purple-950/20"
+            selectedEtf === "3"
+              ? "bg-rose-600 hover:bg-rose-700 text-white border-rose-500"
+              : "border-rose-500/30 text-rose-400 hover:bg-rose-950/20"
           }`}
         >
-          <Zap className="h-3.5 w-3.5" />
-          🚀 Level 3: Diamond Hands ({l3Count})
+          <Flame className="h-3.5 w-3.5" />
+          🔥 Level 3: Diamond Hands ({l3Count})
         </Button>
         <Button
           variant={selectedEtf === "2" ? "default" : "outline"}
           size="sm"
           onClick={() => setSelectedEtf("2")}
           className={`h-8 text-xs font-semibold gap-1.5 ${
-            selectedEtf === "2" ? "bg-sky-600 hover:bg-sky-700 text-white" : "text-sky-400 hover:bg-sky-950/20"
+            selectedEtf === "2"
+              ? "bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-500"
+              : "border-indigo-500/30 text-indigo-400 hover:bg-indigo-950/20"
           }`}
         >
-          <Scale className="h-3.5 w-3.5" />
-          ⚖️ Level 2: Steady Grind ({l2Count})
+          <TrendingUp className="h-3.5 w-3.5" />
+          📈 Level 2: Steady Grind ({l2Count})
         </Button>
         <Button
           variant={selectedEtf === "1" ? "default" : "outline"}
           size="sm"
           onClick={() => setSelectedEtf("1")}
           className={`h-8 text-xs font-semibold gap-1.5 ${
-            selectedEtf === "1" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-emerald-400 hover:bg-emerald-950/20"
+            selectedEtf === "1"
+              ? "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-500"
+              : "border-emerald-500/30 text-emerald-400 hover:bg-emerald-950/20"
           }`}
         >
           <ShieldCheck className="h-3.5 w-3.5" />
