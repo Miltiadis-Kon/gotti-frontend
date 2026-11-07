@@ -95,7 +95,7 @@ export function AddFundsContent({ initialTab = "deposit", onTabChange }: AddFund
 
   // Withdraw Form State
   const [withdrawAmount, setWithdrawAmount] = useState<string>("500");
-  const [withdrawDestination, setWithdrawDestination] = useState<string>("Chase Bank Checking (•••• 4821)");
+  const [withdrawDestination, setWithdrawDestination] = useState<string>("Direct Bank Wire (IBAN/SWIFT)");
 
   // Transfer Form State
   const [transferAmount, setTransferAmount] = useState<string>("250");
@@ -341,7 +341,7 @@ export function AddFundsContent({ initialTab = "deposit", onTabChange }: AddFund
               <Wallet className="h-3.5 w-3.5 mr-1.5" /> Total Portfolio NAV: ${totalNavAll.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </Badge>
             <Badge variant="outline" className="text-xs font-semibold px-3 py-1 bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
-              <Building className="h-3.5 w-3.5 mr-1.5" /> Chase •••• 4821 Connected
+              <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Segregated Custody Active
             </Badge>
           </div>
         </div>
@@ -555,12 +555,10 @@ export function AddFundsContent({ initialTab = "deposit", onTabChange }: AddFund
                     {/* Payment Method Selector */}
                     <div className="space-y-1.5">
                       <Label className="text-xs font-semibold">Payment Method</Label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {[
-                          { id: "Instant Card (Stripe)", name: "Credit / Debit Card", icon: CreditCard,
-  Banknote, detail: "Instant Execution", tag: "Stripe" },
-                          { id: "Direct Bank Wire", name: "Direct Bank Transfer", icon: Landmark, detail: "Zero Fees (Wire)", tag: "Fedwire" },
-                          { id: "Connected Bank (Chase)", name: "Chase •••• 4821", icon: Building, detail: "ACH Verified Account", tag: "ACH" }
+                          { id: "Instant Card (Stripe)", name: "Credit / Debit Card", icon: CreditCard, detail: "Instant Execution", tag: "Stripe" },
+                          { id: "Direct Bank Wire", name: "Direct Bank Transfer", icon: Landmark, detail: "Zero Fees (Fedwire / SWIFT)", tag: "Fedwire" }
                         ].map((m) => (
                           <div
                             key={m.id}
@@ -751,28 +749,20 @@ export function AddFundsContent({ initialTab = "deposit", onTabChange }: AddFund
                     {/* Destination Account Selection */}
                     <div className="space-y-1.5">
                       <Label className="text-xs font-semibold">Payout Destination</Label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {[
-                          {
-                            id: "Chase Bank Checking (•••• 4821)",
-                            name: "Chase Checking •••• 4821",
-                            detail: "ACH Verified Account (1-2 Days)",
-                            icon: Building,
-                            badge: "Default"
-                          },
                           {
                             id: "Direct Bank Wire (IBAN/SWIFT)",
                             name: "Direct Wire Transfer",
-                            detail: "Same-Day Fedwire Express",
+                            detail: "Same-Day Fedwire Express (Zero Fee)",
                             icon: Landmark,
-                            badge: "Zero Fee"
+                            badge: "Recommended"
                           },
                           {
-                            id: "Instant Debit Card (•••• 1234)",
-                            name: "Visa Direct Card •••• 1234",
-                            detail: "Instant 30s Payout",
+                            id: "Instant Debit Card (Visa Direct)",
+                            name: "Visa Direct Card Payout",
+                            detail: "Instant 30s Card Transfer",
                             icon: CreditCard,
-  Banknote,
                             badge: "Instant"
                           }
                         ].map((dest) => (

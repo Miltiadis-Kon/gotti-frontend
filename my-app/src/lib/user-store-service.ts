@@ -388,23 +388,40 @@ export function logoutUser(): void {
 let _isSyncingSubAccounts = false;
 let _lastSubAccountsSyncTime = 0;
 
-
 let _isSyncingTransactions = false;
 let _lastTransactionsSyncTime = 0;
 
+function getStoredTransactionsRaw(): TransactionRecord[] {
+  if (typeof window === "undefined") return INITIAL_TRANSACTIONS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return INITIAL_TRANSACTIONS;
+}
+
+function getStoredSubAccountsRaw(): SubAccount[] {
+  if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SUB_ACCOUNTS);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return INITIAL_SUB_ACCOUNTS;
+}
+
 export async function syncTransactionsWithBackend(): Promise<TransactionRecord[]> {
-  if (typeof window === "undefined") return getAllTransactions();
-  if (_isSyncingTransactions || Date.now() - _lastTransactionsSyncTime < 2000) {
-    return getAllTransactions();
+  if (typeof window === "undefined") return INITIAL_TRANSACTIONS;
+  if (_isSyncingTransactions || Date.now() - _lastTransactionsSyncTime < 2500) {
+    return getStoredTransactionsRaw();
   }
   _isSyncingTransactions = true;
+  _lastTransactionsSyncTime = Date.now();
   try {
     const res = await fetch(`${getBackendApiUrl()}/transactions?limit=100`, { cache: "no-store" });
     if (res.ok) {
       const data: TransactionRecord[] = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(data));
-        _lastTransactionsSyncTime = Date.now();
         window.dispatchEvent(new CustomEvent("gotti_transactions_updated", { detail: data }));
         return data;
       }
@@ -414,22 +431,22 @@ export async function syncTransactionsWithBackend(): Promise<TransactionRecord[]
   } finally {
     _isSyncingTransactions = false;
   }
-  return getAllTransactions();
+  return getStoredTransactionsRaw();
 }
 
 export async function syncSubAccountsWithBackend(): Promise<SubAccount[]> {
   if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
-  if (_isSyncingSubAccounts || Date.now() - _lastSubAccountsSyncTime < 2000) {
-    return getAllSubAccounts();
+  if (_isSyncingSubAccounts || Date.now() - _lastSubAccountsSyncTime < 2500) {
+    return getStoredSubAccountsRaw();
   }
   _isSyncingSubAccounts = true;
+  _lastSubAccountsSyncTime = Date.now();
   try {
     const res = await fetch(`${getBackendApiUrl()}/sub-accounts`, { cache: "no-store" });
     if (res.ok) {
       const data: SubAccount[] = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         localStorage.setItem(STORAGE_KEYS.SUB_ACCOUNTS, JSON.stringify(data));
-        _lastSubAccountsSyncTime = Date.now();
         window.dispatchEvent(new CustomEvent("gotti_sub_accounts_updated", { detail: data }));
         return data;
       }
@@ -439,16 +456,16 @@ export async function syncSubAccountsWithBackend(): Promise<SubAccount[]> {
   } finally {
     _isSyncingSubAccounts = false;
   }
-  return getAllSubAccounts();
+  return getStoredSubAccountsRaw();
 }
 
 if (typeof window !== "undefined") {
   setTimeout(() => {
     syncSubAccountsWithBackend();
     syncTransactionsWithBackend();
-    setInterval(syncSubAccountsWithBackend, 4000);
-    setInterval(syncTransactionsWithBackend, 4000);
-  }, 100);
+    setInterval(syncSubAccountsWithBackend, 5000);
+    setInterval(syncTransactionsWithBackend, 5000);
+  }, 300);
 }
 
 
@@ -457,10 +474,6 @@ if (typeof window !== "undefined") {
  */
 export function getAllSubAccounts(): SubAccount[] {
   if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
-  // Trigger background sync with backend if needed
-  if (Date.now() - _lastSubAccountsSyncTime > 4000) {
-    syncSubAccountsWithBackend().catch(() => {});
-  }
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SUB_ACCOUNTS);
     if (!raw) {

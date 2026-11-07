@@ -66,43 +66,13 @@ export function DashboardContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+        <div className="flex items-center gap-2 text-xs font-mono">
           <Badge variant="outline" className="bg-background">
             Allocated: ${activeAccount.allocatedCapital.toLocaleString()}
           </Badge>
           <Badge variant="outline" className="bg-background">
             NAV: ${activeAccount.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </Badge>
-          <div className="flex items-center gap-1.5 ml-1">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                window.dispatchEvent(
-                  new CustomEvent("gotti_navigate", {
-                    detail: { view: "addFunds", tab: "deposit", subAccountId: activeAccount.id }
-                  })
-                );
-              }}
-              className="h-7 text-[11px] font-semibold gap-1 border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400"
-            >
-              <ArrowDownLeft className="h-3 w-3" /> Deposit
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                window.dispatchEvent(
-                  new CustomEvent("gotti_navigate", {
-                    detail: { view: "addFunds", tab: "withdraw", subAccountId: activeAccount.id }
-                  })
-                );
-              }}
-              className="h-7 text-[11px] font-semibold gap-1 border-rose-500/40 text-rose-500 hover:bg-rose-500/10 hover:text-rose-400"
-            >
-              <ArrowUpRight className="h-3 w-3" /> Withdraw
-            </Button>
-          </div>
         </div>
       </div>
 
