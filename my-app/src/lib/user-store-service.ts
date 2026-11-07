@@ -388,6 +388,35 @@ export function logoutUser(): void {
 let _isSyncingSubAccounts = false;
 let _lastSubAccountsSyncTime = 0;
 
+
+let _isSyncingTransactions = false;
+let _lastTransactionsSyncTime = 0;
+
+export async function syncTransactionsWithBackend(): Promise<TransactionRecord[]> {
+  if (typeof window === "undefined") return getAllTransactions();
+  if (_isSyncingTransactions || Date.now() - _lastTransactionsSyncTime < 2000) {
+    return getAllTransactions();
+  }
+  _isSyncingTransactions = true;
+  try {
+    const res = await fetch(`${getBackendApiUrl()}/transactions?limit=100`, { cache: "no-store" });
+    if (res.ok) {
+      const data: TransactionRecord[] = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(data));
+        _lastTransactionsSyncTime = Date.now();
+        window.dispatchEvent(new CustomEvent("gotti_transactions_updated", { detail: data }));
+        return data;
+      }
+    }
+  } catch (err) {
+    console.debug("[GottiStore] Backend transactions sync notice:", err);
+  } finally {
+    _isSyncingTransactions = false;
+  }
+  return getAllTransactions();
+}
+
 export async function syncSubAccountsWithBackend(): Promise<SubAccount[]> {
   if (typeof window === "undefined") return INITIAL_SUB_ACCOUNTS;
   if (_isSyncingSubAccounts || Date.now() - _lastSubAccountsSyncTime < 2000) {
@@ -416,7 +445,9 @@ export async function syncSubAccountsWithBackend(): Promise<SubAccount[]> {
 if (typeof window !== "undefined") {
   setTimeout(() => {
     syncSubAccountsWithBackend();
+    syncTransactionsWithBackend();
     setInterval(syncSubAccountsWithBackend, 4000);
+    setInterval(syncTransactionsWithBackend, 4000);
   }, 100);
 }
 
@@ -1172,4 +1203,84 @@ export function initGottiDataInspector(): void {
 // Automatically bind DevTools inspector on client mount
 if (typeof window !== "undefined") {
   initGottiDataInspector();
+}
+
+
+/**
+ * Async API-dispatched fund sub-account
+ */
+export async function fundSubAccountApi(
+  subAccountId: string,
+  amount: number,
+  paymentMethod: string = "Instant Card (Stripe)"
+): Promise<SubAccount> {
+  try {
+    const res = await fetch(`${getBackendApiUrl()}/sub-accounts/${subAccountId}/deposit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, paymentMethod })
+    });
+    if (res.ok) {
+      await syncSubAccountsWithBackend();
+      await syncTransactionsWithBackend();
+      const updated = getSubAccountById(subAccountId);
+      if (updated) return updated;
+    }
+  } catch (err) {
+    console.warn("[GottiStore] API deposit error, falling back:", err);
+  }
+  return fundSubAccount(subAccountId, amount, paymentMethod);
+}
+
+/**
+ * Async API-dispatched withdraw from sub-account
+ */
+export async function withdrawFromSubAccountApi(
+  subAccountId: string,
+  amount: number,
+  destination: string = "Bank Wire"
+): Promise<SubAccount> {
+  try {
+    const res = await fetch(`${getBackendApiUrl()}/sub-accounts/${subAccountId}/withdraw`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, destination })
+    });
+    if (res.ok) {
+      await syncSubAccountsWithBackend();
+      await syncTransactionsWithBackend();
+      const updated = getSubAccountById(subAccountId);
+      if (updated) return updated;
+    }
+  } catch (err) {
+    console.warn("[GottiStore] API withdraw error, falling back:", err);
+  }
+  return withdrawFromSubAccount(subAccountId, amount, destination);
+}
+
+/**
+ * Async API-dispatched transfer between sub-accounts
+ */
+export async function transferCashBetweenSubAccountsApi(
+  fromSubAccountId: string,
+  toSubAccountId: string,
+  amount: number
+): Promise<{ fromAccount: SubAccount; toAccount: SubAccount }> {
+  try {
+    const res = await fetch(`${getBackendApiUrl()}/sub-accounts/transfer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fromSubAccountId, toSubAccountId, amount })
+    });
+    if (res.ok) {
+      await syncSubAccountsWithBackend();
+      await syncTransactionsWithBackend();
+      const fromAcc = getSubAccountById(fromSubAccountId);
+      const toAcc = getSubAccountById(toSubAccountId);
+      if (fromAcc && toAcc) return { fromAccount: fromAcc, toAccount: toAcc };
+    }
+  } catch (err) {
+    console.warn("[GottiStore] API transfer error, falling back:", err);
+  }
+  return transferCashBetweenSubAccounts(fromSubAccountId, toSubAccountId, amount);
 }

@@ -13,6 +13,8 @@ import {
   PlusCircle,
   Layers,
   ArrowRight,
+  ArrowDownLeft,
+  ArrowUpRight,
   Sliders,
   DollarSign,
   TrendingDown,
@@ -330,6 +332,32 @@ export default function SubAccountsHubPage() {
                       {isActive ? "Currently Viewing Dashboard" : "Open Sub-Account Dashboard"}
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
+
+                    {/* Deposit & Withdraw Quick Actions */}
+                    <div className="flex items-center gap-2 w-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setActiveSubAccountId(account.id);
+                          router.push("/?view=addFunds&tab=deposit");
+                        }}
+                        className="flex-1 text-[11px] font-semibold gap-1 h-7 border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10"
+                      >
+                        <ArrowDownLeft className="h-3 w-3" /> Deposit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setActiveSubAccountId(account.id);
+                          router.push("/?view=addFunds&tab=withdraw");
+                        }}
+                        className="flex-1 text-[11px] font-semibold gap-1 border-rose-500/40 text-rose-500 hover:bg-rose-500/10"
+                      >
+                        <ArrowUpRight className="h-3 w-3" /> Withdraw
+                      </Button>
+                    </div>
 
                     <div className="flex items-center justify-between w-full gap-2">
                       <Button

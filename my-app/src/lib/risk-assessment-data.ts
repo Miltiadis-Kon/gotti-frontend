@@ -23,6 +23,12 @@ import {
   recordTransaction,
   fundSubAccount as serviceFundSubAccount,
   withdrawFromSubAccount as serviceWithdrawFromSubAccount,
+  transferCashBetweenSubAccounts as serviceTransferCashBetweenSubAccounts,
+  fundSubAccountApi,
+  withdrawFromSubAccountApi,
+  transferCashBetweenSubAccountsApi,
+  syncTransactionsWithBackend,
+  syncSubAccountsWithBackend,
   getSubAccountHoldings,
   getSubAccountWithDetails,
   exportFullUserData,
@@ -270,6 +276,23 @@ export function fundSubAccount(
   return serviceFundSubAccount(subAccountId, amount, paymentMethod);
 }
 
+
+export function withdrawFromSubAccount(
+  subAccountId: string,
+  amount: number,
+  destination: string = "Bank Wire"
+): SubAccount {
+  return serviceWithdrawFromSubAccount(subAccountId, amount, destination);
+}
+
+export function transferCashBetweenSubAccounts(
+  fromSubAccountId: string,
+  toSubAccountId: string,
+  amount: number
+): { fromAccount: SubAccount; toAccount: SubAccount } {
+  return serviceTransferCashBetweenSubAccounts(fromSubAccountId, toSubAccountId, amount);
+}
+
 export function getSubAccountCash(subAccountId: string): number {
   const account = getSubAccountById(subAccountId);
   return account?.cashBalance || 0;
@@ -277,6 +300,11 @@ export function getSubAccountCash(subAccountId: string): number {
 
 // Re-export all centralized store methods
 export {
+  fundSubAccountApi,
+  withdrawFromSubAccountApi,
+  transferCashBetweenSubAccountsApi,
+  syncTransactionsWithBackend,
+  syncSubAccountsWithBackend,
   getUserProfile,
   updateUserProfile,
   isUserAuthenticated,

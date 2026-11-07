@@ -22,6 +22,7 @@ import {
   Layers,
   ChevronDown,
   ArrowUpRight,
+  ArrowDownLeft,
   ExternalLink,
   LogOut
 } from "lucide-react";
@@ -70,6 +71,13 @@ import { SubAccountSwitcher } from "@/components/sub-accounts/sub-account-switch
 
 export default function Dashboard() {
   const [view, setView] = useState("dashboard");
+  const [paymentTab, setPaymentTab] = useState<"deposit" | "withdraw" | "transfer">("deposit");
+
+  const handleNavigateToPayments = (tab: "deposit" | "withdraw" | "transfer" = "deposit") => {
+    setPaymentTab(tab);
+    setActiveLink("addFunds");
+    setView("addFunds");
+  };
   const [activeLink, setActiveLink] = useState("dashboard");
   const [subAccounts, setSubAccounts] = useState<SubAccount[]>(DEFAULT_SUB_ACCOUNTS);
   const [activeSubAccount, setActiveSubAccount] = useState<SubAccount>(DEFAULT_SUB_ACCOUNTS[0]);
@@ -83,6 +91,20 @@ export default function Dashboard() {
     if (typeof window !== "undefined") {
       setHostName(window.location.hostname);
       setHostProto(window.location.protocol);
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const qView = params.get("view");
+        const qTab = params.get("tab") as "deposit" | "withdraw" | "transfer" | null;
+        if (qView) {
+          setView(qView);
+          setActiveLink(qView);
+        }
+        if (qTab) {
+          setPaymentTab(qTab);
+        }
+      } catch (e) {
+        // ignore
+      }
     }
 
     const accs = getSubAccounts();
@@ -98,6 +120,16 @@ export default function Dashboard() {
     } else {
       setIsLoggedIn(isUserLoggedIn());
     }
+    const handleCustomNav = (e: any) => {
+      if (e.detail?.view) {
+        if (e.detail.tab) {
+          setPaymentTab(e.detail.tab);
+        }
+        setActiveLink(e.detail.view);
+        setView(e.detail.view);
+      }
+    };
+    window.addEventListener("gotti_navigate", handleCustomNav);
   }, []);
 
   const handleSubAccountSwitched = (account: SubAccount) => {
@@ -133,7 +165,7 @@ export default function Dashboard() {
       case "evaluation":
         return <EvaluationContent />;
       case "addFunds":
-        return <AddFundsContent />;
+        return <AddFundsContent initialTab={paymentTab} onTabChange={setPaymentTab} />;
       case "profile":
         return <ProfileContent />;
       default:
@@ -249,10 +281,10 @@ export default function Dashboard() {
               <Link
                 href="#"
                 className={getLinkClass("addFunds")}
-                onClick={() => handleLinkClick("addFunds")}
+                onClick={() => handleNavigateToPayments("deposit")}
               >
                 <Landmark className="h-4 w-4" />
-                Add Funds
+                Deposit & Withdraw
               </Link>
               <Link
                 href="#"
@@ -425,10 +457,10 @@ export default function Dashboard() {
                   <Link
                     href="#"
                     className={getLinkClassMobile("addFunds")}
-                    onClick={() => handleLinkClick("addFunds")}
+                    onClick={() => handleNavigateToPayments("deposit")}
                   >
                     <Landmark className="h-5 w-5" />
-                    Add Funds
+                    Deposit & Withdraw
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
@@ -541,7 +573,29 @@ export default function Dashboard() {
             </Link>
           )}
 
-          {/* User Profile Avatar Dropdown */}
+                    {/* Direct Deposit & Withdraw Action Buttons */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleNavigateToPayments("deposit")}
+              className="h-8 text-xs font-semibold gap-1.5 border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400"
+            >
+              <ArrowDownLeft className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Deposit</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleNavigateToPayments("withdraw")}
+              className="h-8 text-xs font-semibold gap-1.5 border-rose-500/40 text-rose-500 hover:bg-rose-500/10 hover:text-rose-400"
+            >
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Withdraw</span>
+            </Button>
+          </div>
+
+{/* User Profile Avatar Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full ring-2 ring-primary/20 hover:ring-primary/40">
